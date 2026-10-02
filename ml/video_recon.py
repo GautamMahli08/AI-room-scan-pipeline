@@ -3,23 +3,29 @@
 Input is an ordinary video (no depth, poses or intrinsics). Output is a
 folder in the Stray Scanner layout that the Go pipeline already reads:
 
-    camera_matrix.csv   intrinsics at the extracted frame resolution
+    camera_matrix.csv   intrinsics at the exported frame resolution
     odometry.csv        camera-to-world pose + intrinsics per frame
     depth/NNNNNN.png    uint16 depth, millimetres
-    confidence/NNNNNN.png
+    confidence/NNNNNN.png  0 / 1 / 2 from the model's depth confidence
     meta.json           tier, frame size, scale uncertainty, provenance
 
 Steps (SYSTEM_DESIGN.md §5):
  1. frames: ffmpeg at 2x the target rate, keep the sharper of each pair
- 2. poses: COLMAP structure from motion (pycolmap), sequential matching;
-    poses are up to an unknown scale
- 3. depth: Depth Anything V2 Metric-Indoor per frame, run on upright frames
- 4. scale: per frame, ratio of metric depth to SfM depth at the sparse
-    points; the median ratio over all frames sets metric scale, its spread
-    gives the scale uncertainty; each frame's depth is then aligned to the
-    shared SfM geometry so frames fuse consistently
- 5. gravity: the camera axis that stays most constant in world space is
-    "up" in the image; refined by the floor plane
+ 2. orientation: rotate frames upright (raw sensor-orientation video is
+    stored sideways); chosen with the metric depth model, since upright
+    indoor views have the nearest surface (the floor) at the bottom
+ 3. poses + depth: VGGT on overlapping chunks of frames (as many as fit in
+    GPU memory). Room scans are mostly panning in place, which defeats
+    incremental SfM (no baseline: COLMAP registered 49 of 223 frames on
+    single_room); VGGT predicts per-frame depth and poses jointly and does
+    not need one. Chunks are chained by a similarity transform fitted on
+    the frames they share (same pixels in both chunks give dense
+    correspondences).
+ 4. metric scale: Depth Anything V2 Metric-Indoor against VGGT depth on
+    confident pixels; the median ratio sets the scale, the spread across
+    frames gives the scale uncertainty that widens every interval
+ 5. gravity: frames are upright, so "up" is image -y averaged over the
+    walk, refined with the floor plane
  6. export
 
 usage: python ml/video_recon.py --video in.mp4 --out export_dir
@@ -27,7 +33,6 @@ usage: python ml/video_recon.py --video in.mp4 --out export_dir
 import argparse
 import json
 import math
-import os
 import shutil
 import subprocess
 import sys
@@ -37,6 +42,8 @@ from pathlib import Path
 import cv2
 import numpy as np
 
+from vggt_runner import VGGTRunner
+
 
 def log(*a):
     print("[video]", *a, file=sys.stderr, flush=True)
@@ -44,71 +51,55 @@ def log(*a):
 
 # ---------------------------------------------------------------- frames
 
-def extract_frames(video, out_dir, fps, max_side):
-    """Extract frames at 2*fps, keep the sharper of each consecutive pair."""
-    raw = out_dir / "raw"
-    raw.mkdir(parents=True, exist_ok=True)
+def extract_frames(video, work, fps, max_side):
+    """Extract frames at 2*fps and keep the sharper of each consecutive
+    pair. Returns [(path, timestamp)]."""
+    raw = work / "raw"
+    if raw.exists():
+        shutil.rmtree(raw)
+    raw.mkdir(parents=True)
     vf = f"fps={2 * fps},scale='if(gt(iw,ih),min({max_side},iw),-2)':'if(gt(iw,ih),-2,min({max_side},ih))'"
     subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(video), "-vf", vf, "-q:v", "2",
                     str(raw / "%06d.jpg")], check=True)
     files = sorted(raw.glob("*.jpg"))
-    keep = out_dir / "images"
-    keep.mkdir(exist_ok=True)
+    keep = work / "frames"
+    if keep.exists():
+        shutil.rmtree(keep)
+    keep.mkdir()
     kept = []
     for i in range(0, len(files), 2):
         pair = files[i:i + 2]
         sharp = [cv2.Laplacian(cv2.imread(str(f), cv2.IMREAD_GRAYSCALE), cv2.CV_64F).var() for f in pair]
         best = pair[int(np.argmax(sharp))]
-        t = (int(best.stem) - 1) / (2 * fps)
-        name = f"{len(kept):06d}.jpg"
-        shutil.copy(best, keep / name)
-        kept.append((name, t))
+        dst = keep / f"{len(kept):06d}.jpg"
+        shutil.move(str(best), dst)
+        kept.append((dst, (int(best.stem) - 1) / (2 * fps)))
     shutil.rmtree(raw)
-    return keep, kept
+    return kept
 
 
-# ---------------------------------------------------------------- SfM
-
-def run_sfm(image_dir, work):
-    import pycolmap
-
-    db = work / "database.db"
-    if db.exists():
-        db.unlink()
-    sparse = work / "sparse"
-    sparse.mkdir(parents=True, exist_ok=True)
-    reader = pycolmap.ImageReaderOptions()
-    reader.camera_model = "SIMPLE_RADIAL"
-    pycolmap.extract_features(db, image_dir, camera_mode=pycolmap.CameraMode.SINGLE, reader_options=reader)
-    seq = pycolmap.SequentialMatchingOptions()
-    seq.overlap = 12
-    seq.quadratic_overlap = True
-    pycolmap.match_sequential(db, matching_options=seq)
-    maps = pycolmap.incremental_mapping(db, image_dir, sparse)
-    if not maps:
-        raise SystemExit("SfM failed: no model reconstructed")
-    rec = max(maps.values(), key=lambda r: r.num_reg_images())
-    log(f"SfM: {rec.num_reg_images()} of {len(list(image_dir.glob('*.jpg')))} frames registered, "
-        f"{rec.num_points3D()} points, {len(maps)} model(s)")
-    return rec
+ROT = {1: cv2.ROTATE_90_CLOCKWISE, 2: cv2.ROTATE_180, 3: cv2.ROTATE_90_COUNTERCLOCKWISE}
 
 
-# ---------------------------------------------------------------- depth
+def rotate(img, r):
+    return cv2.rotate(img, ROT[r]) if r else img
 
-class DepthModel:
+
+# ---------------------------------------------------------------- models
+
+class MetricDepth:
+    """Depth Anything V2 Metric-Indoor (metres)."""
+
     def __init__(self, name, device):
         import torch
         from transformers import AutoImageProcessor, AutoModelForDepthEstimation
-
-        self.torch = torch
-        self.device = device
+        self.torch, self.device = torch, device
         self.proc = AutoImageProcessor.from_pretrained(name)
         self.model = AutoModelForDepthEstimation.from_pretrained(name).to(device).eval()
         if device == "cuda":
             self.model = self.model.half()
 
     def __call__(self, rgb):
-        """Metric depth (metres) at the input image's resolution."""
         torch = self.torch
         inp = self.proc(images=rgb, return_tensors="pt").to(self.device)
         if self.device == "cuda":
@@ -119,77 +110,168 @@ class DepthModel:
                                                align_corners=False)
         return pred[0, 0].cpu().numpy()
 
-
-def upright_rotation(up_cam):
-    """Number of 90° clockwise rotations (cv2) that put the image's up
-    direction at the top. up_cam is world-up expressed in camera axes
-    (x right, y down)."""
-    ux, uy = up_cam[0], up_cam[1]
-    if abs(uy) >= abs(ux):
-        return 0 if uy < 0 else 2          # up is -y (normal) or +y (upside down)
-    return 1 if ux < 0 else 3              # up is -x (left): rotate clockwise once; +x: three times
+    def unload(self):
+        del self.model
+        self.torch.cuda.empty_cache()
 
 
-ROT = {1: cv2.ROTATE_90_CLOCKWISE, 2: cv2.ROTATE_180, 3: cv2.ROTATE_90_COUNTERCLOCKWISE}
-UNROT = {1: cv2.ROTATE_90_COUNTERCLOCKWISE, 2: cv2.ROTATE_180, 3: cv2.ROTATE_90_CLOCKWISE}
+class DepthPro:
+    """Apple Depth Pro: metric depth plus its own focal-length estimate.
+    Metric depth from one image scales with the focal length the model
+    assumes; on single_room it estimates ~2000 px for a true ~1600 px and
+    reads 1.23-1.39x deep, but rescaled by (VGGT focal / its focal) it
+    reads 0.97-1.12x LiDAR. VGGT's focal comes from many views at once."""
+
+    def __init__(self, device):
+        import torch
+        from transformers import DepthProForDepthEstimation, DepthProImageProcessorFast
+        self.torch, self.device = torch, device
+        self.proc = DepthProImageProcessorFast.from_pretrained("apple/DepthPro-hf")
+        dtype = torch.float16 if device == "cuda" else torch.float32
+        self.model = DepthProForDepthEstimation.from_pretrained("apple/DepthPro-hf", dtype=dtype).to(device).eval()
+        self.dtype = dtype
+
+    def __call__(self, rgb):
+        """Returns (depth in metres at the input size, focal in pixels at the input size)."""
+        torch = self.torch
+        inp = self.proc(images=rgb, return_tensors="pt").to(self.device)
+        inp = {k: v.to(self.dtype) for k, v in inp.items()}
+        with torch.no_grad():
+            out = self.model(**inp)
+        post = self.proc.post_process_depth_estimation(out, target_sizes=[rgb.shape[:2]])[0]
+        return post["predicted_depth"].float().cpu().numpy(), float(post["focal_length"])
+
+    def unload(self):
+        del self.model
+        self.torch.cuda.empty_cache()
 
 
-# ---------------------------------------------------------------- gravity
+def axis_line_lengths(gray):
+    """Total length of straight segments within 3 degrees of the image's
+    vertical and horizontal axes (LSD on a 640 px copy). In an upright
+    indoor view vertical edges (wall corners, door frames) stay vertical
+    while horizontal ones are tilted by perspective; sideways, the reverse."""
+    s = 640 / max(gray.shape)
+    g = cv2.resize(gray, None, fx=s, fy=s, interpolation=cv2.INTER_AREA)
+    segs = cv2.createLineSegmentDetector().detect(g)[0]
+    v = h = 0.0
+    if segs is None:
+        return v, h
+    for x1, y1, x2, y2 in segs[:, 0]:
+        length = math.hypot(x2 - x1, y2 - y1)
+        if length < 30:
+            continue
+        ang = math.degrees(math.atan2(abs(y2 - y1), abs(x2 - x1)))  # 0 horizontal, 90 vertical
+        if ang > 87:
+            v += length
+        elif ang < 3:
+            h += length
+    return v, h
 
-def estimate_up(Rcw, pts_world, cams, unit):
-    """World up direction. Start from the camera image axis whose world
-    direction is most constant over the walk (the phone is held the same
-    way up), then refine with the dominant plane whose normal is close to
-    it and which lies at least 0.5 m below the cameras (the floor). unit is
-    an estimate of SfM units per metre.
 
-    The sign assumes the constant image axis points down in the world: true
-    for upright video (+y down) and for raw sensor-orientation video held
-    in portrait as recorded by capture apps (+x down)."""
-    best = None
-    for k in (0, 1):
-        axes = Rcw[:, :, k]
-        m = axes.mean(0)
-        if best is None or np.linalg.norm(m) > np.linalg.norm(best[1]):
-            best = (k, m)
-    k, m = best
-    up = -m / np.linalg.norm(m)   # the image axis points down (y) or sideways-down (x)
+def choose_rotation(frames, depth, n=12):
+    """Quarter turns (clockwise) that make frames upright.
 
-    # Floor refinement: RANSAC planes whose normal is within 15° of up.
+    Two cues: straight lines decide whether the image's vertical is its
+    y or x axis (rotations {0,2} vs {1,3}); within that pair, depth
+    ordering decides the sign, because an upright indoor view has the
+    nearest surface (the floor) at the bottom. The depth scores of r and
+    r+2 are near mirror images, so the sign is reliable even when the
+    depth model is unsure about sideways input."""
+    idx = np.linspace(0, len(frames) - 1, n).astype(int)
+    vert, horiz, dep = 1.0, 1.0, np.zeros(4)
+    for i in idx:
+        bgr = cv2.imread(str(frames[i][0]))
+        v, h = axis_line_lengths(cv2.cvtColor(bgr, cv2.COLOR_BGR2GRAY))
+        vert, horiz = vert + v, horiz + h
+        rgb = cv2.cvtColor(bgr, cv2.COLOR_BGR2RGB)
+        for r in range(4):
+            d = depth(rotate(rgb, r))
+            k = d.shape[0] // 3
+            dep[r] += np.log(np.median(d[:k]) / np.median(d[-k:]))
+    line = math.log(vert / horiz)
+    pair = (0, 2) if line > 0 else (1, 3)
+    rot = pair[0] if dep[pair[0]] >= dep[pair[1]] else pair[1]
+    return rot, line, dep / n
+
+
+def vggt_size(w, h, long_side=518):
+    """VGGT input size: long side 518, both sides multiples of 14."""
+    s = long_side / max(w, h)
+    return int(round(w * s / 14)) * 14, int(round(h * s / 14)) * 14
+
+
+# ---------------------------------------------------------------- geometry
+
+def unproject(depth, K, cam_from_world, step=4, mask=None):
+    """World points of every step-th pixel (where mask is true)."""
+    H, W = depth.shape
+    v, u = np.mgrid[0:H:step, 0:W:step]
+    z = depth[v, u]
+    ok = z > 0
+    if mask is not None:
+        ok &= mask[v, u]
+    u, v, z = u[ok], v[ok], z[ok]
+    xc = np.stack([(u - K[0, 2]) * z / K[0, 0], (v - K[1, 2]) * z / K[1, 1], z], 1)
+    R, t = cam_from_world[:, :3], cam_from_world[:, 3]
+    return (xc - t) @ R  # R^T (x - t)
+
+
+def umeyama(src, dst):
+    """Similarity (s, R, t) minimising |dst - (s R src + t)|."""
+    mu_s, mu_d = src.mean(0), dst.mean(0)
+    xs, xd = src - mu_s, dst - mu_d
+    U, S, Vt = np.linalg.svd(xd.T @ xs / len(src))
+    D = np.eye(3)
+    if np.linalg.det(U @ Vt) < 0:
+        D[2, 2] = -1
+    R = U @ D @ Vt
+    s = np.trace(np.diag(S) @ D) / xs.var(0).sum()
+    return s, R, mu_d - s * R @ mu_s
+
+
+def robust_umeyama(src, dst, iters=3):
+    """Umeyama with rounds of trimming the worst 20 % residuals."""
+    keep = np.ones(len(src), bool)
+    for _ in range(iters):
+        s, R, t = umeyama(src[keep], dst[keep])
+        r = np.linalg.norm(dst - (s * src @ R.T + t), axis=1)
+        keep = r <= np.quantile(r, 0.8)
+    return s, R, t
+
+
+def rotation_to_y(up):
+    y = np.array([0.0, 1.0, 0.0])
+    v, c = np.cross(up, y), float(up @ y)
+    if np.linalg.norm(v) < 1e-12:
+        return np.eye(3) if c > 0 else np.diag([1.0, -1.0, -1.0])
+    vx = np.array([[0, -v[2], v[1]], [v[2], 0, -v[0]], [-v[1], v[0], 0]])
+    return np.eye(3) + vx + vx @ vx / (1 + c)
+
+
+def floor_up(up, pts, cams):
+    """Refine up with the floor: the RANSAC plane within 15° of up, at
+    least 0.5 m below the median camera, with the most inliers."""
     rng = np.random.default_rng(0)
-    P = pts_world
-    if len(P) > 200000:
-        P = P[rng.choice(len(P), 200000, replace=False)]
-    h = P @ up
-    cam_h = np.median(cams @ up)
-    low = P[h < cam_h - 0.5 * unit]
-    best_n, best_in = up, 0
-    for _ in range(400):
+    low = pts[pts @ up < np.median(cams @ up) - 0.5]
+    if len(low) < 100:
+        return up
+    if len(low) > 200000:
+        low = low[rng.choice(len(low), 200000, replace=False)]
+    best, best_in = up, 0
+    for _ in range(500):
         s = low[rng.choice(len(low), 3, replace=False)]
         n = np.cross(s[1] - s[0], s[2] - s[0])
         if np.linalg.norm(n) < 1e-9:
             continue
         n /= np.linalg.norm(n)
-        if n @ up < 0:
-            n = -n
+        n = n if n @ up > 0 else -n
         if n @ up < math.cos(math.radians(15)):
             continue
-        d = np.abs((low - s[0]) @ n)
-        inl = int((d < 0.03 * unit).sum())
+        inl = int((np.abs((low - s[0]) @ n) < 0.03).sum())
         if inl > best_in:
-            best_n, best_in = n, inl
-    return best_n
-
-
-def rotation_to_y(up):
-    """Rotation matrix taking `up` to +Y."""
-    y = np.array([0.0, 1.0, 0.0])
-    v = np.cross(up, y)
-    c = float(up @ y)
-    if np.linalg.norm(v) < 1e-12:
-        return np.eye(3) if c > 0 else np.diag([1.0, -1.0, -1.0])
-    vx = np.array([[0, -v[2], v[1]], [v[2], 0, -v[0]], [-v[1], v[0], 0]])
-    return np.eye(3) + vx + vx @ vx * (1 / (1 + c))
+            best, best_in = n, inl
+    return best
 
 
 def mat_to_quat(R):
@@ -209,17 +291,87 @@ def mat_to_quat(R):
     return ((R[0, 2] + R[2, 0]) / s, (R[1, 2] + R[2, 1]) / s, 0.25 * s, (R[1, 0] - R[0, 1]) / s)
 
 
-# ---------------------------------------------------------------- main
+# ---------------------------------------------------------------- reconstruction
+
+def kabsch(src, dst):
+    """Rigid (R, t) minimising |dst - (R src + t)|, trimming the worst 20 %
+    of residuals twice."""
+    keep = np.ones(len(src), bool)
+    for _ in range(3):
+        ms, md = src[keep].mean(0), dst[keep].mean(0)
+        U, _, Vt = np.linalg.svd((dst[keep] - md).T @ (src[keep] - ms))
+        D = np.diag([1.0, 1.0, np.sign(np.linalg.det(U @ Vt))])
+        R = U @ D @ Vt
+        t = md - R @ ms
+        r = np.linalg.norm(dst - (src @ R.T + t), axis=1)
+        keep = r <= np.quantile(r, 0.8)
+    return R, t
+
+
+def reconstruct(images, runner, metric, chunk, overlap):
+    """VGGT on overlapping chunks of consecutive frames, chained by a
+    similarity transform fitted on the shared frames (same pixels in both
+    chunks). VGGT normalises scale per chunk (0.9-2.6x on single_room), so
+    relative scale must come from the overlap; within a chunk its shape is
+    accurate (2-5 cm over 40 cm of motion against ARKit). One global
+    metric scale is then taken from focal-corrected Depth Pro over all
+    frames that have it. Returns per-frame cam_from_world (3x4, metres),
+    K, depth (metres), conf, and the per-frame metric ratios."""
+    n = len(images)
+    poses, Ks, depths, confs = [None] * n, [None] * n, [None] * n, [None] * n
+    step = chunk - overlap
+    start = 0
+    while True:
+        end = min(start + chunk, n)
+        ids = list(range(start, end))
+        ext, K, D, C = runner([images[i] for i in ids])
+        if start == 0:
+            S, Rg, tg = 1.0, np.eye(3), np.zeros(3)
+        else:
+            src, dst = [], []
+            for j, i in enumerate(ids):
+                if poses[i] is None:
+                    continue
+                mask = (C[j] > np.quantile(C[j], 0.5)) & (confs[i] > np.quantile(confs[i], 0.5))
+                src.append(unproject(D[j], K[j], ext[j], step=8, mask=mask))
+                dst.append(unproject(depths[i], Ks[i], poses[i], step=8, mask=mask))
+            S, Rg, tg = robust_umeyama(np.concatenate(src), np.concatenate(dst))
+        for j, i in enumerate(ids):
+            if poses[i] is not None:
+                continue  # shared frames keep the earlier chunk's estimate
+            R, t = ext[j][:, :3], ext[j][:, 3]
+            Rcw = Rg @ R.T
+            Cw = S * (Rg @ (-R.T @ t)) + tg
+            poses[i] = np.hstack([Rcw.T, (-Rcw.T @ Cw)[:, None]])
+            Ks[i], depths[i], confs[i] = K[j], D[j] * S, C[j]
+        if end == n:
+            break
+        start += step
+
+    ratios = []
+    for i, (dm, fm) in metric.items():
+        dm = dm * (Ks[i][0, 0] / fm)  # metric depth at VGGT's focal
+        ok = (confs[i] > np.quantile(confs[i], 0.5)) & (dm > 0.2) & (dm < 8)
+        if ok.sum() > 500:
+            ratios.append(np.median(dm[ok] / depths[i][ok]))
+    ratios = np.array(ratios)
+    m = float(np.median(ratios))
+    for i in range(n):
+        poses[i] = np.hstack([poses[i][:, :3], poses[i][:, 3:] * m])
+        depths[i] = depths[i] * m
+    return poses, Ks, depths, confs, ratios / m
+
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--video", required=True)
     ap.add_argument("--out", required=True)
     ap.add_argument("--fps", type=float, default=3.0)
-    ap.add_argument("--max-side", type=int, default=1280)
+    ap.add_argument("--chunk", type=int, default=8, help="frames per VGGT pass (8 fits a 4 GB GPU)")
+    ap.add_argument("--overlap", type=int, default=3)
     ap.add_argument("--depth-model", default="depth-anything/Depth-Anything-V2-Metric-Indoor-Base-hf")
-    ap.add_argument("--depth-width", type=int, default=256, help="long side of the exported depth maps")
     ap.add_argument("--max-depth", type=float, default=6.0)
+    ap.add_argument("--metric-every", type=int, default=4, help="run Depth Pro on every n-th frame")
     args = ap.parse_args()
 
     import torch
@@ -229,105 +381,78 @@ def main():
     work = out / "work"
     work.mkdir(parents=True, exist_ok=True)
 
-    image_dir, kept = extract_frames(Path(args.video), work, args.fps, args.max_side)
-    log(f"frames: {len(kept)} kept at {args.fps} fps ({time.time() - t0:.0f}s)")
+    frames = extract_frames(Path(args.video), work, args.fps, 1280)
+    log(f"frames: {len(frames)} at {args.fps} fps ({time.time() - t0:.0f}s)")
 
-    rec = run_sfm(image_dir, work)
-    log(f"SfM done ({time.time() - t0:.0f}s)")
-    cam = next(iter(rec.cameras.values()))
-    W, H = cam.width, cam.height
-    f, cx, cy = cam.params[0], cam.params[1], cam.params[2]
+    metric = MetricDepth(args.depth_model, device)
+    rot, line, dep = choose_rotation(frames, metric)
+    log(f"orientation: {rot} quarter turn(s) clockwise (line score {line:+.2f}: "
+        f"{'upright axis' if line > 0 else 'sideways'}; depth scores {np.round(dep, 2)})")
 
-    images = sorted(rec.images.values(), key=lambda im: im.name)
-    Rcw, Ccw, sparse = [], [], []
-    for im in images:
-        T = im.cam_from_world
-        R = T.rotation.matrix()
-        t = np.asarray(T.translation)
-        Rcw.append(R.T)
-        Ccw.append(-R.T @ t)
-        uv, z = [], []
-        for p2 in im.points2D:
-            if p2.has_point3D():
-                X = rec.points3D[p2.point3D_id].xyz
-                d = (R @ X + t)[2]
-                if d > 0:
-                    uv.append(p2.xy)
-                    z.append(d)
-        sparse.append((np.array(uv).reshape(-1, 2), np.array(z)))
-    Rcw, Ccw = np.array(Rcw), np.array(Ccw)
-    pts = np.array([p.xyz for p in rec.points3D.values()])
+    first = rotate(cv2.imread(str(frames[0][0])), rot)
+    W, H = vggt_size(first.shape[1], first.shape[0])
+    images = [cv2.cvtColor(cv2.resize(rotate(cv2.imread(str(f)), rot), (W, H), interpolation=cv2.INTER_AREA),
+                           cv2.COLOR_BGR2RGB) for f, _ in frames]
 
-    # Gravity from camera axes and the floor (in SfM units).
-    unit = np.median(np.concatenate([z for _, z in sparse if len(z)])) / 2.0  # indoor views are ~2 m deep
-    up = estimate_up(Rcw, pts, Ccw, unit)
+    metric.unload()
+    dp = DepthPro(device)
+    metric_d = {i: dp(images[i]) for i in range(0, len(images), args.metric_every)}
+    dp.unload()
+    log(f"Depth Pro on {len(metric_d)} frames ({time.time() - t0:.0f}s)")
+
+    runner = VGGTRunner(device)
+    poses, Ks, depths, confs, ratios = reconstruct(images, runner, metric_d, args.chunk, args.overlap)
+    s = 1.0  # poses and depth are already in metres
+    spread = float(np.median(np.abs(np.log(ratios)))) * 1.4826
+    # Per-frame metric noise averages over frames (neighbours correlated);
+    # the residual bias of Depth Pro after focal correction (0.97-1.12x
+    # LiDAR on single_room) does not.
+    scale_sig = math.sqrt((spread / math.sqrt(max(1, len(ratios) / 3))) ** 2 + 0.06 ** 2)
+    log(f"VGGT: {len(images)} frames; metric ratio spread across frames {spread * 100:.1f}%, "
+        f"relative scale sigma {scale_sig * 100:.1f}% ({time.time() - t0:.0f}s)")
+
+    # Gravity: frames are upright, so camera -y is up on average.
+    Rcw = np.array([p[:, :3].T for p in poses])
+    Ccw = np.array([-p[:, :3].T @ p[:, 3] for p in poses])
+    up = -Rcw[:, :, 1].mean(0)
+    up /= np.linalg.norm(up)
+    pts = np.concatenate([unproject(depths[i] * s, Ks[i], np.hstack([poses[i][:, :3], poses[i][:, 3:] * s]), step=8,
+                                    mask=confs[i] > np.quantile(confs[i], 0.5)) for i in range(0, len(poses), 2)])
+    up = floor_up(up, pts, Ccw)
     Rw = rotation_to_y(up)
-    up_cam = np.median(np.einsum("nji,j->ni", Rcw, up), axis=0)  # world up in camera axes
-    rot = upright_rotation(up_cam)
-    log(f"gravity: up in camera axes {np.round(up_cam, 2)}, image rotation {rot}x90°")
+    # Cross-check: phones are held around 1.4 m above the floor.
+    floor_h = np.percentile(pts @ up, 2)
+    cam_h = float(np.median(Ccw @ up) - floor_h)
+    log(f"camera height above floor {cam_h:.2f} m (expected ~1.2-1.6 m for a handheld phone)")
 
-    # Metric depth per frame, aligned to the SfM geometry.
-    model = DepthModel(args.depth_model, device)
-    ratios, depths = [], []
-    for im, (uv, z) in zip(images, sparse):
-        rgb = cv2.cvtColor(cv2.imread(str(image_dir / im.name)), cv2.COLOR_BGR2RGB)
-        up_img = cv2.rotate(rgb, ROT[rot]) if rot else rgb
-        d = model(up_img)
-        d = cv2.rotate(d, UNROT[rot]) if rot else d
-        depths.append(d.astype(np.float32))
-        if len(z) >= 20:
-            u = np.clip(uv[:, 0].astype(int), 0, W - 1)
-            v = np.clip(uv[:, 1].astype(int), 0, H - 1)
-            r = d[v, u] / z
-            r = r[np.isfinite(r) & (r > 0)]
-            ratios.append(float(np.median(r)) if len(r) >= 20 else np.nan)
-        else:
-            ratios.append(np.nan)
-    ratios = np.array(ratios)
-    good = np.isfinite(ratios)
-    s = float(np.median(ratios[good]))  # SfM units -> metres
-    logr = np.log(ratios[good] / s)
-    mad = float(np.median(np.abs(logr))) * 1.4826
-    n_eff = max(1.0, good.sum() / 5.0)  # neighbouring frames are correlated
-    scale_sig = math.sqrt((mad / math.sqrt(n_eff)) ** 2 + 0.02 ** 2)  # + 2 % model bias floor until calibrated
-    log(f"scale: {s:.4f} m per SfM unit from {good.sum()} frames, per-frame spread {mad*100:.1f}%, "
-        f"relative sigma {scale_sig*100:.1f}% ({time.time() - t0:.0f}s)")
-
-    # Export in the Stray Scanner layout.
-    (out / "depth").mkdir(exist_ok=True)
-    (out / "confidence").mkdir(exist_ok=True)
-    dw = args.depth_width
-    dh = int(round(dw * H / W)) if W >= H else args.depth_width
-    if H > W:
-        dw = int(round(args.depth_width * W / H))
+    # Export.
+    for d in ("depth", "confidence"):
+        (out / d).mkdir(exist_ok=True)
     rows = []
-    for i, (im, d, r) in enumerate(zip(images, depths, ratios)):
-        k = s / r if np.isfinite(r) else 1.0  # align this frame's depth to the shared geometry
-        dm = cv2.resize(d * k, (dw, dh), interpolation=cv2.INTER_NEAREST)
+    for i, ((f, t), p, K, D, C) in enumerate(zip(frames, poses, Ks, depths, confs)):
+        dm = D * s
         valid = (dm > 0.1) & (dm < args.max_depth)
-        mm = np.where(valid, np.round(dm * 1000), 0).astype(np.uint16)
-        conf = np.where(valid, 2, 0).astype(np.uint8)
-        if not np.isfinite(r):
-            conf[:] = 0  # depth not tied to the geometry: excluded from fusion
-        cv2.imwrite(str(out / "depth" / f"{i:06d}.png"), mm)
-        cv2.imwrite(str(out / "confidence" / f"{i:06d}.png"), conf)
-        R = Rw @ Rcw[i]
-        C = Rw @ (Ccw[i] * s)
+        lo, hi = np.quantile(C, 0.3), np.quantile(C, 0.6)
+        conf = np.where(C >= hi, 2, np.where(C >= lo, 1, 0)).astype(np.uint8) * valid
+        cv2.imwrite(str(out / "depth" / f"{i:06d}.png"), np.where(valid, np.round(dm * 1000), 0).astype(np.uint16))
+        cv2.imwrite(str(out / "confidence" / f"{i:06d}.png"), conf.astype(np.uint8))
+        R = Rw @ p[:, :3].T
+        Cw = Rw @ (-p[:, :3].T @ p[:, 3] * s)
         qx, qy, qz, qw = mat_to_quat(R)
-        t = dict(kept)[im.name]
-        rows.append(f"{t:.6f}, {i:06d}, {C[0]:.6f}, {C[1]:.6f}, {C[2]:.6f}, {qx:.8f}, {qy:.8f}, {qz:.8f}, {qw:.8f}, "
-                    f"{f:.4f}, {f:.4f}, {cx:.4f}, {cy:.4f}, , ")
+        rows.append(f"{t:.6f}, {i:06d}, {Cw[0]:.6f}, {Cw[1]:.6f}, {Cw[2]:.6f}, {qx:.8f}, {qy:.8f}, {qz:.8f}, {qw:.8f}, "
+                    f"{K[0, 0]:.4f}, {K[1, 1]:.4f}, {K[0, 2]:.4f}, {K[1, 2]:.4f}, , ")
     with open(out / "odometry.csv", "w", newline="\n") as fh:
         fh.write("timestamp, frame, x, y, z, qx, qy, qz, qw, fx, fy, cx, cy, distortion_center_x, distortion_center_y\n")
         fh.write("\n".join(rows) + "\n")
+    K = np.median(np.array(Ks), axis=0)
     with open(out / "camera_matrix.csv", "w", newline="\n") as fh:
-        fh.write(f"{f:.4f}, 0.0, {cx:.4f}\n0.0, {f:.4f}, {cy:.4f}\n0.0, 0.0, 1.0")
+        fh.write(f"{K[0, 0]:.4f}, 0.0, {K[0, 2]:.4f}\n0.0, {K[1, 1]:.4f}, {K[1, 2]:.4f}\n0.0, 0.0, 1.0")
     meta = {
-        "tier": "video", "rgb_width": W, "rgb_height": H,
-        "frames_extracted": len(kept), "frames_registered": len(images),
-        "scale_m_per_unit": s, "scale_rel_sigma": scale_sig, "scale_frame_spread": mad,
-        "image_rotation_quarter_turns": rot,
-        "models": [{"name": args.depth_model, "version": "hf"}, {"name": "pycolmap", "version": __import__("pycolmap").__version__}],
+        "tier": "video", "rgb_width": W, "rgb_height": H, "frames": len(frames),
+        "image_rotation_quarter_turns": rot, "orientation_line_score": line, "scale_to_metres": s,
+        "scale_rel_sigma": scale_sig, "scale_frame_spread": spread, "camera_height_m": cam_h,
+        "models": [{"name": "facebook/VGGT-1B", "version": "hf"}, {"name": "apple/DepthPro-hf", "version": "hf"},
+                   {"name": args.depth_model + " (orientation only)", "version": "hf"}],
         "runtime_s": round(time.time() - t0, 1),
     }
     json.dump(meta, open(out / "meta.json", "w"), indent=2)

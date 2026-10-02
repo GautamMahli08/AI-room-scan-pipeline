@@ -1,6 +1,11 @@
 // Command scan runs the room-scanning pipeline on one capture.
 //
-//	scan run <capture_dir> [-out results] [-stride 1] [-voxel 0.02] [-ply] [-debug]
+//	scan run <capture> [-tier lidar|video|photo] [-out results] [-live] [flags]
+//
+// <capture> is a Stray Scanner export (or a folder holding one), a video
+// file, or a folder of photo folders. With -tier video on a Stray Scanner
+// capture only its rgb.mp4 is used: depth, poses, intrinsics and IMU are
+// withheld.
 package main
 
 import (
@@ -10,12 +15,13 @@ import (
 	"os"
 	"path/filepath"
 	"runtime/pprof"
+	"strings"
 
 	"roomscan/internal/pipeline"
 )
 
 func usage() {
-	fmt.Fprintln(os.Stderr, "usage: scan run <capture_dir> [flags]")
+	fmt.Fprintln(os.Stderr, "usage: scan run <capture> [-tier lidar|video|photo] [flags]")
 	os.Exit(2)
 }
 
@@ -27,6 +33,8 @@ func main() {
 	opt := pipeline.DefaultOptions()
 	fs := flag.NewFlagSet("run", flag.ExitOnError)
 	out := fs.String("out", "results", "output root directory")
+	tier := fs.String("tier", "", "input tier: lidar, video or photo (default: from the input)")
+	live := fs.Bool("live", false, "re-run model inference even if a cached export matches the input")
 	fs.IntVar(&opt.Stride, "stride", opt.Stride, "use every n-th frame")
 	fs.Float64Var(&opt.Voxel, "voxel", opt.Voxel, "voxel size in metres")
 	minFrames := fs.Int("min-frames", int(opt.MinFrames), "drop voxels seen by fewer distinct frames")
@@ -35,17 +43,17 @@ func main() {
 	fs.BoolVar(&opt.Drift, "drift", opt.Drift, "plane-anchored drift correction; the uncorrected plan is also written as the ablation")
 	cpuprofile := fs.String("cpuprofile", "", "write a CPU profile to this file")
 
-	// Accept the capture dir before or after flags.
+	// Accept the capture before or after flags.
 	args := os.Args[2:]
-	var dir string
+	var input string
 	if len(args) > 0 && args[0][0] != '-' {
-		dir, args = args[0], args[1:]
+		input, args = args[0], args[1:]
 	}
 	fs.Parse(args)
-	if dir == "" && fs.NArg() > 0 {
-		dir = fs.Arg(0)
+	if input == "" && fs.NArg() > 0 {
+		input = fs.Arg(0)
 	}
-	if dir == "" {
+	if input == "" {
 		usage()
 	}
 	opt.MinFrames = int32(*minFrames)
@@ -57,21 +65,75 @@ func main() {
 		pprof.StartCPUProfile(f)
 		defer pprof.StopCPUProfile()
 	}
-
-	export, err := captureDir(dir)
-	if err != nil {
-		log.Fatal(err)
-	}
-	id := filepath.Base(filepath.Clean(dir))
-	outDir := filepath.Join(*out, id)
-	if err := os.MkdirAll(outDir, 0o755); err != nil {
-		log.Fatal(err)
-	}
-	if _, err := pipeline.RunLiDAR(export, outDir, id, opt); err != nil {
+	if err := run(input, *tier, *out, *live, opt); err != nil {
 		log.Print(err)
 		pprof.StopCPUProfile()
 		os.Exit(1)
 	}
+}
+
+func run(input, tier, outRoot string, live bool, opt pipeline.Options) error {
+	if tier == "" {
+		tier = detectTier(input)
+	}
+	base := strings.TrimSuffix(filepath.Base(filepath.Clean(input)), filepath.Ext(input))
+	switch tier {
+	case "lidar":
+		export, err := captureDir(input)
+		if err != nil {
+			return err
+		}
+		outDir := filepath.Join(outRoot, base)
+		if err := os.MkdirAll(outDir, 0o755); err != nil {
+			return err
+		}
+		_, err = pipeline.RunLiDAR(export, outDir, base, opt)
+		return err
+	case "video":
+		video, err := videoFile(input)
+		if err != nil {
+			return err
+		}
+		id := base + "_video"
+		outDir := filepath.Join(outRoot, id)
+		export := filepath.Join(outDir, "export")
+		if err := pipeline.Reconstruct("video", video, export, live); err != nil {
+			return err
+		}
+		_, err = pipeline.RunLiDAR(export, outDir, id, opt)
+		return err
+	}
+	return fmt.Errorf("unknown tier %q", tier)
+}
+
+func detectTier(input string) string {
+	if isVideo(input) {
+		return "video"
+	}
+	return "lidar"
+}
+
+func isVideo(p string) bool {
+	switch strings.ToLower(filepath.Ext(p)) {
+	case ".mp4", ".mov", ".m4v":
+		return true
+	}
+	return false
+}
+
+// videoFile resolves a video file, or the rgb.mp4 of a Stray Scanner
+// capture (the video tier withholds everything else in the capture).
+func videoFile(input string) (string, error) {
+	if isVideo(input) {
+		return input, nil
+	}
+	if export, err := captureDir(input); err == nil {
+		v := filepath.Join(export, "rgb.mp4")
+		if _, err := os.Stat(v); err == nil {
+			return v, nil
+		}
+	}
+	return "", fmt.Errorf("%s: no video found", input)
 }
 
 // captureDir resolves either an export directory or a sample folder that
