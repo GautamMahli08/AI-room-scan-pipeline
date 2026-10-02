@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"roomscan/internal/calib"
+	"roomscan/internal/damage"
 	"roomscan/internal/geometry"
 	"roomscan/internal/geometry/pointcloud"
 	"roomscan/internal/ingest/strayscanner"
@@ -36,10 +37,14 @@ type Options struct {
 	// Calibrate adds the empirical interval terms (internal/calib). Off
 	// only to produce the uncalibrated plans the calibration is fitted on.
 	Calibrate bool
+	// Damage runs open-vocabulary damage detection on the capture's video
+	// (LiDAR tier; needs the ML environment, skipped with a note if absent).
+	Damage bool
+	Live   bool // ignore cached model outputs
 }
 
 func DefaultOptions() Options {
-	return Options{Stride: 1, Voxel: 0.02, MinFrames: 2, MinConf: 2, PlanRes: 0.02, Drift: true, DriftIters: 2, Calibrate: true}
+	return Options{Stride: 1, Voxel: 0.02, MinFrames: 2, MinConf: 2, PlanRes: 0.02, Drift: true, DriftIters: 2, Calibrate: true, Damage: true}
 }
 
 // forTier adapts fusion to estimated depth. LiDAR depth is accurate to
@@ -123,6 +128,12 @@ func RunLiDAR(exportDir, outDir, captureID string, opt Options) (*Result, error)
 			report.Iterations[0].ScatterBeforeMM, report.Final.ScatterBeforeMM, time.Since(t).Seconds())
 	}
 
+	var dmgRegions []damage.Region
+	var dmgFlags []damage.Flag
+	if opt.Damage && c.Meta.Tier == "lidar" {
+		dmgRegions, dmgFlags = detectDamage(c, final, outDir, opt.Live, logf)
+	}
+
 	write := func(g *scene, drift, suffix string) (*output.Plan, error) {
 		p := assemble(captureID, c.Meta.Tier, c.Meta.ScaleRelSigma, opt.Calibrate, g.floor, g.shapes, g.ceilings, g.openings, g.bounds)
 		p.Provenance = output.Provenance{
@@ -130,6 +141,10 @@ func RunLiDAR(exportDir, outDir, captureID string, opt Options) (*Result, error)
 			DriftCorrection: drift, RuntimeS: math.Round(time.Since(start).Seconds()*10) / 10,
 		}
 		p.Diagnostics = g.diagnostics(c)
+		if g == final && opt.Damage && c.Meta.Tier == "lidar" {
+			addDamage(p, g.shapes, dmgRegions, dmgFlags)
+			p.Provenance.Models = append(p.Provenance.Models, output.Model{Name: "google/owlv2-base-patch16-ensemble", Version: "hf"})
+		}
 		if err := output.WriteJSON(filepath.Join(outDir, "plan"+suffix+".json"), p); err != nil {
 			return nil, err
 		}

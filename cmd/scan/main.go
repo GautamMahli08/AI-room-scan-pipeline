@@ -43,6 +43,7 @@ func main() {
 	fs.BoolVar(&opt.WritePLY, "ply", false, "write the fused point cloud as PLY")
 	fs.BoolVar(&opt.Debug, "debug", false, "write debug rasters")
 	fs.BoolVar(&opt.Drift, "drift", opt.Drift, "plane-anchored drift correction; the uncorrected plan is also written as the ablation")
+	fs.BoolVar(&opt.Damage, "damage", opt.Damage, "damage detection on the capture video (LiDAR tier, needs the ML environment)")
 	fs.BoolVar(&opt.Calibrate, "calib", opt.Calibrate, "add empirical interval terms (false: model sigmas only, for bench calibrate)")
 	cpuprofile := fs.String("cpuprofile", "", "write a CPU profile to this file")
 
@@ -68,6 +69,7 @@ func main() {
 		pprof.StartCPUProfile(f)
 		defer pprof.StopCPUProfile()
 	}
+	opt.Live = *live
 	if err := run(input, *tier, *out, *live, opt); err != nil {
 		log.Print(err)
 		pprof.StopCPUProfile()

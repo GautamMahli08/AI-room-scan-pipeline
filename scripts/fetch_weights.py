@@ -9,6 +9,7 @@ MODELS = [
     ("facebook/VGGT-1B", "multi-view poses + depth (video and photo tiers)"),
     ("apple/DepthPro-hf", "metric depth with focal estimate (metric scale)"),
     ("depth-anything/Depth-Anything-V2-Metric-Indoor-Base-hf", "depth ordering for image orientation"),
+    ("google/owlv2-base-patch16-ensemble", "open-vocabulary damage detection"),
 ]
 
 for repo, use in MODELS:

@@ -42,8 +42,9 @@ The tier is detected from the input when `-tier` is omitted. Output goes to `res
 | `plan_drift_off.json/.svg` | The same plan with drift correction off (ablation) |
 | `drift.json` | Drift correction: per-chunk corrections, held-out scores, footprint on/off |
 | `export/` | Video/photo tiers: the model outputs in LiDAR layout (cached; `-live` recomputes) |
+| `damage/detections.json` | Raw damage detections (cached; `-live` recomputes) |
 
-Useful flags: `-debug` (top-down raster with rooms, walls and openings), `-ply` (fused point cloud), `-drift=false`, `-live` (re-run model inference, ignoring the cache).
+Useful flags: `-debug` (top-down raster with rooms, walls and openings), `-ply` (fused point cloud), `-drift=false`, `-damage=false`, `-live` (re-run model inference, ignoring the cache).
 
 ## Regenerate every reported number
 
@@ -61,7 +62,7 @@ The samples (`single_room/`, `single_scan_floor_only/`, `single_scan_with_ceilin
 | **LiDAR** | Complete: rooms, walls, openings, ceilings, adjacency, drift correction with ablation, intervals | Runs on all three samples in 8–52 s; see [BENCHMARK](docs/BENCHMARK.md) |
 | **Video** | Runs end to end (VGGT + Depth Pro → LiDAR pipeline) | Not yet usable: metric scale within ~18%, trajectory bends over a long walk, walls do not survive fusion |
 | **Photo** | Runs end to end, including doorway linking and stitching | Not yet usable: single-room geometry is distorted |
-| Damage | Output fields and schema in place | Detection not implemented |
+| **Damage** | OWLv2 detection on video frames → projected onto walls/floor/ceiling through LiDAR depth → merged across views → concealed-damage rules → scope items (LiDAR tier) | The samples have no damage: 226 raw detections across the three captures, **0 reported** (precision filters); the positive path is covered by synthetic tests |
 
 The video and photo tiers fail honestly. They report wide intervals, or no rooms, rather than confident wrong numbers.
 
@@ -75,7 +76,8 @@ internal/stitch            plane-anchored drift correction
 internal/calib             measurement-model intervals
 internal/output            JSON (schema-validated) and SVG
 internal/bench             cross-capture registration and repeatability
-ml/                        Python: VGGT, Depth Pro (video and photo tiers)
+internal/damage            damage placement on surfaces, multi-view merge, rules, scope
+ml/                        Python: VGGT, Depth Pro (video and photo tiers), OWLv2 (damage)
 schema/                    published output schema
 scripts/                   setup, weights, sample runs, fix loop, diagnostics
 fixloop/                   Part 4 bundle
