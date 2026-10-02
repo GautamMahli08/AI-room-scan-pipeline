@@ -135,8 +135,74 @@ func FitRoom(arr *Arrangement, label int32, wp *WallPoints) *RoomShape {
 	for i := range fits {
 		lines[i] = fits[i].Line
 	}
+	axes := make([]Orientation, len(es))
+	for i, e := range es {
+		axes[i] = e.axis
+	}
+
+	// Merge coplanar pieces across short jogs, then re-fit every face over
+	// its final extent.
+	lines, axes, fits = mergeJogs(lines, axes, fits)
+	corners = intersectAll(lines)
+	for i := range lines {
+		a, b := corners[i], corners[(i+1)%len(corners)]
+		fits[i] = fitFace(wp, lines[i], axes[i], a, b)
+		lines[i] = fits[i].Line
+	}
 	corners = intersectAll(lines)
 	return &RoomShape{Corners: corners, Walls: fits}
+}
+
+// Jog merging: two same-facing edges joined by a short connector whose
+// measured faces are nearly coplanar are one wall split by an artefact of
+// the arrangement (a wall line from elsewhere in the plan). Real steps
+// (a chimney breast, a pillar) are deeper than the tolerance and stay.
+const (
+	jogMaxConnector = 0.35 // metres
+	jogTolMeasured  = 0.04 // face offset between two measured pieces
+	jogTolInferred  = 0.10 // when either piece is inferred
+)
+
+func mergeJogs(lines []Line, axes []Orientation, fits []WallFit) ([]Line, []Orientation, []WallFit) {
+	for changed := true; changed && len(lines) > 4; {
+		changed = false
+		corners := intersectAll(lines)
+		n := len(lines)
+		for i := 0; i < n; i++ {
+			j, k := (i+1)%n, (i+2)%n
+			if lines[i].N.Dot(lines[k].N) < 0.999 {
+				continue
+			}
+			if corners[j].Sub(corners[k]).Norm() > jogMaxConnector {
+				continue
+			}
+			tol := jogTolMeasured
+			if fits[i].Inferred || fits[k].Inferred {
+				tol = jogTolInferred
+			}
+			if math.Abs(lines[i].C-lines[k].C) > tol {
+				continue
+			}
+			wi, wk := float64(fits[i].Support)+1, float64(fits[k].Support)+1
+			lines[i].C = (lines[i].C*wi + lines[k].C*wk) / (wi + wk)
+			fits[i].Support += fits[k].Support
+			fits[i].Inferred = fits[i].Inferred && fits[k].Inferred
+			// Remove j and k (k may wrap to index 0).
+			keep := func(x int) bool { return x != j && x != k }
+			var nl []Line
+			var na []Orientation
+			var nf []WallFit
+			for x := 0; x < n; x++ {
+				if keep(x) {
+					nl, na, nf = append(nl, lines[x]), append(na, axes[x]), append(nf, fits[x])
+				}
+			}
+			lines, axes, fits = nl, na, nf
+			changed = true
+			break
+		}
+	}
+	return lines, axes, fits
 }
 
 // edge is a polygon edge as a line plus the vertex it starts at.
