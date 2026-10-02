@@ -33,10 +33,13 @@ type Options struct {
 	// is also written (plan_drift_off.*) as the ablation.
 	Drift      bool
 	DriftIters int
+	// Calibrate adds the empirical interval terms (internal/calib). Off
+	// only to produce the uncalibrated plans the calibration is fitted on.
+	Calibrate bool
 }
 
 func DefaultOptions() Options {
-	return Options{Stride: 1, Voxel: 0.02, MinFrames: 2, MinConf: 2, PlanRes: 0.02, Drift: true, DriftIters: 2}
+	return Options{Stride: 1, Voxel: 0.02, MinFrames: 2, MinConf: 2, PlanRes: 0.02, Drift: true, DriftIters: 2, Calibrate: true}
 }
 
 // forTier adapts fusion to estimated depth. LiDAR depth is accurate to
@@ -121,7 +124,7 @@ func RunLiDAR(exportDir, outDir, captureID string, opt Options) (*Result, error)
 	}
 
 	write := func(g *scene, drift, suffix string) (*output.Plan, error) {
-		p := assemble(captureID, c.Meta.Tier, c.Meta.ScaleRelSigma, g.floor, g.shapes, g.ceilings, g.openings, g.bounds)
+		p := assemble(captureID, c.Meta.Tier, c.Meta.ScaleRelSigma, opt.Calibrate, g.floor, g.shapes, g.ceilings, g.openings, g.bounds)
 		p.Provenance = output.Provenance{
 			PipelineVersion: Version, Input: filepath.ToSlash(exportDir), Models: models(c.Meta),
 			DriftCorrection: drift, RuntimeS: math.Round(time.Since(start).Seconds()*10) / 10,
@@ -274,11 +277,23 @@ func wallLayers(shapes []*geometry.RoomShape) map[string][]geometry.Layer {
 // scale is measured; the monocular-depth scale for video and photo tiers).
 // It is added in quadrature to every length (relative) and doubled for
 // areas.
-func assemble(id, tier string, scaleRel float64, floor geometry.Floor, shapes []*geometry.RoomShape, ceilings []geometry.Ceiling,
+func assemble(id, tier string, scaleRel float64, calibrate bool, floor geometry.Floor, shapes []*geometry.RoomShape, ceilings []geometry.Ceiling,
 	openings []geometry.Opening, bounds []geometry.OpenBoundary) *output.Plan {
 	p := output.NewPlan(id, tier)
-	meas := func(v, sigma float64, src string) output.Measurement { return measure(v, sigma, scaleRel, 1, src) }
-	measArea := func(v, sigma float64, src string) output.Measurement { return measure(v, sigma, scaleRel, 2, src) }
+	emp := calib.Empirical{}
+	if calibrate {
+		emp = calib.ForTier(tier)
+	}
+	// Lengths and opening positions get the empirical corner term; areas
+	// its relative counterpart. Ceiling heights have no repeat pairs and
+	// keep the measurement model only.
+	meas := func(v, sigma float64, src string) output.Measurement {
+		return measure(v, math.Hypot(sigma, emp.LengthTauM), scaleRel, 1, src)
+	}
+	measArea := func(v, sigma float64, src string) output.Measurement {
+		return measure(v, math.Hypot(sigma, emp.AreaTauRel*v), scaleRel, 2, src)
+	}
+	measHeight := func(v, sigma float64, src string) output.Measurement { return measure(v, sigma, scaleRel, 1, src) }
 	roomID := map[int]string{}
 	openingID := 0
 	floorSig := calib.FaceSigma(floor.Residual, floor.Inliers, calib.LiDARHeightSys)
@@ -323,7 +338,7 @@ func assemble(id, tier string, scaleRel float64, floor geometry.Floor, shapes []
 
 		cl := ceilings[ri]
 		if cl.Observed {
-			room.CeilingHeightM = output.ObservedValue(meas(cl.Height, calib.HeightSigma(calib.FaceSigma(cl.Spread, cl.Support, calib.LiDARHeightSys), floorSig), "measured"))
+			room.CeilingHeightM = output.ObservedValue(measHeight(cl.Height, calib.HeightSigma(calib.FaceSigma(cl.Spread, cl.Support, calib.LiDARHeightSys), floorSig), "measured"))
 			for _, h := range cl.OtherLevels {
 				room.Notes = append(room.Notes, output.Note{Code: "other",
 					Message: fmt.Sprintf("part of this room has a different ceiling level at %.2f m (bulkhead or merged space)", h)})

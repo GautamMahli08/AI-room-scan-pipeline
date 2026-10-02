@@ -2,6 +2,9 @@
 //
 //	bench repeat [-json] <planA.json> <planB.json> [more pairs...]   repeatability tables (markdown, or JSON)
 //	bench overlay <planA.json> <planB.json> <out.svg>       both plans registered in one drawing
+//	bench calibrate <uncalA.json> <uncalB.json> [...]         empirical interval terms (JSON on stdout)
+//
+// calibrate needs plans written with scan -calib=false (model sigmas only).
 package main
 
 import (
@@ -13,11 +16,16 @@ import (
 	"strings"
 
 	"roomscan/internal/bench"
+	"roomscan/internal/calib"
 	"roomscan/internal/output"
 )
 
 func main() {
 	log.SetFlags(0)
+	if len(os.Args) >= 4 && os.Args[1] == "calibrate" {
+		calibrate(os.Args[2:])
+		return
+	}
 	if len(os.Args) == 5 && os.Args[1] == "overlay" {
 		a, b := load(os.Args[2]), load(os.Args[3])
 		t, _ := bench.Register(a, b)
@@ -69,4 +77,26 @@ func boolInt(b bool) int {
 		return 1
 	}
 	return 0
+}
+
+// calibrate pools benchmark pairs from uncalibrated plans and prints the
+// empirical interval terms (commit as internal/calib/empirical_lidar.json).
+func calibrate(args []string) {
+	if len(args)%2 != 0 {
+		log.Fatal("calibrate: plans must come in pairs")
+	}
+	var lengths, areas []calib.Pair
+	var sources []string
+	for i := 0; i < len(args); i += 2 {
+		a, b := load(args[i]), load(args[i+1])
+		l, ar := bench.CalibrationPairs(bench.Compare(a, b), a, b)
+		lengths, areas = append(lengths, l...), append(areas, ar...)
+		sources = append(sources, name(args[i])+" vs "+name(args[i+1]))
+	}
+	lt, lloo := calib.Tau(lengths)
+	at, aloo := calib.Tau(areas)
+	e := calib.Empirical{Tier: "lidar", LengthTauM: lt, AreaTauRel: at, LengthPairs: len(lengths), AreaPairs: len(areas),
+		LengthLOO: lloo, AreaLOO: aloo, Source: strings.Join(sources, "; ")}
+	out, _ := json.MarshalIndent(e, "", "  ")
+	fmt.Println(string(out))
 }

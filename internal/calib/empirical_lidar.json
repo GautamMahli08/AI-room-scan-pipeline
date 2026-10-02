@@ -1,0 +1,10 @@
+{
+  "tier": "lidar",
+  "length_tau_m": 0.16663315343522297,
+  "area_tau_rel": 0.15434968687508233,
+  "length_pairs": 17,
+  "area_pairs": 9,
+  "length_loo_cov": 0.8823529411764706,
+  "area_loo_cov": 0.8888888888888888,
+  "source": "single_scan_floor_only/plan vs single_scan_with_ceiling/plan; single_room/plan vs single_scan_with_ceiling/plan; single_room/plan vs single_scan_floor_only/plan"
+}
