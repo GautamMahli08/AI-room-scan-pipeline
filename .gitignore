@@ -1,0 +1,32 @@
+# Sample captures (large; fetched/placed locally, see scripts/fetch_sample_data.sh)
+/single_room/
+/single_scan_floor_only/
+/single_scan_with_ceiling/
+/data/
+
+# Outputs, caches, model weights
+/results/
+/cache/
+/weights/
+*.npy
+*.ply
+
+# Go
+/bin/
+*.exe
+*.test
+*.out
+
+# Python
+__pycache__/
+.venv/
+*.pyc
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Case study brief (hiring team document, not redistributed)
+/Applied_AI_Case_Study.pdf
