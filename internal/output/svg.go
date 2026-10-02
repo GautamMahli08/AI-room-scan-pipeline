@@ -130,6 +130,32 @@ func WriteSVG(path string, p *Plan) error {
 		fmt.Fprintf(&b, `<text x="%.1f" y="%.1f" font-size="11" fill="#666" text-anchor="middle">%s</text>`+"\n", tx(cx), ty(cy)+24, ceil)
 	}
 
+	// Damage: a red ring at the region centre (on a wall: the point along
+	// the wall; on floor/ceiling: the plan point), sized by its width,
+	// labelled with class, area and any concealed-damage rule.
+	flagged := map[string][]string{}
+	for _, f := range p.ConcealedFlags {
+		for _, id := range f.DamageIDs {
+			flagged[id] = append(flagged[id], f.RuleID)
+		}
+	}
+	for _, d := range p.Damage {
+		x, y, ok := damagePoint(p, d)
+		if !ok {
+			continue
+		}
+		r := math.Max(6, d.WidthM.Value*scale/2)
+		label := fmt.Sprintf("%s %.2f m²", strings.ReplaceAll(d.Class, "_", " "), d.AreaM2.Value)
+		if d.Location.Surface == "ceiling" || d.Location.Surface == "floor" {
+			label += " (" + d.Location.Surface + ")"
+		}
+		if rules := flagged[d.ID]; len(rules) > 0 {
+			label += " ⚠ " + strings.Join(rules, ", ")
+		}
+		fmt.Fprintf(&b, `<circle cx="%.1f" cy="%.1f" r="%.1f" fill="#e74c3c" fill-opacity="0.25" stroke="#c0392b" stroke-width="2"/>`+"\n", tx(x), ty(y), r)
+		fmt.Fprintf(&b, `<text x="%.1f" y="%.1f" font-size="10" fill="#c0392b" font-weight="bold">%s %s</text>`+"\n", tx(x)+r+3, ty(y)+3, esc(d.ID), esc(label))
+	}
+
 	// 1 m scale bar.
 	fmt.Fprintf(&b, `<line x1="%.0f" y1="%.0f" x2="%.0f" y2="%.0f" stroke="#222" stroke-width="3"/><text x="%.0f" y="%.0f" font-size="11">1 m</text>`+"\n",
 		margin, H-20, margin+scale, H-20, margin+scale+6, H-16)
@@ -174,4 +200,29 @@ func centroid(p [][2]float64) (float64, float64) {
 
 func esc(s string) string {
 	return strings.NewReplacer("&", "&amp;", "<", "&lt;", ">", "&gt;").Replace(s)
+}
+
+// damagePoint returns the plan position of a damage region's centre.
+func damagePoint(p *Plan, d Damage) (float64, float64, bool) {
+	if d.CentreM == nil {
+		return 0, 0, false
+	}
+	if d.Location.Surface == "floor" || d.Location.Surface == "ceiling" {
+		return d.CentreM[0], d.CentreM[1], true
+	}
+	for _, r := range p.Rooms {
+		if r.ID != d.Location.Room {
+			continue
+		}
+		if w := wallByID(r.Walls, d.Location.Surface); w != nil {
+			dx, dy := w.End[0]-w.Start[0], w.End[1]-w.Start[1]
+			l := math.Hypot(dx, dy)
+			if l == 0 {
+				return 0, 0, false
+			}
+			t := d.CentreM[0] / l
+			return w.Start[0] + dx*t, w.Start[1] + dy*t, true
+		}
+	}
+	return 0, 0, false
 }

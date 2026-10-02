@@ -1,6 +1,9 @@
 package pipeline
 
 import (
+	"os"
+	"path/filepath"
+	"strings"
 	"testing"
 
 	"roomscan/internal/damage"
@@ -12,6 +15,10 @@ import (
 // schema (the samples have no damage, so real runs never exercise this).
 func TestDamageOutputValidates(t *testing.T) {
 	shapes := []*geometry.RoomShape{{Corners: []geometry.Pt{{X: 0, Y: 0}, {X: 4, Y: 0}, {X: 4, Y: 3}, {X: 0, Y: 3}}}}
+	room := output.Room{ID: "R1", Polygon: [][2]float64{{0, 0}, {4, 0}, {4, 3}, {0, 3}}, Openings: []output.Opening{},
+		CeilingHeightM: output.Unobserved("not scanned"),
+		Walls: []output.Wall{{ID: "W1", Start: [2]float64{0, 0}, End: [2]float64{4, 0}}, {ID: "W2", Start: [2]float64{4, 0}, End: [2]float64{4, 3}},
+			{ID: "W3", Start: [2]float64{4, 3}, End: [2]float64{0, 3}}, {ID: "W4", Start: [2]float64{0, 3}, End: [2]float64{0, 0}}}}
 	regions := []damage.Region{
 		{Class: "mould", Surface: damage.Surface{Room: 0, Wall: 1}, U0: 1, U1: 1.4, V0: 0.1, V1: 0.5, Score: 0.6, Views: 3},
 		{Class: "crack", Surface: damage.Surface{Room: 0, Wall: 2}, U0: 1, U1: 1.05, V0: 1.5, V1: 2.2, Score: 0.5, Views: 2},
@@ -21,6 +28,7 @@ func TestDamageOutputValidates(t *testing.T) {
 	p := output.NewPlan("t", "lidar")
 	p.Provenance = output.Provenance{PipelineVersion: "test", Models: []output.Model{}}
 	addDamage(p, shapes, regions, flags)
+	p.Rooms = append(p.Rooms, room)
 	if len(p.Damage) != 3 || len(p.Scope) != 3 || len(p.ConcealedFlags) != 1 {
 		t.Fatalf("damage %d scope %d flags %d, want 3/3/1", len(p.Damage), len(p.Scope), len(p.ConcealedFlags))
 	}
@@ -29,5 +37,15 @@ func TestDamageOutputValidates(t *testing.T) {
 	}
 	if err := output.ValidateValue(p); err != nil {
 		t.Fatal(err)
+	}
+	svg := filepath.Join(t.TempDir(), "plan.svg")
+	if err := output.WriteSVG(svg, p); err != nil {
+		t.Fatal(err)
+	}
+	b, _ := os.ReadFile(svg)
+	for _, want := range []string{"D1 mould", "R-WALL-BASE-01", "D3 hole"} {
+		if !strings.Contains(string(b), want) {
+			t.Errorf("SVG lacks %q", want)
+		}
 	}
 }
