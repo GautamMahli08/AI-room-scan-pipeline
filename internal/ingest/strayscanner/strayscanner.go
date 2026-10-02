@@ -9,6 +9,7 @@ package strayscanner
 
 import (
 	"encoding/csv"
+	"encoding/json"
 	"fmt"
 	"image"
 	"image/png"
@@ -32,6 +33,7 @@ const (
 // Capture is a loaded Stray Scanner export. Frames carry poses and
 // intrinsics already scaled to depth resolution; depth is loaded on demand.
 type Capture struct {
+	Meta        Meta
 	Dir         string
 	Frames      []frame.Frame
 	DepthWidth  int
@@ -46,6 +48,12 @@ func Load(dir string) (*Capture, error) {
 	var err error
 	if c.RGBK, err = readCameraMatrix(filepath.Join(dir, "camera_matrix.csv")); err != nil {
 		return nil, err
+	}
+	if c.Meta, err = readMeta(dir); err != nil {
+		return nil, err
+	}
+	if c.Meta.RGBWidth > 0 {
+		c.RGBK.Width, c.RGBK.Height = c.Meta.RGBWidth, c.Meta.RGBHeight
 	}
 
 	w, h, err := pngSize(filepath.Join(dir, "depth", "000000.png"))
@@ -70,6 +78,40 @@ func Load(dir string) (*Capture, error) {
 		}
 	}
 	return c, nil
+}
+
+// Meta is the optional meta.json written by the video and photo tiers,
+// whose exports use the same layout with estimated depth and poses.
+// Native Stray Scanner exports have none: tier lidar at 1920x1440.
+type Meta struct {
+	Tier          string   `json:"tier"`
+	RGBWidth      int      `json:"rgb_width"`
+	RGBHeight     int      `json:"rgb_height"`
+	ScaleRelSigma float64  `json:"scale_rel_sigma"` // relative 1-sigma of metric scale
+	Models        []Model  `json:"models"`
+	RuntimeS      float64  `json:"runtime_s"`
+	Notes         []string `json:"notes"`
+}
+
+// Model is a model used to produce an export.
+type Model struct {
+	Name    string `json:"name"`
+	Version string `json:"version"`
+}
+
+func readMeta(dir string) (Meta, error) {
+	m := Meta{Tier: "lidar"}
+	b, err := os.ReadFile(filepath.Join(dir, "meta.json"))
+	if os.IsNotExist(err) {
+		return m, nil
+	}
+	if err != nil {
+		return m, err
+	}
+	if err := json.Unmarshal(b, &m); err != nil {
+		return m, fmt.Errorf("meta.json: %w", err)
+	}
+	return m, nil
 }
 
 func (c *Capture) depthPath(i int) string {

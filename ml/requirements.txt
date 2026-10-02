@@ -1,0 +1,12 @@
+# Python side of the pipeline (model inference only; Go owns geometry).
+# Install: uv venv ml/.venv --python 3.12 && uv pip install --python ml/.venv -r ml/requirements.txt \
+#            --index-url https://download.pytorch.org/whl/cu124 --extra-index-url https://pypi.org/simple
+torch==2.6.0
+torchvision==0.21.0
+transformers>=4.45,<5
+huggingface_hub>=0.25
+pycolmap>=3.11
+opencv-python-headless>=4.10
+numpy>=1.26,<3
+pillow>=10
+pillow-heif>=0.18

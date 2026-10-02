@@ -95,9 +95,9 @@ func RunLiDAR(exportDir, outDir, captureID string, opt Options) (*Result, error)
 	}
 
 	write := func(g *scene, drift, suffix string) (*output.Plan, error) {
-		p := assemble(captureID, g.floor, g.shapes, g.ceilings, g.openings, g.bounds)
+		p := assemble(captureID, c.Meta.Tier, c.Meta.ScaleRelSigma, g.floor, g.shapes, g.ceilings, g.openings, g.bounds)
 		p.Provenance = output.Provenance{
-			PipelineVersion: Version, Input: filepath.ToSlash(exportDir), Models: []output.Model{},
+			PipelineVersion: Version, Input: filepath.ToSlash(exportDir), Models: models(c.Meta),
 			DriftCorrection: drift, RuntimeS: math.Round(time.Since(start).Seconds()*10) / 10,
 		}
 		p.Diagnostics = g.diagnostics(c)
@@ -243,9 +243,16 @@ func wallLayers(shapes []*geometry.RoomShape) map[string][]geometry.Layer {
 }
 
 // assemble converts geometry into the output contract with intervals.
-func assemble(id string, floor geometry.Floor, shapes []*geometry.RoomShape, ceilings []geometry.Ceiling,
+//
+// scaleRel is the relative 1-sigma of the metric scale (0 for LiDAR, whose
+// scale is measured; the monocular-depth scale for video and photo tiers).
+// It is added in quadrature to every length (relative) and doubled for
+// areas.
+func assemble(id, tier string, scaleRel float64, floor geometry.Floor, shapes []*geometry.RoomShape, ceilings []geometry.Ceiling,
 	openings []geometry.Opening, bounds []geometry.OpenBoundary) *output.Plan {
-	p := output.NewPlan(id, "lidar")
+	p := output.NewPlan(id, tier)
+	meas := func(v, sigma float64, src string) output.Measurement { return measure(v, sigma, scaleRel, 1, src) }
+	measArea := func(v, sigma float64, src string) output.Measurement { return measure(v, sigma, scaleRel, 2, src) }
 	roomID := map[int]string{}
 	openingID := 0
 	floorSig := calib.FaceSigma(floor.Residual, floor.Inliers, calib.LiDARHeightSys)
@@ -284,7 +291,7 @@ func assemble(id string, floor geometry.Floor, shapes []*geometry.RoomShape, cei
 			areaVar += (l * sig[i]) * (l * sig[i])
 		}
 		area := geometry.PolygonArea(s.Corners)
-		room.FloorAreaM2 = meas(area, math.Sqrt(areaVar), "measured")
+		room.FloorAreaM2 = measArea(area, math.Sqrt(areaVar), "measured")
 		footArea += area
 		footVar += areaVar
 
@@ -370,11 +377,14 @@ func assemble(id string, floor geometry.Floor, shapes []*geometry.RoomShape, cei
 	for _, k := range adjOrder {
 		p.Adjacency = append(p.Adjacency, output.Adjacency{Rooms: [2]string{k[0], k[1]}, Via: adj[k]})
 	}
-	p.FootprintAreaM2 = meas(footArea, math.Sqrt(footVar), "measured")
+	p.FootprintAreaM2 = measArea(footArea, math.Sqrt(footVar), "measured")
 	return p
 }
 
-func meas(v, sigma float64, src string) output.Measurement {
+// measure builds a measurement whose sigma combines the geometric sigma
+// with a relative scale sigma raised to power (1 for lengths, 2 for areas).
+func measure(v, sigma, scaleRel float64, power int, src string) output.Measurement {
+	sigma = math.Hypot(sigma, float64(power)*scaleRel*v)
 	ci := calib.Interval(v, sigma)
 	return output.Measurement{Value: round(v, 3), CI90: [2]float64{round(ci[0], 3), round(ci[1], 3)}, Source: src}
 }
@@ -404,6 +414,14 @@ func ceilingDiag(cs []geometry.Ceiling) []map[string]any {
 	var out []map[string]any
 	for _, c := range cs {
 		out = append(out, map[string]any{"observed": c.Observed, "height": round(c.Height, 3), "coverage": round(c.Coverage, 2), "support": c.Support, "spread_mm": round(c.Spread*1000, 1), "other_levels": c.OtherLevels})
+	}
+	return out
+}
+
+func models(m strayscanner.Meta) []output.Model {
+	out := []output.Model{}
+	for _, x := range m.Models {
+		out = append(out, output.Model{Name: x.Name, Version: x.Version})
 	}
 	return out
 }
