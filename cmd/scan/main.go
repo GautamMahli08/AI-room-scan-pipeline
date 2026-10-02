@@ -7,10 +7,12 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"math"
 	"os"
 	"path/filepath"
 	"time"
 
+	"roomscan/internal/geometry"
 	"roomscan/internal/geometry/pointcloud"
 	"roomscan/internal/ingest/strayscanner"
 )
@@ -98,6 +100,43 @@ func run(dir, outRoot string, stride int, voxel float64, minFrames int32, ply bo
 			return err
 		}
 		log.Printf("[%s] wrote %s", id, p)
+	}
+
+	t = time.Now()
+	floor, err := geometry.EstimateFloor(pts)
+	if err != nil {
+		return err
+	}
+	log.Printf("[%s] floor: y=%.3f residual=%.1fmm tilt=%.2f° inliers=%d", id, floor.C, floor.Residual*1000, floor.TiltDeg, floor.Inliers)
+
+	pf := geometry.PlanFrame{Floor: floor}
+	theta, support := geometry.EstimateManhattan(geometry.BuildRasters(pts, pf, 0.02))
+	pf.Theta = theta
+	log.Printf("[%s] manhattan: θ=%.2f° (%.0f%% of linear wall cells within 3°)", id, theta*180/math.Pi, support*100)
+
+	r := geometry.BuildRasters(pts, pf, 0.02)
+	wall := r.WallMask()
+	orient := geometry.Orientations(r, wall)
+	// Close every wall break up to 1.6 m for segmentation; breaks of 0.5 m
+	// and more are opening candidates.
+	gaps := geometry.FindGaps(r, orient, 0.02, 1.6)
+	var trajXY [][2]float64
+	for _, f := range c.Frames {
+		x, y, _ := pf.ToPlan(f.Pose.T)
+		trajXY = append(trajXY, [2]float64{x, y})
+	}
+	tc := time.Now()
+	free := geometry.Carve(c, r, 5, 4)
+	log.Printf("[%s] carve: %.1fs", id, time.Since(tc).Seconds())
+	labels, regions := geometry.SegmentRooms(r, wall, gaps, free, trajXY, 0.25)
+	for _, reg := range regions {
+		log.Printf("  room %d: %.2f m², %d trajectory samples", reg.Label, reg.Area, reg.TrajCells)
+	}
+	log.Printf("[%s] plan: raster %dx%d, %d gaps, %d rooms (%.1fs)", id, r.W, r.H, len(gaps), len(regions), time.Since(t).Seconds())
+
+	dbg := filepath.Join(outDir, "debug_raster.png")
+	if err := writeDebug(dbg, r, wall, orient, gaps, labels, trajXY); err != nil {
+		return err
 	}
 	log.Printf("[%s] done in %.1fs", id, time.Since(start).Seconds())
 	return nil
