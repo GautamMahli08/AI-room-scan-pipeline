@@ -59,7 +59,7 @@ The samples (`single_room/`, `single_scan_floor_only/`, `single_scan_with_ceilin
 
 | Tier | State | On the samples |
 |---|---|---|
-| **LiDAR** | Complete: rooms, walls, openings, ceilings, adjacency, drift correction with ablation, intervals | Runs on all three samples in 8–52 s; see [BENCHMARK](docs/BENCHMARK.md) |
+| **LiDAR** | Complete: rooms, walls, openings, ceilings, adjacency, drift correction with ablation, intervals | Runs on all three samples: geometry 7–56 s on CPU, plus 20–100 s for damage detection on GPU; see [BENCHMARK](docs/BENCHMARK.md) |
 | **Video** | Runs end to end (VGGT + Depth Pro → LiDAR pipeline) | Not yet usable: metric scale within ~18%, trajectory bends over a long walk, walls do not survive fusion |
 | **Photo** | Runs end to end, including doorway linking and stitching | Not yet usable: single-room geometry is distorted |
 | **Damage** | OWLv2 detection on video frames → projected onto walls/floor/ceiling through LiDAR depth → merged across views → concealed-damage rules → scope items (LiDAR tier) | The samples have no damage: 226 raw detections across the three captures, **0 reported** (precision filters); the positive path is covered by synthetic tests |

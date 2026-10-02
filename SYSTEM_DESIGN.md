@@ -223,7 +223,7 @@ ARKit performs visual-inertial odometry with its own internal corrections, but a
 
 ## 7. Damage assessment
 
-1. **Detection.** Open-vocabulary segmentation (Grounding DINO + SAM 2) with prompts per damage class (water stain, mould, crack, peeling paint, hole).
+1. **Detection.** Open-vocabulary detection (OWLv2) with several prompts per damage class (water stain, mould, crack, peeling paint, hole) and distractor prompts (plant, curtain, shadow, ...). Boxes, not masks: Grounding DINO + SAM 2 was the original plan; OWLv2 is one model and fits next to the others on a 4 GB GPU. Regions are reported only when seen in at least 2 views with score >= 0.35.
 2. **Projection to surfaces.** Each mask is projected onto the fitted wall/floor/ceiling plane using the frame's pose and depth, which gives the damaged region in metres on a known surface.
 3. **Multi-view merging.** Detections of the same region from different frames are merged on the surface.
 4. **Metric extent.** Area and bounding dimensions on the surface plane, with intervals.

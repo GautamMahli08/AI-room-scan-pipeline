@@ -82,7 +82,8 @@ Scale diagnostics that drove the design (metric depth vs LiDAR depth on the same
 | | `single_room` | `single_scan_floor_only` | `single_scan_with_ceiling` |
 |---|---|---|---|
 | Frames / path | 1715 / 14.6 m | 5251 / 54.3 m | 9745 / 99.9 m |
-| LiDAR tier, full run incl. 2 drift iterations | 7 s | 16 s | 40–80 s |
+| LiDAR tier geometry, incl. 2 drift iterations (CPU) | 7 s | 16 s | 40–56 s |
+| Damage detection (OWLv2, 1 frame per ~2 s, GPU) | 22 s | ~65 s | 102 s |
 | Video tier (RTX 3050 Ti 4 GB) | 9 min | – | – |
 | Photo tier, 6-room set (RTX 3050 Ti 4 GB) | – | – | 19 min |
 
