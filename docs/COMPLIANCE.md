@@ -58,7 +58,7 @@ Requirement → where it lives → what to look at → status. Status key: ✅ d
 
 | Requirement | Status |
 |---|---|
-| Commit as you work | ✅ `git log`: ~30 commits, each a working step, from design doc to calibration |
+| Commit as you work | ✅ `git log`: one commit per working step (design doc → ingest → geometry → drift → fix loop → tiers → calibration → docs) |
 
 ## Deliverables
 
