@@ -65,8 +65,8 @@ Typical raw false positives: whole-wall boxes ("a cracked plaster wall"), a shad
 
 | Gate | Requirement | Result | Verdict |
 |---|---|---|---|
-| Video wall lengths | ±3% | No walls survive fusion on `single_room`. The camera trajectory scored against the capture's ARKit poses (diagnostic only) gives metric scale within 18% and 70 cm median position error over 14.6 m. Single 8-frame VGGT chunks are accurate to 2–5 cm, so the error is accumulated chaining. | **Fail** |
-| Photo wall lengths | ±8% with calibrated intervals | Single-room photo geometry is distorted (fan-shaped surfaces) on sample-derived photo sets | **Fail** |
+| Video wall lengths | ±3% | No walls are fitted on `single_room`; rooms are outlined from free space with every wall inferred, and the footprint is 19.35 m² vs 25.02 m² from LiDAR (**−23%**). The camera trajectory scored against the capture's ARKit poses (diagnostic only) gives metric scale within 18% and 70 cm median position error over 14.6 m. Single 8-frame VGGT chunks are accurate to 2–5 cm, so the error is accumulated chaining. | **Fail** |
+| Photo wall lengths | ±8% with calibrated intervals | Room R3 alone (6 photos): VGGT's cameras match ARKit within 16 cm (median), scale within 8% (`scripts/photo_eval.py`). But walls are not fitted from 6 views of model depth, so the room is outlined from free space with every wall inferred: footprint 14.25 m² vs 10.03 m² from LiDAR (**+42%**) | **Fail** |
 | Photo whole-property stitch | One plan, correct adjacency, no overlaps, footprint ±8% | Doorway linking and spanning-tree layout run; 4 of 6 rooms linked on the first photo set, but placement is wrong because per-room geometry is wrong | **Fail** |
 
 Scale diagnostics that drove the design (metric depth vs LiDAR depth on the same `single_room` frames):

@@ -206,6 +206,35 @@ func mergeJogs(lines []Line, axes []Orientation, fits []WallFit) ([]Line, []Orie
 	return lines, axes, fits
 }
 
+// FallbackShape outlines a room whose walls could not be fitted (no wall
+// lines bound it, as with sparse or noisy model depth): the cleaned region
+// is traced, simplified at 10 cm and snapped to the Manhattan axes, and
+// every wall is reported as inferred, so it carries the wide inferred-wall
+// interval. A rough, honestly uncertain outline is more useful than
+// dropping the room.
+func FallbackShape(r *Rasters, cells []int) *RoomShape {
+	mask := cleanRegion(r, cells, openRadius)
+	poly := douglasPeucker(traceBoundary(r, mask), 0.10)
+	if len(poly) < 3 {
+		return nil
+	}
+	es := regularize(edgeLines(poly))
+	if len(es) < 3 {
+		return nil
+	}
+	lines := make([]Line, len(es))
+	fits := make([]WallFit, len(es))
+	for i, e := range es {
+		lines[i] = e.l
+		fits[i] = WallFit{Line: e.l, Axis: e.axis, Inferred: true}
+	}
+	corners := intersectAll(lines)
+	if math.Abs(PolygonArea(corners)) < 1.0 {
+		return nil
+	}
+	return &RoomShape{Corners: corners, Walls: fits}
+}
+
 // edge is a polygon edge as a line plus the vertex it starts at.
 type edge struct {
 	l    Line

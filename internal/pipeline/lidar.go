@@ -52,7 +52,8 @@ func DefaultOptions() Options {
 // at the highest confidence filter noise well. Model depth from a few
 // photos or keyframes is noisy by centimetres and each surface is seen by
 // few views, so those settings discard almost everything: estimated tiers
-// use 4 cm voxels, a single view, and confidence >= 1. Values the caller
+// use 4 cm voxels, a single view, confidence >= 1 and a 5 cm plan raster.
+// Values the caller
 // changed from the LiDAR defaults are kept.
 func (o Options) forTier(tier string) Options {
 	if tier == "lidar" || tier == "" {
@@ -67,6 +68,11 @@ func (o Options) forTier(tier string) Options {
 	}
 	if o.MinConf == d.MinConf {
 		o.MinConf = 1
+	}
+	// Model depth smears a wall over +-5-10 cm; on 2 cm plan cells no single
+	// cell is filled enough in height to count as wall. 5 cm cells gather it.
+	if o.PlanRes == d.PlanRes {
+		o.PlanRes = 0.05
 	}
 	return o
 }
@@ -235,8 +241,17 @@ func extract(c *strayscanner.Capture, opt Options, outDir string, logf func(stri
 	xs, ys := geometry.WallLines(r, orient)
 	arr := geometry.BuildArrangement(r, clean, xs, ys)
 	shapes := make([]*geometry.RoomShape, len(regions))
+	fallback := 0
 	for i, reg := range regions {
 		shapes[i] = geometry.FitRoom(arr, reg.Label, wp)
+		if shapes[i] == nil {
+			if shapes[i] = geometry.FallbackShape(r, reg.Cells); shapes[i] != nil {
+				fallback++
+			}
+		}
+	}
+	if fallback > 0 {
+		logf("plan: %d room(s) without fitted walls outlined from free space (all walls inferred)", fallback)
 	}
 	g := &scene{
 		pts: len(pts), floor: floor, pf: pf, support: support, regions: regions, shapes: shapes,
