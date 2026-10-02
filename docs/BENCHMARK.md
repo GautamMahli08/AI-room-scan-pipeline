@@ -12,7 +12,7 @@ The case study asks for a self-built benchmark: a multi-room capture, a room wit
 | Same room captured twice at the same tier | ✅ The property is scanned twice; `single_room` overlaps it a third time |
 | Same rooms at all three tiers | ✅ Video and photo inputs are derived from the same captures (frames from `rgb.mp4`; photo folders built by `scripts/make_photo_sets.py`) |
 | Laser / tape ground truth | ❌ None exists. Reference = the LiDAR result, independent repeat captures, and synthetic scenes with exact ground truth |
-| Staged damage (two classes) | ❌ No damage in the samples; damage detection is not implemented |
+| Staged damage (two classes) | ❌ No damage in the samples, so only precision on undamaged rooms can be measured (below) |
 | Head-to-head vs a consumer app (Part 3) | ❌ Needs the same rooms scanned with Polycam/magicplan; the rooms and a LiDAR device were not available. Not attempted, rather than faked. |
 
 ## Gates: LiDAR tier
@@ -48,6 +48,18 @@ The resulting wall intervals are about ±27 cm (90%), which is honest about what
 ### Synthetic ground truth (unit tests, exact)
 
 `internal/geometry/geometry_test.go`: a 4.00 × 3.00 m room rotated 20° with a 0.90 m door runs through the whole chain. Walls come out as 4.0000 / 3.0000 m, the door as 0.9000 m and the Manhattan angle as 20.000°; the tilted floor plane is recovered to 2e-4. This checks the geometry is exact when the data is.
+
+## Damage (LiDAR tier)
+
+Damage recall cannot be measured: the samples contain no damage. The samples do measure precision on undamaged rooms, which is the failure that produces confident false scope.
+
+| Capture | Frames analysed (1 per ~2 s) | Raw OWLv2 detections (score ≥ 0.15) | Score ≥ 0.35 | Reported regions (on a surface, ≥ 2 views) |
+|---|---|---|---|---|
+| `single_room` | 20 | 33 | 1 | **0** |
+| `single_scan_floor_only` | 59 | 93 | 0 | **0** |
+| `single_scan_with_ceiling` | 109 | 100 | 0 | **0** |
+
+Typical raw false positives: whole-wall boxes ("a cracked plaster wall"), a shadow beside a potted plant ("mold growth", 0.52), and curtains. These are removed by the box-size limit, the distractor prompts, the score threshold and the two-view requirement. The positive path (projection onto the right wall with the right metric extent, merging two views, every rule firing, the scope units, schema validity) is covered by `internal/damage/damage_test.go` and `internal/pipeline/damage_test.go`.
 
 ## Gates: video and photo tiers
 

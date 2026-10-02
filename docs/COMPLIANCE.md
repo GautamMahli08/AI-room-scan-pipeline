@@ -20,9 +20,9 @@ Requirement → where it lives → what to look at → status. Status key: ✅ d
 |---|---|---|---|
 | Per-room plan: walls, ceiling height, floor area, openings | [internal/geometry](../internal/geometry), [internal/output/plan.go](../internal/output/plan.go) | `results/<capture>/plan.json` → `rooms[]` | ✅ |
 | Stitched multi-room plan with correct adjacency | [internal/geometry/rooms.go](../internal/geometry/rooms.go), [openings.go](../internal/geometry/openings.go) | `rooms[]` in one frame + `adjacency[]` via openings / open boundaries | ✅ LiDAR · ⚠️ photo/video |
-| Per-surface damage regions with class and metric extent | [schema/plan.schema.json](../schema/plan.schema.json) `damage` | Schema and output field exist (always empty) | ❌ detection not implemented |
-| Concealed-damage flags with the rule that fired | schema `concealed_flags`, rule IDs in [SYSTEM_DESIGN §7](../SYSTEM_DESIGN.md) | Field exists (empty) | ❌ depends on damage detection |
-| Scope line items keyed to surfaces | schema `scope` | Field exists (empty) | ❌ depends on damage detection |
+| Per-surface damage regions with class and metric extent | [ml/damage_detect.py](../ml/damage_detect.py), [internal/damage](../internal/damage/damage.go), [internal/pipeline/damage.go](../internal/pipeline/damage.go) | `damage[]`: class, room + surface (wall id / floor / ceiling), centre, width, height, area with intervals, confidence, views | ⚠️ LiDAR tier only; 0 regions on the undamaged samples (226 raw detections filtered); positive path tested synthetically |
+| Concealed-damage flags with the rule that fired | [internal/damage/rules.go](../internal/damage/rules.go) | `concealed_flags[]` with `rule_id`: R-WET-CEIL-01, R-WALL-BASE-01, R-CRACK-DIAG-01 | ✅ (tested; nothing fires on the samples) |
+| Scope line items keyed to surfaces | [internal/pipeline/damage.go](../internal/pipeline/damage.go) | `scope[]`: action per damage class, quantity with interval, unit, linked damage and flag ids | ✅ (tested; empty on the samples) |
 | A confidence interval on every measurement | [internal/calib](../internal/calib) | Every `*_m` / `*_m2` value has `ci90`; empirically calibrated for lengths and areas (88–93% coverage) | ✅ |
 | One command per capture | [cmd/scan](../cmd/scan/main.go) | `bin/scan run <capture>` | ✅ |
 | JSON to the published schema | [schema/plan.schema.json](../schema/plan.schema.json), [internal/output/validate.go](../internal/output/validate.go) | Every run is validated; invalid output is an error | ✅ |
@@ -78,7 +78,7 @@ Requirement → where it lives → what to look at → status. Status key: ✅ d
 | Constraint | Status |
 |---|---|
 | Handheld consumer capture only | ✅ |
-| Pretrained models disclosed | ✅ VGGT-1B (Meta), Depth Pro (Apple), Depth Anything V2 Metric-Indoor; listed in every plan's `provenance.models` |
+| Pretrained models disclosed | ✅ VGGT-1B (Meta), Depth Pro (Apple), Depth Anything V2 Metric-Indoor, OWLv2 (Google); listed in every plan's `provenance.models` |
 | Runs without calling our infrastructure | ✅ only public weight downloads |
 | Weights fetched by script | ✅ [scripts/fetch_weights.py](../scripts/fetch_weights.py) |
 | Mirrors, glass, wet-look surfaces, low light covered | ⚠️ Handled: unobserved gaps are not reported as openings; ceilings not seen are "unobserved"; windows need wall below; soft surfaces (curtains) found in the fix loop. Not yet handled: mirror phantom rooms in photo/video ([TECHNICAL_REPORT §7](TECHNICAL_REPORT.md)) |

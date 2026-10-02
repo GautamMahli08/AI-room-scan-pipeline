@@ -14,7 +14,7 @@ Which tier runs on which phone, what it reads, and the accuracy it honestly deli
 |---|---|---|
 | Runs on | Any machine with Go (CPU only) | NVIDIA GPU with ≥ 4 GB (tested: RTX 3050 Ti Laptop, 4 GB); CPU works but is much slower |
 | Time on the samples | 8–52 s per capture (incl. drift correction) | single_room video: 9 min; 6-room photo set: 19 min (GPU memory bound) |
-| Models | none | VGGT-1B (aggregator in fp16), Apple Depth Pro, Depth Anything V2 Metric-Indoor (orientation only) |
+| Models | OWLv2 for damage detection (optional; skipped with a note if the ML environment is absent) | VGGT-1B (aggregator in fp16), Apple Depth Pro, Depth Anything V2 Metric-Indoor (orientation only) |
 
 ## Why the tiers differ
 

@@ -136,4 +136,13 @@ Two earlier hypotheses were tested and rejected before declaring:
 | Sideways raw video, missing EXIF | Upside-down or sideways input to the models | Line + depth orientation cue | handled |
 | 4 GB GPU | VGGT batches over 8 frames spill to shared memory | Chunks of 8; half-precision aggregator | handled (slow) |
 
-**Not implemented:** damage detection, concealed-damage rules and scope items (output fields exist, empty), and the head-to-head against a consumer app (needs a LiDAR device in the same rooms).
+**Damage** (LiDAR tier):
+
+- **Detect:** OWLv2 open-vocabulary detection on one frame per ~2 s, run on upright frames. The rotation comes from the ARKit poses.
+- **Filter boxes:** boxes covering more than 20% of the frame are dropped, as are boxes overlapping a distractor (plant, curtain, shadow, …) or scoring below 0.35.
+- **Place:** each surviving box is projected through LiDAR depth onto the wall (within 25 cm of its face), floor or ceiling, then merged across views. Only regions seen in at least 2 frames are reported.
+- **Rules:** R-WET-CEIL-01, R-WALL-BASE-01 and R-CRACK-DIAG-01 raise concealed-damage flags. Scope items are generated per class (m², m or each) and linked to their damage and flags.
+
+On the undamaged samples, 226 raw detections give **0 reports**. Recall is untested on real damage; the projection and rules are tested synthetically.
+
+**Not implemented:** damage at the video and photo tiers, and the head-to-head against a consumer app (needs a LiDAR device in the same rooms).
