@@ -150,3 +150,39 @@ func TestConventionOnSample(t *testing.T) {
 		t.Errorf("OpenCV convention should give a much sharper floor: %.3f vs %.3f", cv, ar)
 	}
 }
+
+// The same capture must fuse to exactly the same cloud whatever order the
+// workers finish in.
+func TestFuseDeterministic(t *testing.T) {
+	dirs, _ := filepath.Glob("../../../single_room/*")
+	if len(dirs) == 0 {
+		t.Skip("sample capture single_room not present")
+	}
+	c, err := strayscanner.Load(dirs[0])
+	if err != nil {
+		t.Fatal(err)
+	}
+	opt := DefaultFuseOptions()
+	opt.Stride = 20
+	var ref []geom.Vec3
+	for _, workers := range []int{1, 3, 8} {
+		opt.Workers = workers
+		g, err := Fuse(c, opt)
+		if err != nil {
+			t.Fatal(err)
+		}
+		pts := g.Points(1)
+		if ref == nil {
+			ref = pts
+			continue
+		}
+		if len(pts) != len(ref) {
+			t.Fatalf("workers=%d: %d points, want %d", workers, len(pts), len(ref))
+		}
+		for i := range pts {
+			if pts[i] != ref[i] {
+				t.Fatalf("workers=%d: point %d differs: %v vs %v", workers, i, pts[i], ref[i])
+			}
+		}
+	}
+}

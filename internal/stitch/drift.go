@@ -98,11 +98,19 @@ type wallRef struct {
 
 type obsKey struct{ lm, chunk, seg int }
 
+// obsAcc sums observations as integer micrometres so the totals do not
+// depend on which worker saw which frame.
 type obsAcc struct {
-	n      int
-	s      float64
-	px, py float64
+	n          int
+	sUM        int64
+	pxUM, pyUM int64
 }
+
+func um(x float64) int64 { return int64(math.Round(x * 1e6)) }
+
+func (o *obsAcc) s() float64  { return float64(o.sUM) / 1e6 }
+func (o *obsAcc) px() float64 { return float64(o.pxUM) / 1e6 }
+func (o *obsAcc) py() float64 { return float64(o.pyUM) / 1e6 }
 
 // Estimate measures how each chunk sees the room walls and floor and
 // solves for per-chunk corrections. shapes and pf are from a plan built
@@ -193,7 +201,7 @@ func Estimate(src pointcloud.DepthSource, frames []frame.Frame, pf geometry.Plan
 								a.floor[j] = o
 							}
 							o.n++
-							o.s += h
+							o.sUM += um(h)
 							continue
 						}
 						if room < 0 || h < 0.3 || h > 2.0 {
@@ -217,9 +225,9 @@ func Estimate(src pointcloud.DepthSource, frames []frame.Frame, pf geometry.Plan
 								a.wall[k] = o
 							}
 							o.n++
-							o.s += s
-							o.px += x
-							o.py += y
+							o.sUM += um(s)
+							o.pxUM += um(x)
+							o.pyUM += um(y)
 						}
 					}
 				}
@@ -242,9 +250,9 @@ func Estimate(src pointcloud.DepthSource, frames []frame.Frame, pf geometry.Plan
 				wallObs[k] = m
 			}
 			m.n += o.n
-			m.s += o.s
-			m.px += o.px
-			m.py += o.py
+			m.sUM += o.sUM
+			m.pxUM += o.pxUM
+			m.pyUM += o.pyUM
 		}
 		for k, o := range a.floor {
 			m := floorObs[k]
@@ -253,7 +261,7 @@ func Estimate(src pointcloud.DepthSource, frames []frame.Frame, pf geometry.Plan
 				floorObs[k] = m
 			}
 			m.n += o.n
-			m.s += o.s
+			m.sUM += o.sUM
 		}
 	}
 
@@ -309,12 +317,12 @@ func Estimate(src pointcloud.DepthSource, frames []frame.Frame, pf geometry.Plan
 	for _, k := range used {
 		o := wallObs[k]
 		wr := walls[k.lm]
-		pm := geometry.Pt{X: o.px / float64(o.n), Y: o.py / float64(o.n)}
+		pm := geometry.Pt{X: o.px() / float64(o.n), Y: o.py() / float64(o.n)}
 		g := pm.Sub(pivot(k.chunk))
 		rows = append(rows, obsRow{
 			chunk: k.chunk, lm: lmIndex[k.lm], wall: true, test: k.seg%2 == 1,
 			nx: wr.n.X, ny: wr.n.Y, ntheta: wr.n.Dot(geometry.Pt{X: -g.Y, Y: g.X}),
-			value: o.s / float64(o.n), w: obsW(o.n),
+			value: o.s() / float64(o.n), w: obsW(o.n),
 		})
 	}
 	floorChunks := make([]int, 0, len(floorObs))
@@ -324,7 +332,7 @@ func Estimate(src pointcloud.DepthSource, frames []frame.Frame, pf geometry.Plan
 	sort.Ints(floorChunks)
 	for _, j := range floorChunks {
 		if o := floorObs[j]; o.n >= minPts {
-			rows = append(rows, obsRow{chunk: j, value: o.s / float64(o.n), w: obsW(o.n)})
+			rows = append(rows, obsRow{chunk: j, value: o.s() / float64(o.n), w: obsW(o.n)})
 		}
 	}
 
@@ -340,7 +348,8 @@ func Estimate(src pointcloud.DepthSource, frames []frame.Frame, pf geometry.Plan
 	}
 	corr.HeldOutNone = sys.scatter(baseline, true)
 	bestScale, bestScore := 0.0, corr.HeldOutNone
-	for _, s := range []float64{0.25, 0.5, 1, 2, 4, 8} {
+	// Strong priors first: the optimum sat at the old grid edge (x0.25).
+	for _, s := range []float64{0.03, 0.06, 0.125, 0.25, 0.5, 1, 2, 4, 8} {
 		x, err := sys.solve(true, s)
 		if err != nil {
 			return nil, err

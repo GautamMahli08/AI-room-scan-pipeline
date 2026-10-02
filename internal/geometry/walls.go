@@ -113,7 +113,7 @@ const (
 // room), so every edge already lies on a detected wall line or its
 // extension; fitting then moves each edge onto its measured face.
 func FitRoom(arr *Arrangement, label int32, wp *WallPoints) *RoomShape {
-	poly := dropCollinear(arr.Outline(label))
+	poly := removeSmallFeatures(dropCollinear(arr.Outline(label)), minFeature)
 	if len(poly) < 3 {
 		return nil
 	}
@@ -436,6 +436,55 @@ func layers(hist []int, offs, along []float64, length, bin, chosen float64) []La
 			Density:  math.Round(float64(sm[i])/float64(maxN)*100) / 100,
 			Coverage: math.Round(float64(nc)/((length-2*endTrim)/coverageBin)*100) / 100,
 		})
+	}
+	return out
+}
+
+// minFeature is the smallest outline feature kept. Notches, bumps and
+// leak strips narrower or shallower than this are not seen consistently
+// from one capture to the next (they depend on which rectangles of the
+// wall-line arrangement pass the ownership threshold), and they decide
+// where the neighbouring walls end.
+const minFeature = 0.30
+
+// removeSmallFeatures flattens every U-shaped feature of the outline (two
+// antiparallel edges joined by a third) whose depth (the shorter leg) or
+// width (the joining edge) is below min: the joining edge is moved back
+// by the shorter leg. Repeats until no such feature remains.
+func removeSmallFeatures(p []Pt, min float64) []Pt {
+	for iter := 0; iter < 4*len(p) && len(p) > 4; iter++ {
+		n := len(p)
+		found := false
+		for i := 0; i < n; i++ {
+			a, b, c, d := p[i], p[(i+1)%n], p[(i+2)%n], p[(i+3)%n]
+			e0, e1, e2 := b.Sub(a), c.Sub(b), d.Sub(c)
+			la, w, lb := e0.Norm(), e1.Norm(), e2.Norm()
+			if la == 0 || lb == 0 || e0.Dot(e2) >= 0 || math.Abs(e0.Cross(e2)) > 1e-9*la*lb {
+				continue // not a U turn
+			}
+			if math.Min(la, lb) >= min && w >= min {
+				continue
+			}
+			back := e0.Scale(math.Min(la, lb) / la)
+			p[(i+1)%n], p[(i+2)%n] = b.Sub(back), c.Sub(back)
+			p = dropCollinear(dedupe(p))
+			found = true
+			break
+		}
+		if !found {
+			break
+		}
+	}
+	return p
+}
+
+// dedupe removes consecutive coincident vertices.
+func dedupe(p []Pt) []Pt {
+	var out []Pt
+	for i := range p {
+		if p[i].Sub(p[(i+1)%len(p)]).Norm() > 1e-9 {
+			out = append(out, p[i])
+		}
 	}
 	return out
 }

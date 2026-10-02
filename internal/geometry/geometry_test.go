@@ -221,3 +221,28 @@ func TestSyntheticRoomEndToEnd(t *testing.T) {
 		t.Errorf("door width %.3f, want 0.90 ±0.01", doors[0].Width)
 	}
 }
+
+func TestRemoveSmallFeatures(t *testing.T) {
+	// 4 x 3 room with a 0.8 m wide, 0.15 m deep bump on the top wall, a
+	// 0.2 m wide, 2 m long leak strip on the right wall, and a 0.5 m deep
+	// alcove on the bottom wall that must stay.
+	p := []Pt{
+		{0, 0}, {1, 0}, {1, -0.5}, {2, -0.5}, {2, 0}, // alcove (kept)
+		{4, 0}, {4, 1}, {6, 1}, {6, 1.2}, {4, 1.2}, // leak strip (removed)
+		{4, 3}, {2.5, 3}, {2.5, 3.15}, {1.7, 3.15}, {1.7, 3}, // bump (removed)
+		{0, 3},
+	}
+	got := removeSmallFeatures(p, 0.30)
+	want := []Pt{{0, 0}, {1, 0}, {1, -0.5}, {2, -0.5}, {2, 0}, {4, 0}, {4, 3}, {0, 3}}
+	if len(got) != len(want) {
+		t.Fatalf("got %v, want %v", got, want)
+	}
+	for i := range want {
+		if got[i].Sub(want[i]).Norm() > 1e-9 {
+			t.Fatalf("got %v, want %v", got, want)
+		}
+	}
+	if a := PolygonArea(got); math.Abs(a-12.5) > 1e-9 {
+		t.Errorf("area %v, want 12.5", a)
+	}
+}

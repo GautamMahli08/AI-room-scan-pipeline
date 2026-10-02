@@ -4,7 +4,9 @@
 package pointcloud
 
 import (
+	"cmp"
 	"fmt"
+	"math"
 	"runtime"
 	"slices"
 	"sync"
@@ -69,15 +71,24 @@ func (k Key) Unpack() (int, int, int) {
 		int(int64(k)&keyMask) - keyOff
 }
 
-// Voxel accumulates the points that fell into one grid cell.
+// Voxel accumulates the points that fell into one grid cell. Positions
+// are summed as integer micrometres so the result does not depend on the
+// order frames are merged in (float addition is not associative, and
+// workers finish in arbitrary order): the same capture always fuses to the
+// same cloud.
 type Voxel struct {
-	Sum    geom.Vec3 // sum of point positions
-	N      int32     // number of points
-	Frames int32     // number of distinct frames that observed this voxel
+	SumUM  [3]int64 // sum of point positions, micrometres
+	N      int32    // number of points
+	Frames int32    // number of distinct frames that observed this voxel
 }
 
 // Centroid is the mean position of the voxel's points.
-func (v Voxel) Centroid() geom.Vec3 { return v.Sum.Scale(1 / float64(v.N)) }
+func (v Voxel) Centroid() geom.Vec3 {
+	n := float64(v.N) * 1e6
+	return geom.Vec3{float64(v.SumUM[0]) / n, float64(v.SumUM[1]) / n, float64(v.SumUM[2]) / n}
+}
+
+func toUM(x float64) int64 { return int64(math.Round(x * 1e6)) }
 
 // Grid is a sparse voxel grid.
 type Grid struct {
@@ -106,7 +117,7 @@ func floorDiv(x, s float64) int {
 // frameCell is one voxel's contribution from a single frame.
 type frameCell struct {
 	key Key
-	sum geom.Vec3
+	sum [3]int64 // micrometres
 	n   int32
 }
 
@@ -134,7 +145,10 @@ func (g *Grid) aggregate(pts []geom.Vec3) []frameCell {
 	for i := 0; i < len(ks); {
 		c := frameCell{key: ks[i].k}
 		for ; i < len(ks) && ks[i].k == c.key; i++ {
-			c.sum = c.sum.Add(pts[ks[i].i])
+			p := pts[ks[i].i]
+			c.sum[0] += toUM(p[0])
+			c.sum[1] += toUM(p[1])
+			c.sum[2] += toUM(p[2])
 			c.n++
 		}
 		out = append(out, c)
@@ -152,7 +166,9 @@ func (g *Grid) merge(cells []frameCell) {
 			g.Cells = append(g.Cells, Voxel{})
 		}
 		v := &g.Cells[i]
-		v.Sum = v.Sum.Add(c.sum)
+		v.SumUM[0] += c.sum[0]
+		v.SumUM[1] += c.sum[1]
+		v.SumUM[2] += c.sum[2]
 		v.N += c.n
 		v.Frames++
 	}
@@ -162,11 +178,16 @@ func (g *Grid) merge(cells []frameCell) {
 func (g *Grid) Len() int { return len(g.Cells) }
 
 // Points returns the centroids of voxels observed by at least minFrames
-// distinct frames.
+// distinct frames, in voxel key order (independent of merge order).
 func (g *Grid) Points(minFrames int32) []geom.Vec3 {
+	idx := make([]int, len(g.Cells))
+	for i := range idx {
+		idx[i] = i
+	}
+	slices.SortFunc(idx, func(a, b int) int { return cmp.Compare(g.Keys[a], g.Keys[b]) })
 	var out []geom.Vec3
-	for _, v := range g.Cells {
-		if v.Frames >= minFrames {
+	for _, i := range idx {
+		if v := g.Cells[i]; v.Frames >= minFrames {
 			out = append(out, v.Centroid())
 		}
 	}
