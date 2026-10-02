@@ -1,0 +1,223 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://roomscan.local/schema/plan.schema.json",
+  "title": "Room scan plan",
+  "description": "One output per capture, identical for every input tier. Coordinates are metres in the stitched property frame: x/y on the floor plane, +y = north on the rendered plan. Every measurement carries a 90% interval; quantities that were not observed say so instead of guessing.",
+  "type": "object",
+  "required": ["schema_version", "capture_id", "tier", "rooms", "adjacency", "footprint_area_m2", "damage", "concealed_flags", "scope", "provenance"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "capture_id": { "type": "string", "minLength": 1 },
+    "tier": { "enum": ["photo", "video", "lidar"] },
+    "rooms": { "type": "array", "items": { "$ref": "#/$defs/room" } },
+    "adjacency": { "type": "array", "items": { "$ref": "#/$defs/adjacency" } },
+    "footprint_area_m2": {
+      "description": "Area of the union of all placed room polygons.",
+      "$ref": "#/$defs/measurement"
+    },
+    "damage": { "type": "array", "items": { "$ref": "#/$defs/damage" } },
+    "concealed_flags": { "type": "array", "items": { "$ref": "#/$defs/concealed_flag" } },
+    "scope": { "type": "array", "items": { "$ref": "#/$defs/scope_item" } },
+    "provenance": { "$ref": "#/$defs/provenance" },
+    "diagnostics": {
+      "description": "Free-form per-stage diagnostics (fit residuals, drift estimates, ablation results). Not part of the contract.",
+      "type": "object"
+    }
+  },
+
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[A-Za-z][A-Za-z0-9_-]*$" },
+    "point2": { "type": "array", "items": { "type": "number" }, "minItems": 2, "maxItems": 2 },
+
+    "measurement": {
+      "description": "A measured value with a 90% interval. source=prior means the value comes from a prior, not observation.",
+      "type": "object",
+      "required": ["value", "ci90"],
+      "additionalProperties": false,
+      "properties": {
+        "value": { "type": "number" },
+        "ci90": { "type": "array", "items": { "type": "number" }, "minItems": 2, "maxItems": 2 },
+        "source": { "enum": ["measured", "inferred", "prior"], "default": "measured" }
+      }
+    },
+
+    "observable_measurement": {
+      "description": "A measurement that may not have been observed at all (e.g. a ceiling that was never scanned).",
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["observed", "value", "ci90"],
+          "additionalProperties": false,
+          "properties": {
+            "observed": { "const": true },
+            "value": { "type": "number" },
+            "ci90": { "type": "array", "items": { "type": "number" }, "minItems": 2, "maxItems": 2 },
+            "source": { "enum": ["measured", "inferred", "prior"] }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["observed", "value", "reason"],
+          "additionalProperties": false,
+          "properties": {
+            "observed": { "const": false },
+            "value": { "type": "null" },
+            "reason": { "type": "string", "minLength": 1 },
+            "prior": { "$ref": "#/$defs/measurement" }
+          }
+        }
+      ]
+    },
+
+    "room": {
+      "type": "object",
+      "required": ["id", "polygon", "walls", "openings", "ceiling_height_m", "floor_area_m2"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "label": { "type": "string" },
+        "polygon": {
+          "description": "Room outline in the property frame, counter-clockwise, not closed (first point not repeated).",
+          "type": "array", "items": { "$ref": "#/$defs/point2" }, "minItems": 3
+        },
+        "walls": { "type": "array", "items": { "$ref": "#/$defs/wall" } },
+        "openings": { "type": "array", "items": { "$ref": "#/$defs/opening" } },
+        "ceiling_height_m": { "$ref": "#/$defs/observable_measurement" },
+        "floor_area_m2": { "$ref": "#/$defs/measurement" },
+        "notes": { "type": "array", "items": { "$ref": "#/$defs/note" } }
+      }
+    },
+
+    "wall": {
+      "type": "object",
+      "required": ["id", "start", "end", "length_m", "inferred"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "start": { "$ref": "#/$defs/point2" },
+        "end": { "$ref": "#/$defs/point2" },
+        "length_m": { "$ref": "#/$defs/measurement" },
+        "inferred": { "description": "True when the wall was closed from floor coverage rather than observed.", "type": "boolean" }
+      }
+    },
+
+    "opening": {
+      "type": "object",
+      "required": ["id", "wall", "type", "width_m"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "wall": { "$ref": "#/$defs/id" },
+        "type": { "enum": ["door", "window", "opening"] },
+        "offset_m": { "description": "Distance from wall start to the near jamb.", "$ref": "#/$defs/measurement" },
+        "width_m": { "$ref": "#/$defs/measurement" },
+        "height_m": { "$ref": "#/$defs/measurement" },
+        "sill_m": { "description": "Windows only: sill height above floor.", "$ref": "#/$defs/measurement" }
+      }
+    },
+
+    "note": {
+      "description": "Something the pipeline saw but does not report as a measurement, e.g. a glass gap or a mirror.",
+      "type": "object",
+      "required": ["code", "message"],
+      "additionalProperties": false,
+      "properties": {
+        "code": { "enum": ["glass_gap", "unobserved_gap", "mirror", "specular", "low_light", "wall_inferred", "other"] },
+        "wall": { "$ref": "#/$defs/id" },
+        "message": { "type": "string" }
+      }
+    },
+
+    "adjacency": {
+      "type": "object",
+      "required": ["rooms", "via"],
+      "additionalProperties": false,
+      "properties": {
+        "rooms": { "type": "array", "items": { "$ref": "#/$defs/id" }, "minItems": 2, "maxItems": 2 },
+        "via": { "description": "Opening ids on each side of the connection.", "type": "array", "items": { "$ref": "#/$defs/id" }, "minItems": 1 }
+      }
+    },
+
+    "surface_ref": {
+      "type": "object",
+      "required": ["room", "surface"],
+      "additionalProperties": false,
+      "properties": {
+        "room": { "$ref": "#/$defs/id" },
+        "surface": { "description": "Wall id, or 'floor' / 'ceiling'.", "type": "string", "pattern": "^(floor|ceiling|[A-Za-z][A-Za-z0-9_-]*)$" }
+      }
+    },
+
+    "damage": {
+      "type": "object",
+      "required": ["id", "class", "location", "area_m2", "width_m", "height_m", "detection_confidence"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "class": { "enum": ["water_stain", "mould", "crack", "peeling_paint", "hole"] },
+        "location": { "$ref": "#/$defs/surface_ref" },
+        "centre_m": { "description": "Centre in surface coordinates: (along wall from start, height above floor) for walls; property-frame (x, y) for floor/ceiling.", "$ref": "#/$defs/point2" },
+        "area_m2": { "$ref": "#/$defs/measurement" },
+        "width_m": { "$ref": "#/$defs/measurement" },
+        "height_m": { "$ref": "#/$defs/measurement" },
+        "detection_confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "views": { "description": "Number of frames the region was detected in.", "type": "integer", "minimum": 1 }
+      }
+    },
+
+    "concealed_flag": {
+      "type": "object",
+      "required": ["id", "rule_id", "location", "damage_ids", "message"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "rule_id": { "type": "string", "pattern": "^R-[A-Z0-9-]+$" },
+        "location": { "$ref": "#/$defs/surface_ref" },
+        "damage_ids": { "type": "array", "items": { "$ref": "#/$defs/id" } },
+        "message": { "type": "string" }
+      }
+    },
+
+    "scope_item": {
+      "type": "object",
+      "required": ["id", "location", "action", "quantity", "unit"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "location": { "$ref": "#/$defs/surface_ref" },
+        "action": { "type": "string" },
+        "quantity": { "$ref": "#/$defs/measurement" },
+        "unit": { "enum": ["m2", "m", "each"] },
+        "damage_ids": { "type": "array", "items": { "$ref": "#/$defs/id" } },
+        "flag_ids": { "type": "array", "items": { "$ref": "#/$defs/id" } }
+      }
+    },
+
+    "provenance": {
+      "type": "object",
+      "required": ["pipeline_version", "models", "runtime_s"],
+      "additionalProperties": false,
+      "properties": {
+        "pipeline_version": { "type": "string" },
+        "input": { "type": "string" },
+        "models": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "version"],
+            "additionalProperties": false,
+            "properties": {
+              "name": { "type": "string" },
+              "version": { "type": "string" },
+              "weights_sha256": { "type": "string" },
+              "cached": { "type": "boolean" }
+            }
+          }
+        },
+        "drift_correction": { "enum": ["on", "off", "n/a"] },
+        "runtime_s": { "type": "number", "minimum": 0 }
+      }
+    }
+  }
+}
