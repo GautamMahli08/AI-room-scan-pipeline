@@ -25,6 +25,7 @@ type Options struct {
 	Stride    int     // use every n-th frame for fusion
 	Voxel     float64 // voxel size, metres
 	MinFrames int32   // drop voxels seen by fewer frames
+	MinConf   uint8   // minimum depth confidence (0..2)
 	PlanRes   float64 // plan raster resolution, metres
 	WritePLY  bool
 	Debug     bool // write debug rasters
@@ -35,7 +36,31 @@ type Options struct {
 }
 
 func DefaultOptions() Options {
-	return Options{Stride: 1, Voxel: 0.02, MinFrames: 2, PlanRes: 0.02, Drift: true, DriftIters: 2}
+	return Options{Stride: 1, Voxel: 0.02, MinFrames: 2, MinConf: 2, PlanRes: 0.02, Drift: true, DriftIters: 2}
+}
+
+// forTier adapts fusion to estimated depth. LiDAR depth is accurate to
+// millimetres and dense in time (60 Hz), so 2 cm voxels seen by two frames
+// at the highest confidence filter noise well. Model depth from a few
+// photos or keyframes is noisy by centimetres and each surface is seen by
+// few views, so those settings discard almost everything: estimated tiers
+// use 4 cm voxels, a single view, and confidence >= 1. Values the caller
+// changed from the LiDAR defaults are kept.
+func (o Options) forTier(tier string) Options {
+	if tier == "lidar" || tier == "" {
+		return o
+	}
+	d := DefaultOptions()
+	if o.Voxel == d.Voxel {
+		o.Voxel = 0.04
+	}
+	if o.MinFrames == d.MinFrames {
+		o.MinFrames = 1
+	}
+	if o.MinConf == d.MinConf {
+		o.MinConf = 1
+	}
+	return o
 }
 
 // Result is everything a LiDAR run produced.
@@ -53,7 +78,8 @@ func RunLiDAR(exportDir, outDir, captureID string, opt Options) (*Result, error)
 	if err != nil {
 		return nil, err
 	}
-	logf("ingest: %d frames, depth %dx%d", len(c.Frames), c.DepthWidth, c.DepthHeight)
+	logf("ingest: %d frames, depth %dx%d, tier %s", len(c.Frames), c.DepthWidth, c.DepthHeight, c.Meta.Tier)
+	opt = opt.forTier(c.Meta.Tier)
 
 	off, err := extract(c, opt, outDir, logf)
 	if err != nil {
@@ -150,7 +176,7 @@ type scene struct {
 func extract(c *strayscanner.Capture, opt Options, outDir string, logf func(string, ...any)) (*scene, error) {
 	t := time.Now()
 	fo := pointcloud.DefaultFuseOptions()
-	fo.Stride, fo.VoxelSize = opt.Stride, opt.Voxel
+	fo.Stride, fo.VoxelSize, fo.MinConf = opt.Stride, opt.Voxel, opt.MinConf
 	grid, err := pointcloud.Fuse(c, fo)
 	if err != nil {
 		return nil, err

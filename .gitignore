@@ -33,3 +33,6 @@ Thumbs.db
 
 # Python env
 /ml/.venv/
+
+# Generated benchmark inputs (regenerate with scripts/make_photo_sets.py)
+/data/

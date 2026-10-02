@@ -3,6 +3,7 @@ package pipeline
 import (
 	"encoding/json"
 	"fmt"
+	"io/fs"
 	"log"
 	"os"
 	"os/exec"
@@ -10,20 +11,45 @@ import (
 	"runtime"
 )
 
-// inputStamp identifies an input file for the reconstruction cache.
+// inputStamp identifies an input (a video file, or a folder of photo
+// folders) for the reconstruction cache: every file's relative path, size
+// and modification time.
 type inputStamp struct {
-	Path    string `json:"path"`
-	Size    int64  `json:"size"`
-	ModTime int64  `json:"mod_time_unix"`
+	Path  string   `json:"path"`
+	Files []string `json:"files"`
 }
 
 func stamp(path string) (inputStamp, error) {
-	st, err := os.Stat(path)
+	abs, err := filepath.Abs(path)
 	if err != nil {
 		return inputStamp{}, err
 	}
-	abs, _ := filepath.Abs(path)
-	return inputStamp{Path: filepath.ToSlash(abs), Size: st.Size(), ModTime: st.ModTime().Unix()}, nil
+	s := inputStamp{Path: filepath.ToSlash(abs)}
+	err = filepath.WalkDir(path, func(p string, d fs.DirEntry, err error) error {
+		if err != nil || d.IsDir() {
+			return err
+		}
+		info, err := d.Info()
+		if err != nil {
+			return err
+		}
+		rel, _ := filepath.Rel(path, p)
+		s.Files = append(s.Files, fmt.Sprintf("%s|%d|%d", filepath.ToSlash(rel), info.Size(), info.ModTime().Unix()))
+		return nil
+	})
+	return s, err
+}
+
+func (a inputStamp) equal(b inputStamp) bool {
+	if a.Path != b.Path || len(a.Files) != len(b.Files) {
+		return false
+	}
+	for i := range a.Files {
+		if a.Files[i] != b.Files[i] {
+			return false
+		}
+	}
+	return true
 }
 
 // Reconstruct runs the Python reconstruction for a video (or photo) input
@@ -39,7 +65,7 @@ func Reconstruct(tier, input, export string, live bool) error {
 	if !live {
 		if b, err := os.ReadFile(stampFile); err == nil {
 			var old inputStamp
-			if json.Unmarshal(b, &old) == nil && old == st {
+			if json.Unmarshal(b, &old) == nil && old.equal(st) {
 				if _, err := os.Stat(filepath.Join(export, "meta.json")); err == nil {
 					log.Printf("[%s] reusing cached %s reconstruction in %s (use -live to recompute)", tier, tier, export)
 					return nil

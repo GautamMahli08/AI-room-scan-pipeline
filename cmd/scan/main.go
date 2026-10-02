@@ -2,6 +2,8 @@
 //
 //	scan run <capture> [-tier lidar|video|photo] [-out results] [-live] [flags]
 //
+// Photo tier input: a folder with one sub-folder of 2-8 photos per room.
+//
 // <capture> is a Stray Scanner export (or a folder holding one), a video
 // file, or a folder of photo folders. With -tier video on a Stray Scanner
 // capture only its rgb.mp4 is used: depth, poses, intrinsics and IMU are
@@ -102,6 +104,15 @@ func run(input, tier, outRoot string, live bool, opt pipeline.Options) error {
 		}
 		_, err = pipeline.RunLiDAR(export, outDir, id, opt)
 		return err
+	case "photo":
+		id := base + "_photo"
+		outDir := filepath.Join(outRoot, id)
+		export := filepath.Join(outDir, "export")
+		if err := pipeline.Reconstruct("photo", input, export, live); err != nil {
+			return err
+		}
+		_, err := pipeline.RunLiDAR(export, outDir, id, opt)
+		return err
 	}
 	return fmt.Errorf("unknown tier %q", tier)
 }
@@ -110,7 +121,29 @@ func detectTier(input string) string {
 	if isVideo(input) {
 		return "video"
 	}
+	if _, err := captureDir(input); err != nil && hasPhotoFolders(input) {
+		return "photo"
+	}
 	return "lidar"
+}
+
+// hasPhotoFolders reports whether dir holds sub-folders of images (the
+// photo tier's one-folder-per-room layout).
+func hasPhotoFolders(dir string) bool {
+	subs, _ := os.ReadDir(dir)
+	for _, s := range subs {
+		if !s.IsDir() {
+			continue
+		}
+		files, _ := os.ReadDir(filepath.Join(dir, s.Name()))
+		for _, f := range files {
+			switch strings.ToLower(filepath.Ext(f.Name())) {
+			case ".jpg", ".jpeg", ".png", ".heic", ".heif":
+				return true
+			}
+		}
+	}
+	return false
 }
 
 func isVideo(p string) bool {
