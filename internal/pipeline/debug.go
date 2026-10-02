@@ -1,4 +1,4 @@
-package main
+package pipeline
 
 import (
 	"image/color"
@@ -13,7 +13,7 @@ var palette = []color.RGBA{{166, 206, 227, 255}, {178, 223, 138, 255}, {251, 154
 // wall cells by orientation, gaps (magenta with header evidence, orange
 // without) and the camera trajectory.
 func writeDebug(path string, r *geometry.Rasters, wall []bool, orient []geometry.Orientation, gaps []geometry.Gap,
-	labels []int32, traj [][2]float64) error {
+	labels []int32, traj [][2]float64, shapes []*geometry.RoomShape) error {
 	n := r.W * r.H
 	mask := func(f func(i int) bool) []bool {
 		m := make([]bool, n)
@@ -45,6 +45,24 @@ func writeDebug(path string, r *geometry.Rasters, wall []bool, orient []geometry
 	var pts []geometry.DebugPoint
 	for _, p := range traj {
 		pts = append(pts, geometry.DebugPoint{X: p[0], Y: p[1], Color: color.RGBA{230, 0, 0, 255}})
+	}
+	// Fitted outlines: observed walls black, inferred walls grey.
+	for _, s := range shapes {
+		if s == nil {
+			continue
+		}
+		for i, w := range s.Walls {
+			a, b := s.Corners[i], s.Corners[(i+1)%len(s.Corners)]
+			c := color.RGBA{0, 0, 0, 255}
+			if w.Inferred {
+				c = color.RGBA{150, 150, 150, 255}
+			}
+			n := int(b.Sub(a).Norm()/(r.Res/2)) + 1
+			for k := 0; k <= n; k++ {
+				p := a.Add(b.Sub(a).Scale(float64(k) / float64(n)))
+				pts = append(pts, geometry.DebugPoint{X: p.X, Y: p.Y, Color: c})
+			}
+		}
 	}
 	return geometry.WriteDebugPNG(path, r.Grid2, layers, pts, 2)
 }

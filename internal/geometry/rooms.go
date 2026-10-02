@@ -48,7 +48,7 @@ func SegmentRooms(r *Rasters, wall []bool, gaps []Gap, free []uint16, traj [][2]
 			regions[l-1].TrajCells++
 			continue
 		}
-		cells := flood(r, seed, func(i int) bool { return interior[i] && labels[i] == 0 })
+		cells := flood(r.Grid2, seed, func(i int) bool { return interior[i] && labels[i] == 0 })
 		for _, i := range cells {
 			labels[i] = next
 		}
@@ -153,7 +153,7 @@ func nearestInterior(r *Rasters, interior []bool, cx, cy, radius int) int {
 
 // flood returns the 4-connected component of cells reachable from seed
 // through cells where ok is true.
-func flood(r *Rasters, seed int, ok func(i int) bool) []int {
+func flood(r Grid2, seed int, ok func(i int) bool) []int {
 	seen := map[int]bool{seed: true}
 	stack, out := []int{seed}, []int{}
 	for len(stack) > 0 {
@@ -185,7 +185,7 @@ func fillHoles(r *Rasters, labels []int32, regions []Region, maxCells int) {
 			continue
 		}
 		var touches int32 = -1 // -1 none yet, 0 border/several rooms
-		comp := flood(r, start, func(i int) bool { return labels[i] == 0 && !visited[i] })
+		comp := flood(r.Grid2, start, func(i int) bool { return labels[i] == 0 && !visited[i] })
 		for _, i := range comp {
 			visited[i] = true
 			x, y := i%r.W, i/r.W

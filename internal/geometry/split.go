@@ -100,7 +100,7 @@ func splitAt(r *Rasters, comp []int, in []bool, dist []float64, level float64) [
 		if seen[i] || dist[i] <= next {
 			continue
 		}
-		c := flood(r, i, func(j int) bool { return in[j] && dist[j] > next })
+		c := flood(r.Grid2, i, func(j int) bool { return in[j] && dist[j] > next })
 		for _, j := range c {
 			seen[j] = true
 		}
