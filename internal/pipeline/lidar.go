@@ -221,7 +221,25 @@ func (g *scene) diagnostics(c *strayscanner.Capture) map[string]any {
 		"room_regions_m2":     regionAreas(g.regions),
 		"ceilings":            ceilingDiag(g.ceilings),
 		"trajectory_length_m": round(pathLength(c), 1),
+		"wall_layers":         wallLayers(g.shapes),
 	}
+}
+
+// wallLayers lists, per output wall id, the point layers found near its
+// face (for diagnosing which layer was taken as the wall).
+func wallLayers(shapes []*geometry.RoomShape) map[string][]geometry.Layer {
+	out := map[string][]geometry.Layer{}
+	n := 0
+	for _, s := range shapes {
+		if s == nil {
+			continue
+		}
+		n++
+		for i, w := range s.Walls {
+			out[fmt.Sprintf("R%d/W%d", n, i+1)] = w.Layers
+		}
+	}
+	return out
 }
 
 // assemble converts geometry into the output contract with intervals.

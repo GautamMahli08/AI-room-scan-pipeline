@@ -47,7 +47,13 @@ type WallMatch struct {
 	RelDelta       float64 // Delta / LenA
 	Pass           bool    // |Δ| <= 1 cm or <= 0.5 %
 	OffsetMismatch float64 // distance between the two wall lines, metres
+	SignedOffset   float64 // B's face minus A's, along A's outward normal
+	// SameCorners: both endpoints coincide within cornerTol, i.e. the two
+	// plans agree on where this wall starts and ends (same topology).
+	SameCorners bool
 }
+
+const cornerTol = 0.06
 
 // Result is a repeatability comparison.
 type Result struct {
@@ -304,7 +310,10 @@ func matchWalls(wa, wb []wallLine) []WallMatch {
 		usedA[c.i], usedB[c.j] = true, true
 		a, b := wa[c.i], wb[c.j]
 		m := WallMatch{A: a.id, B: b.id, LenA: a.length, LenB: b.length, Measured: a.measured && b.measured,
-			Delta: b.length - a.length, OffsetMismatch: c.d}
+			Delta: b.length - a.length, OffsetMismatch: c.d, SignedOffset: a.n.Dot(b.mid) - a.c}
+		d1 := math.Min(a.a.Sub(b.a).Norm(), a.a.Sub(b.b).Norm())
+		d2 := math.Min(a.b.Sub(b.a).Norm(), a.b.Sub(b.b).Norm())
+		m.SameCorners = d1 <= cornerTol && d2 <= cornerTol
 		m.RelDelta = m.Delta / a.length
 		m.Pass = math.Abs(m.Delta) <= 0.01 || math.Abs(m.RelDelta) <= 0.005
 		out = append(out, m)
@@ -331,6 +340,33 @@ func (r *Result) Summary() (pairs, pass int, medAbs float64) {
 	return pairs, pass, median(abs)
 }
 
+// SplitSummary is Summary separately for measured pairs whose corners
+// coincide and pairs whose corners differ.
+func (r *Result) SplitSummary() (same, sameP, diff, diffP int, sameMed, diffMed float64) {
+	var sa, da []float64
+	for _, m := range r.Rooms {
+		for _, w := range m.Walls {
+			if !w.Measured {
+				continue
+			}
+			if w.SameCorners {
+				same++
+				if w.Pass {
+					sameP++
+				}
+				sa = append(sa, math.Abs(w.Delta))
+			} else {
+				diff++
+				if w.Pass {
+					diffP++
+				}
+				da = append(da, math.Abs(w.Delta))
+			}
+		}
+	}
+	return same, sameP, diff, diffP, median(sa), median(da)
+}
+
 // Markdown renders the comparison as tables.
 func (r *Result) Markdown(nameA, nameB string) string {
 	pairs, pass, med := r.Summary()
@@ -338,6 +374,9 @@ func (r *Result) Markdown(nameA, nameB string) string {
 		nameA, nameB, r.Transform.Rot, r.Transform.Tx, r.Transform.Ty, r.Overlap)
 	s += fmt.Sprintf("Measured wall pairs: **%d**, within gate (≤1 cm or ≤0.5%%): **%d** (%.0f%%), median |Δ| %.1f cm.\n\n",
 		pairs, pass, 100*float64(pass)/math.Max(1, float64(pairs)), med*100)
+	same, sameP, diff, diffP, sameMed, diffMed := r.SplitSummary()
+	s += fmt.Sprintf("Same corners in both plans: %d pairs, %d pass, median |Δ| %.1f cm. Different corners: %d pairs, %d pass, median |Δ| %.1f cm.\n\n",
+		same, sameP, sameMed*100, diff, diffP, diffMed*100)
 	s += "| Room A | Room B | IoU | Area A m² | Area B m² | Ceiling A | Ceiling B |\n|---|---|---|---|---|---|---|\n"
 	for _, m := range r.Rooms {
 		s += fmt.Sprintf("| %s | %s | %.2f | %.2f | %.2f | %s | %s |\n", m.A, m.B, m.IoU, m.AreaA, m.AreaB, fmtPtr(m.CeilA), fmtPtr(m.CeilB))

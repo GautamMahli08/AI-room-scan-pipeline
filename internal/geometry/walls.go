@@ -30,6 +30,7 @@ type WallFit struct {
 	Spread   float64     // std of those points about the face, metres
 	Coverage float64     // fraction of edge length with wall points at the face
 	Inferred bool        // too little wall evidence: boundary from free space only
+	Layers   []Layer     // all point layers near the face (diagnostics)
 }
 
 // RoomShape is a room outline with per-edge wall fits. Edge i runs from
@@ -382,10 +383,61 @@ func fitFace(wp *WallPoints, l Line, axis Orientation, a, b Pt) WallFit {
 	}
 	fit.Coverage = float64(nc) / ((length - 2*endTrim) / coverageBin)
 	fit.Inferred = fit.Coverage < minCoverage
+	fit.Layers = layers(hist, offs, along, length, bin, peak)
 	if !fit.Inferred {
 		fit.Line.C += mean
 	}
 	return fit
+}
+
+// Layer is one density peak of wall points near a face (diagnostics).
+type Layer struct {
+	Offset   float64 `json:"offset_m"` // relative to the chosen face, positive = outward
+	Density  float64 `json:"density"`  // peak height relative to the densest layer
+	Coverage float64 `json:"coverage"` // fraction of the wall length it spans
+}
+
+// layers lists the local maxima of the smoothed offset histogram holding
+// at least 15 % of the densest one.
+func layers(hist []int, offs, along []float64, length, bin, chosen float64) []Layer {
+	nb := len(hist)
+	sm := make([]int, nb)
+	maxN := 0
+	for i := range hist {
+		sm[i] = hist[i]
+		if i > 0 {
+			sm[i] += hist[i-1]
+		}
+		if i+1 < nb {
+			sm[i] += hist[i+1]
+		}
+		maxN = max(maxN, sm[i])
+	}
+	var out []Layer
+	for i := range sm {
+		if sm[i]*100 < maxN*15 || (i > 0 && sm[i-1] > sm[i]) || (i+1 < nb && sm[i+1] >= sm[i]) {
+			continue
+		}
+		c := -faceSearch + (float64(i)+0.5)*bin
+		covered := make([]bool, int(length/coverageBin)+1)
+		for k, s := range offs {
+			if math.Abs(s-c) <= faceBand {
+				covered[int(along[k]/coverageBin)] = true
+			}
+		}
+		nc := 0
+		for _, v := range covered {
+			if v {
+				nc++
+			}
+		}
+		out = append(out, Layer{
+			Offset:   math.Round((c-chosen)*1000) / 1000,
+			Density:  math.Round(float64(sm[i])/float64(maxN)*100) / 100,
+			Coverage: math.Round(float64(nc)/((length-2*endTrim)/coverageBin)*100) / 100,
+		})
+	}
+	return out
 }
 
 // dropCollinear removes vertices whose two edges have the same direction.
