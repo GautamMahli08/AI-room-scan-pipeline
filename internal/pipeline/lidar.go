@@ -73,6 +73,8 @@ func RunLiDAR(exportDir, outDir, captureID string, opt Options) (*Result, error)
 	pf := geometry.PlanFrame{Floor: floor}
 	theta, support := geometry.EstimateManhattan(geometry.BuildRasters(pts, pf, opt.PlanRes))
 	pf.Theta = theta
+	pf.Theta = geometry.RefineManhattan(pts, pf)
+	theta = pf.Theta
 	logf("floor: residual %.1f mm, tilt %.2f°; manhattan θ=%.2f° (%.0f%% support)", floor.Residual*1000, floor.TiltDeg, theta*180/math.Pi, support*100)
 
 	r := geometry.BuildRasters(pts, pf, opt.PlanRes)

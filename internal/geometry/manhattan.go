@@ -2,6 +2,8 @@ package geometry
 
 import (
 	"math"
+
+	"roomscan/internal/geom"
 )
 
 // Orientation flags of a wall cell. A corner cell can be both H and V.
@@ -166,4 +168,53 @@ func runLengths(alongN, acrossN int, m []bool, idx func(a, b int) int) []int {
 		}
 	}
 	return out
+}
+
+// RefineManhattan sharpens a coarse Manhattan angle on the wall-band points
+// themselves: it searches ±0.6° in 0.01° steps for the rotation that makes
+// the 1 cm histograms of plan x and y most peaked (largest sum of squared
+// counts). The raster estimate is only good to ~0.5°, which smears a 4 m
+// wall over more than a centimetre.
+func RefineManhattan(pts []geom.Vec3, f PlanFrame) float64 {
+	const (
+		span = 0.6 * math.Pi / 180
+		step = 0.01 * math.Pi / 180
+		bin  = 0.01
+		maxN = 300000
+	)
+	var xz [][2]float64
+	every := 1
+	for _, p := range pts {
+		if h := f.Floor.Height(p); h >= wallBandLo && h <= wallBandHi {
+			xz = append(xz, [2]float64{p[0], -p[2]})
+		}
+	}
+	if len(xz) > maxN {
+		every = len(xz)/maxN + 1
+	}
+	best, bestScore := f.Theta, -1.0
+	hx := map[int]float64{}
+	hy := map[int]float64{}
+	for th := f.Theta - span; th <= f.Theta+span+step/2; th += step {
+		clear(hx)
+		clear(hy)
+		c, s := math.Cos(-th), math.Sin(-th)
+		for i := 0; i < len(xz); i += every {
+			x := c*xz[i][0] - s*xz[i][1]
+			y := s*xz[i][0] + c*xz[i][1]
+			hx[int(math.Floor(x/bin))]++
+			hy[int(math.Floor(y/bin))]++
+		}
+		var score float64
+		for _, n := range hx {
+			score += n * n
+		}
+		for _, n := range hy {
+			score += n * n
+		}
+		if score > bestScore {
+			best, bestScore = th, score
+		}
+	}
+	return best
 }
