@@ -148,6 +148,18 @@ func traceGrid(r Grid2, mask []bool, vx, vy func(int) float64) []Pt {
 	return verts
 }
 
+// PointInPolygon reports whether p is inside polygon poly (even-odd rule).
+func PointInPolygon(p Pt, poly []Pt) bool {
+	in := false
+	for i, j := 0, len(poly)-1; i < len(poly); j, i = i, i+1 {
+		a, b := poly[i], poly[j]
+		if (a.Y > p.Y) != (b.Y > p.Y) && p.X < (b.X-a.X)*(p.Y-a.Y)/(b.Y-a.Y)+a.X {
+			in = !in
+		}
+	}
+	return in
+}
+
 // floorHalf returns floor(v/2) for a doubled coordinate.
 func floorHalf(v int) int {
 	if v < 0 {

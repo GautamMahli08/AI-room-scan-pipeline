@@ -173,12 +173,13 @@ p_world = R(q) · [x, y, z]ᵀ + t
 
 ARKit performs visual-inertial odometry with its own internal corrections, but accumulated drift is still possible on long multi-room walks. The design:
 
-1. **Detect drift.** Each wall plane is fitted separately from early and late frames. A systematic offset between the two fits measures drift.
-2. **Plane-anchored correction.** Treat fitted planes (floor, walls) as landmarks and run a pose-graph optimisation that adjusts frame poses so that each landmark is consistent across all frames that observe it.
-3. **Loop closure.** When the path revisits a place, match point clouds (ICP) between the two visits and add a constraint to the pose graph.
-4. **Ablation.** The stitched footprint is produced with correction **on** and **off**, and both are reported.
+1. **Detect drift.** The walk is split into 4 s chunks. Every chunk observes each measured wall face (binned in 0.5 m segments) and the floor through its own depth points; only frames whose camera is inside a room observe that room's walls, so the far face of a thick wall is never associated. The scatter of those per-chunk observations about each wall is the drift measure.
+2. **Plane-anchored correction.** Each chunk gets a rigid correction (plan translation, yaw, vertical shift), linearly interpolated in time. One linear least-squares problem solves chunk corrections and landmark (wall, floor) positions together, with a random-walk prior between neighbouring chunks; the first chunk is the gauge. Two iterations, re-fusing and re-fitting in between.
+3. **Loop closure.** A room re-entered late in the walk re-observes the same wall faces, which ties late chunks to early ones. This replaces the point-cloud ICP originally planned; landmark re-observation gives the same constraint for walls and does not depend on overlap in raw points.
+4. **Guarding against overfitting.** Chunk corrections have many degrees of freedom, so the prior strength is chosen on held-out data: odd wall segments are never fitted, and the correction is applied only if it lowers held-out scatter by at least 5% over no correction. Otherwise poses are kept and the report says drift was not detectable.
+5. **Ablation.** Every LiDAR run writes the plan with correction **on** (`plan.json`) and **off** (`plan_drift_off.json`), plus `drift.json` with per-chunk corrections, held-out scores and both footprints.
 
-**Observation on the samples:** in `single_room` walls appear as single thin lines with no visible doubling over a 14.5 m path, so drift is small. The whole-property scans are the real test: 54 m and 100 m paths through ~5 rooms, and `single_scan_with_ceiling` revisits rooms, which provides loop-closure constraints. The on/off ablation is reported on both whole-property scans.
+**Observation on the samples:** drift is real and small. Wall-observation scatter, uncorrected → corrected: `single_room` 16.4 → 9.6 mm, `single_scan_floor_only` 20.4 → 13.6 mm, `single_scan_with_ceiling` 20.9 → 12.8 mm; on held-out wall segments the correction lowers scatter in every case (e.g. 21.2 → 15.2 mm). Corrections reach 5–10 cm translation and under 1° yaw; most chunks share a ~0.7° heading offset relative to the first 4 s, consistent with ARKit's heading settling at the start of a session. Footprint effect is reported per capture in `drift.json`.
 
 ### 4.4 Known failure modes (seen in the sample data)
 

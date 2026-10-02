@@ -32,6 +32,7 @@ func main() {
 	minFrames := fs.Int("min-frames", int(opt.MinFrames), "drop voxels seen by fewer distinct frames")
 	fs.BoolVar(&opt.WritePLY, "ply", false, "write the fused point cloud as PLY")
 	fs.BoolVar(&opt.Debug, "debug", false, "write debug rasters")
+	fs.BoolVar(&opt.Drift, "drift", opt.Drift, "plane-anchored drift correction; the uncorrected plan is also written as the ablation")
 	cpuprofile := fs.String("cpuprofile", "", "write a CPU profile to this file")
 
 	// Accept the capture dir before or after flags.

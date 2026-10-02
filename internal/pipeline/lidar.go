@@ -14,6 +14,7 @@ import (
 	"roomscan/internal/geometry/pointcloud"
 	"roomscan/internal/ingest/strayscanner"
 	"roomscan/internal/output"
+	"roomscan/internal/stitch"
 )
 
 // Version is reported in provenance.
@@ -27,10 +28,14 @@ type Options struct {
 	PlanRes   float64 // plan raster resolution, metres
 	WritePLY  bool
 	Debug     bool // write debug rasters
+	// Drift enables plane-anchored drift correction. The uncorrected plan
+	// is also written (plan_drift_off.*) as the ablation.
+	Drift      bool
+	DriftIters int
 }
 
 func DefaultOptions() Options {
-	return Options{Stride: 1, Voxel: 0.02, MinFrames: 2, PlanRes: 0.02}
+	return Options{Stride: 1, Voxel: 0.02, MinFrames: 2, PlanRes: 0.02, Drift: true, DriftIters: 2}
 }
 
 // Result is everything a LiDAR run produced.
@@ -50,6 +55,99 @@ func RunLiDAR(exportDir, outDir, captureID string, opt Options) (*Result, error)
 	}
 	logf("ingest: %d frames, depth %dx%d", len(c.Frames), c.DepthWidth, c.DepthHeight)
 
+	off, err := extract(c, opt, outDir, logf)
+	if err != nil {
+		return nil, err
+	}
+	final := off
+	var report *DriftReport
+	if opt.Drift {
+		report = &DriftReport{}
+		t := time.Now()
+		for it := 0; it < opt.DriftIters; it++ {
+			cr, err := stitch.Estimate(c, c.Frames, final.pf, final.shapes, stitch.DefaultOptions())
+			if err != nil {
+				return nil, err
+			}
+			report.Iterations = append(report.Iterations, iterSummary(cr))
+			if it == 0 {
+				report.Chunks = cr.Chunks
+			}
+			logf("drift iter %d: %d obs on %d walls; held-out scatter %.1f mm uncorrected, %.1f mm with prior x%g; max shift %.1f cm, max yaw %.2f°",
+				it+1, cr.Observations, cr.Landmarks, cr.HeldOutNone*1000, cr.HeldOutBest*1000, cr.PriorScale, cr.MaxShift()*100, cr.MaxYaw()*180/math.Pi)
+			if cr.PriorScale == 0 {
+				logf("drift: no correction beats none on held-out walls; poses kept")
+				break
+			}
+			stitch.Apply(c.Frames, final.pf, cr)
+			if final, err = extract(c, opt, outDir, logf); err != nil {
+				return nil, err
+			}
+		}
+		// Re-measure the scatter on the final, corrected plan.
+		cr, err := stitch.Estimate(c, c.Frames, final.pf, final.shapes, stitch.DefaultOptions())
+		if err != nil {
+			return nil, err
+		}
+		report.Final = iterSummary(cr)
+		logf("drift: wall scatter %.1f mm uncorrected -> %.1f mm corrected (%.1fs)",
+			report.Iterations[0].ScatterBeforeMM, report.Final.ScatterBeforeMM, time.Since(t).Seconds())
+	}
+
+	write := func(g *scene, drift, suffix string) (*output.Plan, error) {
+		p := assemble(captureID, g.floor, g.shapes, g.ceilings, g.openings, g.bounds)
+		p.Provenance = output.Provenance{
+			PipelineVersion: Version, Input: filepath.ToSlash(exportDir), Models: []output.Model{},
+			DriftCorrection: drift, RuntimeS: math.Round(time.Since(start).Seconds()*10) / 10,
+		}
+		p.Diagnostics = g.diagnostics(c)
+		if err := output.WriteJSON(filepath.Join(outDir, "plan"+suffix+".json"), p); err != nil {
+			return nil, err
+		}
+		return p, output.WriteSVG(filepath.Join(outDir, "plan"+suffix+".svg"), p)
+	}
+	if !opt.Drift {
+		p, err := write(off, "off", "")
+		if err != nil {
+			return nil, err
+		}
+		logf("wrote plan.json, plan.svg (%.1fs total)", time.Since(start).Seconds())
+		return &Result{Plan: p}, nil
+	}
+	pOff, err := write(off, "off", "_drift_off")
+	if err != nil {
+		return nil, err
+	}
+	pOn, err := write(final, "on", "")
+	if err != nil {
+		return nil, err
+	}
+	report.FootprintOff, report.FootprintOn = pOff.FootprintAreaM2, pOn.FootprintAreaM2
+	report.RoomsOff, report.RoomsOn = len(pOff.Rooms), len(pOn.Rooms)
+	if err := writeJSONFile(filepath.Join(outDir, "drift.json"), report); err != nil {
+		return nil, err
+	}
+	logf("footprint: drift off %.2f m², on %.2f m²; wrote plan.*, plan_drift_off.*, drift.json (%.1fs total)",
+		pOff.FootprintAreaM2.Value, pOn.FootprintAreaM2.Value, time.Since(start).Seconds())
+	return &Result{Plan: pOn}, nil
+}
+
+// scene is the geometry extracted from one set of poses.
+type scene struct {
+	pts      int
+	floor    geometry.Floor
+	pf       geometry.PlanFrame
+	support  float64
+	regions  []geometry.Region
+	shapes   []*geometry.RoomShape
+	ceilings []geometry.Ceiling
+	openings []geometry.Opening
+	bounds   []geometry.OpenBoundary
+}
+
+// extract fuses the capture with its current poses and builds the plan
+// geometry.
+func extract(c *strayscanner.Capture, opt Options, outDir string, logf func(string, ...any)) (*scene, error) {
 	t := time.Now()
 	fo := pointcloud.DefaultFuseOptions()
 	fo.Stride, fo.VoxelSize = opt.Stride, opt.Voxel
@@ -74,8 +172,7 @@ func RunLiDAR(exportDir, outDir, captureID string, opt Options) (*Result, error)
 	theta, support := geometry.EstimateManhattan(geometry.BuildRasters(pts, pf, opt.PlanRes))
 	pf.Theta = theta
 	pf.Theta = geometry.RefineManhattan(pts, pf)
-	theta = pf.Theta
-	logf("floor: residual %.1f mm, tilt %.2f°; manhattan θ=%.2f° (%.0f%% support)", floor.Residual*1000, floor.TiltDeg, theta*180/math.Pi, support*100)
+	logf("floor: residual %.1f mm, tilt %.2f°; manhattan θ=%.2f° (%.0f%% support)", floor.Residual*1000, floor.TiltDeg, pf.Theta*180/math.Pi, support*100)
 
 	r := geometry.BuildRasters(pts, pf, opt.PlanRes)
 	wall := r.WallMask()
@@ -97,41 +194,34 @@ func RunLiDAR(exportDir, outDir, captureID string, opt Options) (*Result, error)
 	for i, reg := range regions {
 		shapes[i] = geometry.FitRoom(arr, reg.Label, wp)
 	}
-	ceilings := geometry.EstimateCeilings(pts, pf, r, labels, len(regions))
-	openings := geometry.AssignOpenings(r, gaps, shapes, labels, wp, traj)
-	bounds := geometry.OpenBoundaries(r, labels, shapes)
-	logf("plan: %d rooms, %d openings, %d open boundaries (%.1fs)", len(regions), len(openings), len(bounds), time.Since(t).Seconds())
+	g := &scene{
+		pts: len(pts), floor: floor, pf: pf, support: support, regions: regions, shapes: shapes,
+		ceilings: geometry.EstimateCeilings(pts, pf, r, labels, len(regions)),
+		openings: geometry.AssignOpenings(r, gaps, shapes, labels, wp, traj),
+		bounds:   geometry.OpenBoundaries(r, labels, shapes),
+	}
+	logf("plan: %d rooms, %d openings, %d open boundaries (%.1fs)", len(regions), len(g.openings), len(g.bounds), time.Since(t).Seconds())
 
 	if opt.Debug {
 		if err := writeDebug(filepath.Join(outDir, "debug_raster.png"), r, wall, orient, gaps, labels, traj, shapes); err != nil {
 			return nil, err
 		}
 	}
+	return g, nil
+}
 
-	p := assemble(captureID, floor, shapes, ceilings, openings, bounds)
-	p.Provenance = output.Provenance{
-		PipelineVersion: Version, Input: filepath.ToSlash(exportDir), Models: []output.Model{},
-		DriftCorrection: "off", RuntimeS: math.Round(time.Since(start).Seconds()*10) / 10,
-	}
-	p.Diagnostics = map[string]any{
+func (g *scene) diagnostics(c *strayscanner.Capture) map[string]any {
+	return map[string]any{
 		"frames":              len(c.Frames),
-		"fused_points":        len(pts),
-		"floor_residual_mm":   round(floor.Residual*1000, 1),
-		"floor_tilt_deg":      round(floor.TiltDeg, 3),
-		"manhattan_deg":       round(theta*180/math.Pi, 2),
-		"manhattan_support":   round(support, 3),
-		"room_regions_m2":     regionAreas(regions),
-		"ceilings":            ceilingDiag(ceilings),
+		"fused_points":        g.pts,
+		"floor_residual_mm":   round(g.floor.Residual*1000, 1),
+		"floor_tilt_deg":      round(g.floor.TiltDeg, 3),
+		"manhattan_deg":       round(g.pf.Theta*180/math.Pi, 2),
+		"manhattan_support":   round(g.support, 3),
+		"room_regions_m2":     regionAreas(g.regions),
+		"ceilings":            ceilingDiag(g.ceilings),
 		"trajectory_length_m": round(pathLength(c), 1),
 	}
-	if err := output.WriteJSON(filepath.Join(outDir, "plan.json"), p); err != nil {
-		return nil, err
-	}
-	if err := output.WriteSVG(filepath.Join(outDir, "plan.svg"), p); err != nil {
-		return nil, err
-	}
-	logf("wrote plan.json, plan.svg (%.1fs total)", time.Since(start).Seconds())
-	return &Result{Plan: p}, nil
 }
 
 // assemble converts geometry into the output contract with intervals.
