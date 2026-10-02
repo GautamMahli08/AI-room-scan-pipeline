@@ -1,0 +1,168 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1136" height="1130" viewBox="0 0 1136 1130" font-family="Helvetica, Arial, sans-serif">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="60" y="28" font-size="18" fill="#222">single_scan_with_ceiling — lidar tier — footprint 60.5 m² [60.0, 61.0]</text>
+<polygon points="683.8,402.4 1075.5,402.4 1075.5,100.9 777.3,100.9 777.3,290.0 452.0,290.0 452.0,388.2 683.8,388.2" fill="#eaf2fb" stroke="none"/>
+<polygon points="682.0,1066.8 982.0,1066.8 982.0,791.9 901.1,791.9 901.1,752.3 683.8,752.3 683.8,722.2 511.6,722.2 511.6,823.3 682.0,823.3" fill="#eef7e8" stroke="none"/>
+<polygon points="496.3,709.7 930.9,709.7 930.9,423.4 511.7,423.4 511.7,387.1 496.4,387.1 496.4,423.8 482.9,423.8 482.9,497.4 496.3,497.4" fill="#fdf0e6" stroke="none"/>
+<polygon points="60.0,496.4 450.0,496.4 450.0,423.8 496.4,423.8 496.4,402.5 476.3,402.5 476.3,386.8 450.4,386.8 450.4,143.2 372.0,143.2 372.0,100.0 111.7,100.0 111.7,384.6 60.0,384.6" fill="#f3edf8" stroke="none"/>
+<polygon points="371.9,1069.5 670.3,1069.5 670.3,825.8 476.3,825.8 476.3,817.2 371.9,817.2" fill="#fdf8e1" stroke="none"/>
+<polygon points="475.9,290.0 670.3,290.0 670.3,143.2 685.2,143.2 685.2,100.7 521.6,100.7 521.6,143.8 475.9,143.8" fill="#e8f6f4" stroke="none"/>
+<line x1="683.8" y1="402.4" x2="1075.5" y2="402.4" stroke="#222" stroke-width="5" stroke-linecap="square"/>
+<text x="879.7" y="380.4" font-size="11" fill="#333" text-anchor="middle" dominant-baseline="middle" transform="rotate(-0.0 879.7 380.4)">3.92 m ±16 cm</text>
+<line x1="1075.5" y1="402.4" x2="1075.5" y2="203.6" stroke="#222" stroke-width="5" stroke-linecap="square"/>
+<line x1="1075.5" y1="148.3" x2="1075.5" y2="100.9" stroke="#222" stroke-width="5" stroke-linecap="square"/>
+<text x="1053.5" y="251.7" font-size="11" fill="#333" text-anchor="middle" dominant-baseline="middle" transform="rotate(-90.0 1053.5 251.7)">3.02 m ±1 cm</text>
+<line x1="1075.5" y1="100.9" x2="873.2" y2="100.9" stroke="#222" stroke-width="5" stroke-linecap="square"/>
+<line x1="811.2" y1="100.9" x2="777.3" y2="100.9" stroke="#222" stroke-width="5" stroke-linecap="square"/>
+<text x="926.4" y="122.9" font-size="11" fill="#333" text-anchor="middle" dominant-baseline="middle" transform="rotate(0.0 926.4 122.9)">2.98 m ±1 cm</text>
+<line x1="777.3" y1="100.9" x2="777.3" y2="290.0" stroke="#222" stroke-width="5" stroke-linecap="square"/>
+<text x="799.3" y="195.4" font-size="11" fill="#333" text-anchor="middle" dominant-baseline="middle" transform="rotate(90.0 799.3 195.4)">1.89 m ±1 cm</text>
+<line x1="777.3" y1="290.0" x2="673.2" y2="290.0" stroke="#222" stroke-width="5" stroke-linecap="square"/>
+<line x1="609.2" y1="290.0" x2="452.0" y2="290.0" stroke="#222" stroke-width="5" stroke-linecap="square"/>
+<text x="614.6" y="312.0" font-size="11" fill="#333" text-anchor="middle" dominant-baseline="middle" transform="rotate(0.0 614.6 312.0)">3.25 m ±1 cm</text>
+<line x1="452.0" y1="290.0" x2="452.0" y2="388.2" stroke="#222" stroke-width="5" stroke-linecap="square"/>
+<text x="474.0" y="339.1" font-size="11" fill="#333" text-anchor="middle" dominant-baseline="middle" transform="rotate(90.0 474.0 339.1)">0.98 m ±1 cm</text>
+<line x1="452.0" y1="388.2" x2="463.2" y2="388.2" stroke="#222" stroke-width="5" stroke-linecap="square"/>
+<line x1="583.9" y1="388.2" x2="683.8" y2="388.2" stroke="#222" stroke-width="5" stroke-linecap="square"/>
+<text x="567.9" y="366.2" font-size="11" fill="#333" text-anchor="middle" dominant-baseline="middle" transform="rotate(-0.0 567.9 366.2)">2.32 m ±16 cm</text>
+<line x1="683.8" y1="388.2" x2="683.8" y2="402.4" stroke="#999" stroke-width="2" stroke-dasharray="8 6"/>
+<path d="M 1075.5 203.6 L 1020.2 203.6 A 55.3 55.3 0 0 1 1075.5 148.3" fill="none" stroke="#c0392b" stroke-width="1.2"/>
+<text x="1075.5" y="168.0" font-size="10" fill="#c0392b" text-anchor="middle">door 0.55</text>
+<path d="M 873.2 100.9 L 873.2 162.9 A 62.0 62.0 0 0 1 811.2 100.9" fill="none" stroke="#c0392b" stroke-width="1.2"/>
+<text x="842.2" y="92.9" font-size="10" fill="#c0392b" text-anchor="middle">door 0.62</text>
+<path d="M 673.2 290.0 L 673.2 354.0 A 64.0 64.0 0 0 1 609.2 290.0" fill="none" stroke="#c0392b" stroke-width="1.2"/>
+<text x="641.2" y="282.0" font-size="10" fill="#c0392b" text-anchor="middle">door 0.64</text>
+<path d="M 463.2 388.2 L 463.2 267.5 A 120.7 120.7 0 0 1 583.9 388.2" fill="none" stroke="#c0392b" stroke-width="1.2"/>
+<text x="523.5" y="380.2" font-size="10" fill="#c0392b" text-anchor="middle">door 1.21</text>
+<line x1="682.0" y1="1066.8" x2="789.3" y2="1066.8" stroke="#222" stroke-width="5" stroke-linecap="square"/>
+<line x1="865.3" y1="1066.8" x2="982.0" y2="1066.8" stroke="#222" stroke-width="5" stroke-linecap="square"/>
+<text x="832.0" y="1044.8" font-size="11" fill="#333" text-anchor="middle" dominant-baseline="middle" transform="rotate(-0.0 832.0 1044.8)">3.00 m ±1 cm</text>
+<line x1="982.0" y1="1066.8" x2="982.0" y2="1006.3" stroke="#222" stroke-width="5" stroke-linecap="square"/>
+<line x1="982.0" y1="948.3" x2="982.0" y2="946.3" stroke="#222" stroke-width="5" stroke-linecap="square"/>
+<line x1="982.0" y1="892.3" x2="982.0" y2="856.3" stroke="#222" stroke-width="5" stroke-linecap="square"/>
+<text x="960.0" y="929.4" font-size="11" fill="#333" text-anchor="middle" dominant-baseline="middle" transform="rotate(-90.0 960.0 929.4)">2.75 m ±1 cm</text>
+<line x1="982.0" y1="791.9" x2="901.1" y2="791.9" stroke="#222" stroke-width="5" stroke-linecap="square"/>
+<text x="941.5" y="813.9" font-size="11" fill="#333" text-anchor="middle" dominant-baseline="middle" transform="rotate(0.0 941.5 813.9)">0.81 m ±1 cm</text>
+<line x1="901.1" y1="791.9" x2="901.1" y2="752.3" stroke="#222" stroke-width="5" stroke-linecap="square"/>
+<line x1="901.1" y1="752.3" x2="683.8" y2="752.3" stroke="#222" stroke-width="5" stroke-linecap="square"/>
+<text x="792.4" y="774.3" font-size="11" fill="#333" text-anchor="middle" dominant-baseline="middle" transform="rotate(0.0 792.4 774.3)">2.17 m ±16 cm</text>
+<line x1="683.8" y1="752.3" x2="683.8" y2="722.2" stroke="#999" stroke-width="2" stroke-dasharray="8 6"/>
+<line x1="683.8" y1="722.2" x2="595.3" y2="722.2" stroke="#222" stroke-width="5" stroke-linecap="square"/>
+<text x="597.7" y="744.2" font-size="11" fill="#333" text-anchor="middle" dominant-baseline="middle" transform="rotate(0.0 597.7 744.2)">1.72 m ±17 cm</text>
+<line x1="511.6" y1="722.2" x2="511.6" y2="736.2" stroke="#222" stroke-width="5" stroke-linecap="square"/>
+<line x1="511.6" y1="796.2" x2="511.6" y2="823.3" stroke="#222" stroke-width="5" stroke-linecap="square"/>
+<text x="533.6" y="772.8" font-size="11" fill="#333" text-anchor="middle" dominant-baseline="middle" transform="rotate(90.0 533.6 772.8)">1.01 m ±1 cm</text>
+<line x1="577.3" y1="823.3" x2="682.0" y2="823.3" stroke="#222" stroke-width="5" stroke-linecap="square"/>
+<text x="596.8" y="801.3" font-size="11" fill="#333" text-anchor="middle" dominant-baseline="middle" transform="rotate(-0.0 596.8 801.3)">1.70 m ±1 cm</text>
+<line x1="682.0" y1="823.3" x2="682.0" y2="1066.8" stroke="#222" stroke-width="5" stroke-linecap="square"/>
+<text x="704.0" y="945.0" font-size="11" fill="#333" text-anchor="middle" dominant-baseline="middle" transform="rotate(90.0 704.0 945.0)">2.44 m ±1 cm</text>
+<line x1="789.3" y1="1066.8" x2="865.3" y2="1066.8" stroke="#3a7bd5" stroke-width="5"/>
+<text x="827.3" y="1058.8" font-size="10" fill="#c0392b" text-anchor="middle">window 0.76</text>
+<line x1="982.0" y1="1006.3" x2="982.0" y2="948.3" stroke="#3a7bd5" stroke-width="5"/>
+<text x="982.0" y="969.3" font-size="10" fill="#c0392b" text-anchor="middle">window 0.58</text>
+<line x1="982.0" y1="946.3" x2="982.0" y2="892.3" stroke="#3a7bd5" stroke-width="5"/>
+<text x="982.0" y="911.3" font-size="10" fill="#c0392b" text-anchor="middle">window 0.54</text>
+<line x1="982.0" y1="856.3" x2="982.0" y2="746.3" stroke="#3a7bd5" stroke-width="5"/>
+<text x="982.0" y="793.3" font-size="10" fill="#c0392b" text-anchor="middle">window 1.10</text>
+<line x1="511.6" y1="736.2" x2="511.6" y2="796.2" stroke="#3a7bd5" stroke-width="5"/>
+<text x="511.6" y="758.2" font-size="10" fill="#c0392b" text-anchor="middle">window 0.60</text>
+<path d="M 475.3 823.3 L 475.3 721.3 A 102.0 102.0 0 0 1 577.3 823.3" fill="none" stroke="#c0392b" stroke-width="1.2"/>
+<text x="526.3" y="815.3" font-size="10" fill="#c0392b" text-anchor="middle">door 1.02</text>
+<text x="553.5" y="714.2" font-size="10" fill="#c0392b" text-anchor="middle">opening 0.84</text>
+<line x1="496.3" y1="709.7" x2="817.2" y2="709.7" stroke="#222" stroke-width="5" stroke-linecap="square"/>
+<line x1="875.2" y1="709.7" x2="930.9" y2="709.7" stroke="#222" stroke-width="5" stroke-linecap="square"/>
+<text x="713.6" y="687.7" font-size="11" fill="#333" text-anchor="middle" dominant-baseline="middle" transform="rotate(-0.0 713.6 687.7)">4.35 m ±1 cm</text>
+<line x1="930.9" y1="709.7" x2="930.9" y2="630.3" stroke="#222" stroke-width="5" stroke-linecap="square"/>
+<line x1="930.9" y1="562.3" x2="930.9" y2="423.4" stroke="#222" stroke-width="5" stroke-linecap="square"/>
+<text x="908.9" y="566.6" font-size="11" fill="#333" text-anchor="middle" dominant-baseline="middle" transform="rotate(-90.0 908.9 566.6)">2.86 m ±1 cm</text>
+<line x1="930.9" y1="423.4" x2="511.7" y2="423.4" stroke="#222" stroke-width="5" stroke-linecap="square"/>
+<text x="721.3" y="445.4" font-size="11" fill="#333" text-anchor="middle" dominant-baseline="middle" transform="rotate(0.0 721.3 445.4)">4.19 m ±17 cm</text>
+<line x1="511.7" y1="423.4" x2="511.7" y2="387.1" stroke="#999" stroke-width="2" stroke-dasharray="8 6"/>
+<line x1="511.7" y1="387.1" x2="496.4" y2="387.1" stroke="#999" stroke-width="2" stroke-dasharray="8 6"/>
+<line x1="496.4" y1="387.1" x2="496.4" y2="423.8" stroke="#999" stroke-width="2" stroke-dasharray="8 6"/>
+<line x1="496.4" y1="423.8" x2="482.9" y2="423.8" stroke="#999" stroke-width="2" stroke-dasharray="8 6"/>
+<line x1="482.9" y1="489.2" x2="482.9" y2="497.4" stroke="#999" stroke-width="2" stroke-dasharray="8 6"/>
+<text x="504.9" y="460.6" font-size="11" fill="#999" text-anchor="middle" dominant-baseline="middle" transform="rotate(90.0 504.9 460.6)">0.74 m ±23 cm</text>
+<line x1="482.9" y1="497.4" x2="496.3" y2="497.4" stroke="#999" stroke-width="2" stroke-dasharray="8 6"/>
+<line x1="496.3" y1="497.4" x2="496.3" y2="709.7" stroke="#222" stroke-width="5" stroke-linecap="square"/>
+<text x="518.3" y="603.5" font-size="11" fill="#333" text-anchor="middle" dominant-baseline="middle" transform="rotate(90.0 518.3 603.5)">2.12 m ±16 cm</text>
+<path d="M 817.2 709.7 L 817.2 651.7 A 58.0 58.0 0 0 1 875.2 709.7" fill="none" stroke="#c0392b" stroke-width="1.2"/>
+<text x="846.2" y="701.7" font-size="10" fill="#c0392b" text-anchor="middle">door 0.58</text>
+<text x="930.9" y="588.3" font-size="10" fill="#c0392b" text-anchor="middle">opening 0.68</text>
+<text x="482.9" y="448.5" font-size="10" fill="#c0392b" text-anchor="middle">opening 0.65</text>
+<line x1="60.0" y1="496.4" x2="450.0" y2="496.4" stroke="#222" stroke-width="5" stroke-linecap="square"/>
+<text x="255.0" y="474.4" font-size="11" fill="#333" text-anchor="middle" dominant-baseline="middle" transform="rotate(-0.0 255.0 474.4)">3.90 m ±17 cm</text>
+<line x1="450.0" y1="496.4" x2="450.0" y2="423.8" stroke="#999" stroke-width="2" stroke-dasharray="8 6"/>
+<text x="428.0" y="460.1" font-size="11" fill="#999" text-anchor="middle" dominant-baseline="middle" transform="rotate(-90.0 428.0 460.1)">0.72 m ±16 cm</text>
+<line x1="450.0" y1="423.8" x2="496.4" y2="423.8" stroke="#999" stroke-width="2" stroke-dasharray="8 6"/>
+<text x="473.2" y="401.8" font-size="11" fill="#999" text-anchor="middle" dominant-baseline="middle" transform="rotate(-0.0 473.2 401.8)">0.46 m ±23 cm</text>
+<line x1="496.4" y1="423.8" x2="496.4" y2="402.5" stroke="#999" stroke-width="2" stroke-dasharray="8 6"/>
+<line x1="496.4" y1="402.5" x2="476.3" y2="402.5" stroke="#999" stroke-width="2" stroke-dasharray="8 6"/>
+<line x1="476.3" y1="402.5" x2="476.3" y2="386.8" stroke="#999" stroke-width="2" stroke-dasharray="8 6"/>
+<line x1="476.3" y1="386.8" x2="450.4" y2="386.8" stroke="#222" stroke-width="5" stroke-linecap="square"/>
+<line x1="450.4" y1="386.8" x2="450.4" y2="143.2" stroke="#222" stroke-width="5" stroke-linecap="square"/>
+<text x="428.4" y="265.0" font-size="11" fill="#333" text-anchor="middle" dominant-baseline="middle" transform="rotate(-90.0 428.4 265.0)">2.44 m ±16 cm</text>
+<line x1="450.4" y1="143.2" x2="372.0" y2="143.2" stroke="#999" stroke-width="2" stroke-dasharray="8 6"/>
+<text x="411.2" y="165.2" font-size="11" fill="#999" text-anchor="middle" dominant-baseline="middle" transform="rotate(0.0 411.2 165.2)">0.78 m ±16 cm</text>
+<line x1="372.0" y1="143.2" x2="372.0" y2="100.0" stroke="#999" stroke-width="2" stroke-dasharray="8 6"/>
+<text x="350.0" y="121.6" font-size="11" fill="#999" text-anchor="middle" dominant-baseline="middle" transform="rotate(-90.0 350.0 121.6)">0.43 m ±16 cm</text>
+<line x1="372.0" y1="100.0" x2="111.7" y2="100.0" stroke="#222" stroke-width="5" stroke-linecap="square"/>
+<text x="241.8" y="122.0" font-size="11" fill="#333" text-anchor="middle" dominant-baseline="middle" transform="rotate(0.0 241.8 122.0)">2.60 m ±16 cm</text>
+<line x1="111.7" y1="100.0" x2="111.7" y2="274.2" stroke="#222" stroke-width="5" stroke-linecap="square"/>
+<line x1="111.7" y1="344.2" x2="111.7" y2="384.6" stroke="#222" stroke-width="5" stroke-linecap="square"/>
+<text x="133.7" y="242.3" font-size="11" fill="#333" text-anchor="middle" dominant-baseline="middle" transform="rotate(90.0 133.7 242.3)">2.85 m ±1 cm</text>
+<line x1="111.7" y1="384.6" x2="60.0" y2="384.6" stroke="#222" stroke-width="5" stroke-linecap="square"/>
+<text x="85.8" y="406.6" font-size="11" fill="#333" text-anchor="middle" dominant-baseline="middle" transform="rotate(0.0 85.8 406.6)">0.52 m ±1 cm</text>
+<line x1="60.0" y1="384.6" x2="60.0" y2="496.4" stroke="#222" stroke-width="5" stroke-linecap="square"/>
+<text x="82.0" y="440.5" font-size="11" fill="#333" text-anchor="middle" dominant-baseline="middle" transform="rotate(90.0 82.0 440.5)">1.12 m ±1 cm</text>
+<line x1="111.7" y1="274.2" x2="111.7" y2="344.2" stroke="#3a7bd5" stroke-width="5"/>
+<text x="111.7" y="301.2" font-size="10" fill="#c0392b" text-anchor="middle">window 0.70</text>
+<line x1="371.9" y1="1069.5" x2="670.3" y2="1069.5" stroke="#222" stroke-width="5" stroke-linecap="square"/>
+<text x="521.1" y="1047.5" font-size="11" fill="#333" text-anchor="middle" dominant-baseline="middle" transform="rotate(-0.0 521.1 1047.5)">2.98 m ±17 cm</text>
+<line x1="670.3" y1="1069.5" x2="670.3" y2="825.8" stroke="#999" stroke-width="2" stroke-dasharray="8 6"/>
+<text x="648.3" y="947.6" font-size="11" fill="#999" text-anchor="middle" dominant-baseline="middle" transform="rotate(-90.0 648.3 947.6)">2.44 m ±1 cm</text>
+<line x1="670.3" y1="825.8" x2="476.3" y2="825.8" stroke="#222" stroke-width="5" stroke-linecap="square"/>
+<text x="573.3" y="847.8" font-size="11" fill="#333" text-anchor="middle" dominant-baseline="middle" transform="rotate(0.0 573.3 847.8)">1.94 m ±23 cm</text>
+<line x1="476.3" y1="825.8" x2="476.3" y2="817.2" stroke="#999" stroke-width="2" stroke-dasharray="8 6"/>
+<line x1="476.3" y1="817.2" x2="371.9" y2="817.2" stroke="#222" stroke-width="5" stroke-linecap="square"/>
+<text x="424.1" y="839.2" font-size="11" fill="#333" text-anchor="middle" dominant-baseline="middle" transform="rotate(0.0 424.1 839.2)">1.04 m ±16 cm</text>
+<line x1="371.9" y1="817.2" x2="371.9" y2="1069.5" stroke="#222" stroke-width="5" stroke-linecap="square"/>
+<text x="393.9" y="943.4" font-size="11" fill="#333" text-anchor="middle" dominant-baseline="middle" transform="rotate(90.0 393.9 943.4)">2.52 m ±1 cm</text>
+<line x1="475.9" y1="290.0" x2="551.3" y2="290.0" stroke="#222" stroke-width="5" stroke-linecap="square"/>
+<line x1="659.3" y1="290.0" x2="670.3" y2="290.0" stroke="#222" stroke-width="5" stroke-linecap="square"/>
+<text x="573.1" y="268.0" font-size="11" fill="#333" text-anchor="middle" dominant-baseline="middle" transform="rotate(-0.0 573.1 268.0)">1.94 m ±1 cm</text>
+<line x1="670.3" y1="290.0" x2="670.3" y2="143.2" stroke="#222" stroke-width="5" stroke-linecap="square"/>
+<text x="648.3" y="216.6" font-size="11" fill="#333" text-anchor="middle" dominant-baseline="middle" transform="rotate(-90.0 648.3 216.6)">1.47 m ±16 cm</text>
+<line x1="670.3" y1="143.2" x2="685.2" y2="143.2" stroke="#999" stroke-width="2" stroke-dasharray="8 6"/>
+<line x1="685.2" y1="143.2" x2="685.2" y2="100.7" stroke="#222" stroke-width="5" stroke-linecap="square"/>
+<text x="663.2" y="122.0" font-size="11" fill="#333" text-anchor="middle" dominant-baseline="middle" transform="rotate(-90.0 663.2 122.0)">0.43 m ±16 cm</text>
+<line x1="685.2" y1="100.7" x2="521.6" y2="100.7" stroke="#222" stroke-width="5" stroke-linecap="square"/>
+<text x="603.4" y="122.7" font-size="11" fill="#333" text-anchor="middle" dominant-baseline="middle" transform="rotate(0.0 603.4 122.7)">1.64 m ±1 cm</text>
+<line x1="521.6" y1="100.7" x2="521.6" y2="143.8" stroke="#222" stroke-width="5" stroke-linecap="square"/>
+<text x="543.6" y="122.2" font-size="11" fill="#333" text-anchor="middle" dominant-baseline="middle" transform="rotate(90.0 543.6 122.2)">0.43 m ±1 cm</text>
+<line x1="521.6" y1="143.8" x2="475.9" y2="143.8" stroke="#222" stroke-width="5" stroke-linecap="square"/>
+<text x="498.7" y="165.8" font-size="11" fill="#333" text-anchor="middle" dominant-baseline="middle" transform="rotate(0.0 498.7 165.8)">0.46 m ±1 cm</text>
+<line x1="475.9" y1="143.8" x2="475.9" y2="290.0" stroke="#222" stroke-width="5" stroke-linecap="square"/>
+<text x="497.9" y="216.9" font-size="11" fill="#333" text-anchor="middle" dominant-baseline="middle" transform="rotate(90.0 497.9 216.9)">1.46 m ±1 cm</text>
+<path d="M 551.3 290.0 L 551.3 182.0 A 108.0 108.0 0 0 1 659.3 290.0" fill="none" stroke="#c0392b" stroke-width="1.2"/>
+<text x="605.3" y="282.0" font-size="10" fill="#c0392b" text-anchor="middle">door 1.08</text>
+<text x="843.4" y="265.9" font-size="15" font-weight="bold" fill="#222" text-anchor="middle">R1</text>
+<text x="843.4" y="283.9" font-size="12" fill="#444" text-anchor="middle">12.3 m² [12.3, 12.4]</text>
+<text x="843.4" y="299.9" font-size="11" fill="#666" text-anchor="middle">ceiling 2.94 m</text>
+<text x="791.3" y="881.8" font-size="15" font-weight="bold" fill="#222" text-anchor="middle">R2</text>
+<text x="791.3" y="899.8" font-size="12" fill="#444" text-anchor="middle">10.8 m² [10.8, 10.9]</text>
+<text x="791.3" y="915.8" font-size="11" fill="#666" text-anchor="middle">ceiling 3.07 m</text>
+<text x="710.9" y="555.0" font-size="15" font-weight="bold" fill="#222" text-anchor="middle">R3</text>
+<text x="710.9" y="573.0" font-size="12" fill="#444" text-anchor="middle">12.6 m² [12.4, 12.8]</text>
+<text x="710.9" y="589.0" font-size="11" fill="#666" text-anchor="middle">ceiling 3.08 m</text>
+<text x="271.5" y="299.6" font-size="15" font-weight="bold" fill="#222" text-anchor="middle">R4</text>
+<text x="271.5" y="317.6" font-size="12" fill="#444" text-anchor="middle">13.8 m² [13.6, 14.0]</text>
+<text x="271.5" y="333.6" font-size="11" fill="#666" text-anchor="middle">ceiling 2.40 m</text>
+<text x="519.9" y="936.1" font-size="15" font-weight="bold" fill="#222" text-anchor="middle">R5</text>
+<text x="519.9" y="954.1" font-size="12" fill="#444" text-anchor="middle">7.4 m² [7.0, 7.8]</text>
+<text x="519.9" y="970.1" font-size="11" fill="#666" text-anchor="middle">ceiling 2.33 m</text>
+<text x="579.1" y="188.1" font-size="15" font-weight="bold" fill="#222" text-anchor="middle">R6</text>
+<text x="579.1" y="206.1" font-size="12" fill="#444" text-anchor="middle">3.5 m² [3.5, 3.6]</text>
+<text x="579.1" y="222.1" font-size="11" fill="#666" text-anchor="middle">ceiling 2.25 m</text>
+<line x1="60" y1="1110" x2="160" y2="1110" stroke="#222" stroke-width="3"/><text x="166" y="1114" font-size="11">1 m</text>
+</svg>

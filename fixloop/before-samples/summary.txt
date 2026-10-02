@@ -1,0 +1,5 @@
+run1: Measured wall pairs: **14**, within gate (≤1 cm or ≤0.5%): **2** (14%), median |Δ| 13.6 cm.
+run2: Measured wall pairs: **15**, within gate (≤1 cm or ≤0.5%): **1** (7%), median |Δ| 13.6 cm.
+run3: Measured wall pairs: **15**, within gate (≤1 cm or ≤0.5%): **3** (20%), median |Δ| 6.2 cm.
+run4: Measured wall pairs: **15**, within gate (≤1 cm or ≤0.5%): **3** (20%), median |Δ| 6.2 cm.
+run5: Measured wall pairs: **14**, within gate (≤1 cm or ≤0.5%): **2** (14%), median |Δ| 13.6 cm.

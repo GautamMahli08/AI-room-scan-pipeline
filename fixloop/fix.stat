@@ -1,0 +1,14 @@
+ bench/overlay_after.svg                         | 175 ++++++++++++++++++
+ bench/overlay_v0.svg                            | 227 ++++++++++++++++++++++++
+ cmd/bench/main.go                               |  29 ++-
+ internal/bench/overlay.go                       |  58 ++++++
+ internal/bench/repeat.go                        |  41 ++++-
+ internal/geometry/geometry_test.go              |  25 +++
+ internal/geometry/pointcloud/pointcloud.go      |  43 +++--
+ internal/geometry/pointcloud/pointcloud_test.go |  36 ++++
+ internal/geometry/walls.go                      | 103 ++++++++++-
+ internal/pipeline/lidar.go                      |  18 ++
+ internal/stitch/drift.go                        |  39 ++--
+ scripts/repeat_decompose.py                     |  63 +++++++
+ scripts/repeat_diagnose.py                      |  96 ++++++++++
+ 13 files changed, 923 insertions(+), 30 deletions(-)

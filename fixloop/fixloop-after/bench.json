@@ -1,0 +1,426 @@
+{
+  "plan_a": "run1/single_scan_floor_only/plan.json",
+  "plan_b": "run1/single_scan_with_ceiling/plan.json",
+  "result": {
+    "Transform": {
+      "Rot": 1,
+      "Tx": -6.197,
+      "Ty": 0.07000000000000006
+    },
+    "Overlap": 0.8569719208679004,
+    "Rooms": [
+      {
+        "A": "R1",
+        "B": "R4",
+        "IoU": 0.9185397736330304,
+        "AreaA": 15.122,
+        "AreaB": 14.804,
+        "Walls": [
+          {
+            "A": "W1",
+            "B": "W10",
+            "LenA": 0.984,
+            "LenB": 1.11,
+            "Measured": true,
+            "Delta": 0.1260000000000001,
+            "RelDelta": 0.128048780487805,
+            "Pass": false,
+            "OffsetMismatch": 0.0070000000000014495,
+            "SignedOffset": -0.0070000000000014495,
+            "SameCorners": false
+          },
+          {
+            "A": "W2",
+            "B": "W1",
+            "LenA": 4.731,
+            "LenB": 4.527,
+            "Measured": false,
+            "Delta": -0.20399999999999974,
+            "RelDelta": -0.043119847812301784,
+            "Pass": false,
+            "OffsetMismatch": 0.01499999999999968,
+            "SignedOffset": 0.01499999999999968,
+            "SameCorners": false
+          },
+          {
+            "A": "W4",
+            "B": "W3",
+            "LenA": 0.896,
+            "LenB": 0.631,
+            "Measured": false,
+            "Delta": -0.265,
+            "RelDelta": -0.2957589285714286,
+            "Pass": false,
+            "OffsetMismatch": 0.06699999999999928,
+            "SignedOffset": -0.06699999999999928,
+            "SameCorners": false
+          },
+          {
+            "A": "W5",
+            "B": "W4",
+            "LenA": 1.719,
+            "LenB": 1.476,
+            "Measured": false,
+            "Delta": -0.2430000000000001,
+            "RelDelta": -0.14136125654450268,
+            "Pass": false,
+            "OffsetMismatch": 0.06899999999999995,
+            "SignedOffset": 0.06899999999999995,
+            "SameCorners": false
+          },
+          {
+            "A": "W6",
+            "B": "W7",
+            "LenA": 3.355,
+            "LenB": 2.611,
+            "Measured": false,
+            "Delta": -0.7439999999999998,
+            "RelDelta": -0.22175856929955284,
+            "Pass": false,
+            "OffsetMismatch": 0.10899999999999999,
+            "SignedOffset": 0.10899999999999999,
+            "SameCorners": false
+          },
+          {
+            "A": "W7",
+            "B": "W8",
+            "LenA": 2.825,
+            "LenB": 2.822,
+            "Measured": true,
+            "Delta": -0.0030000000000001137,
+            "RelDelta": -0.0010619469026549074,
+            "Pass": true,
+            "OffsetMismatch": 0.05299999999999905,
+            "SignedOffset": -0.05299999999999905,
+            "SameCorners": false
+          },
+          {
+            "A": "W8",
+            "B": "W9",
+            "LenA": 0.479,
+            "LenB": 0.525,
+            "Measured": true,
+            "Delta": 0.04600000000000004,
+            "RelDelta": 0.09603340292275583,
+            "Pass": false,
+            "OffsetMismatch": 0.1120000000000001,
+            "SignedOffset": 0.1120000000000001,
+            "SameCorners": false
+          }
+        ],
+        "CeilA": null,
+        "CeilB": 2.415,
+        "DeltaA": -0.3179999999999996
+      },
+      {
+        "A": "R2",
+        "B": "R3",
+        "IoU": 0.9075122687806719,
+        "AreaA": 12.821,
+        "AreaB": 12.052,
+        "Walls": [
+          {
+            "A": "W2",
+            "B": "W1",
+            "LenA": 4.606,
+            "LenB": 4.208,
+            "Measured": false,
+            "Delta": -0.3979999999999997,
+            "RelDelta": -0.08640903169778544,
+            "Pass": false,
+            "OffsetMismatch": 0.002000000000000113,
+            "SignedOffset": -0.002000000000000113,
+            "SameCorners": false
+          },
+          {
+            "A": "W3",
+            "B": "W2",
+            "LenA": 2.867,
+            "LenB": 2.864,
+            "Measured": true,
+            "Delta": -0.0030000000000001137,
+            "RelDelta": -0.001046389954656475,
+            "Pass": true,
+            "OffsetMismatch": 0.10499999999999993,
+            "SignedOffset": -0.10499999999999993,
+            "SameCorners": false
+          },
+          {
+            "A": "W4",
+            "B": "W3",
+            "LenA": 4.117,
+            "LenB": 4.208,
+            "Measured": false,
+            "Delta": 0.09100000000000019,
+            "RelDelta": 0.02210347340296337,
+            "Pass": false,
+            "OffsetMismatch": 0,
+            "SignedOffset": 0,
+            "SameCorners": false
+          }
+        ],
+        "CeilA": null,
+        "CeilB": 3.078,
+        "DeltaA": -0.7690000000000001
+      },
+      {
+        "A": "R6",
+        "B": "R6",
+        "IoU": 0.8959943780744906,
+        "AreaA": 3.52,
+        "AreaB": 3.184,
+        "Walls": [
+          {
+            "A": "W2",
+            "B": "W1",
+            "LenA": 2.224,
+            "LenB": 1.968,
+            "Measured": true,
+            "Delta": -0.2560000000000002,
+            "RelDelta": -0.11510791366906484,
+            "Pass": false,
+            "OffsetMismatch": 0.009000000000000341,
+            "SignedOffset": -0.009000000000000341,
+            "SameCorners": false
+          },
+          {
+            "A": "W3",
+            "B": "W2",
+            "LenA": 1.716,
+            "LenB": 1.72,
+            "Measured": true,
+            "Delta": 0.0040000000000000036,
+            "RelDelta": 0.002331002331002333,
+            "Pass": true,
+            "OffsetMismatch": 0.08699999999999974,
+            "SignedOffset": -0.08699999999999974,
+            "SameCorners": false
+          },
+          {
+            "A": "W4",
+            "B": "W3",
+            "LenA": 1.534,
+            "LenB": 1.491,
+            "Measured": true,
+            "Delta": -0.04299999999999993,
+            "RelDelta": -0.0280312907431551,
+            "Pass": false,
+            "OffsetMismatch": 0.0129999999999999,
+            "SignedOffset": 0.0129999999999999,
+            "SameCorners": false
+          },
+          {
+            "A": "W5",
+            "B": "W4",
+            "LenA": 0.432,
+            "LenB": 0.422,
+            "Measured": true,
+            "Delta": -0.010000000000000009,
+            "RelDelta": -0.023148148148148168,
+            "Pass": false,
+            "OffsetMismatch": 0.043999999999999595,
+            "SignedOffset": 0.043999999999999595,
+            "SameCorners": true
+          },
+          {
+            "A": "W6",
+            "B": "W5",
+            "LenA": 0.69,
+            "LenB": 0.477,
+            "Measured": true,
+            "Delta": -0.21299999999999997,
+            "RelDelta": -0.30869565217391304,
+            "Pass": false,
+            "OffsetMismatch": 0.022999999999999687,
+            "SignedOffset": 0.022999999999999687,
+            "SameCorners": false
+          }
+        ],
+        "CeilA": null,
+        "CeilB": 2.259,
+        "DeltaA": -0.33599999999999985
+      },
+      {
+        "A": "R4",
+        "B": "R1",
+        "IoU": 0.8114531462200091,
+        "AreaA": 10.66,
+        "AreaB": 9.541,
+        "Walls": [
+          {
+            "A": "W2",
+            "B": "W6",
+            "LenA": 5.461,
+            "LenB": 4.045,
+            "Measured": false,
+            "Delta": -1.4160000000000004,
+            "RelDelta": -0.25929316974913025,
+            "Pass": false,
+            "OffsetMismatch": 0.01499999999999968,
+            "SignedOffset": 0.01499999999999968,
+            "SameCorners": false
+          },
+          {
+            "A": "W3",
+            "B": "W1",
+            "LenA": 2.698,
+            "LenB": 2.851,
+            "Measured": true,
+            "Delta": 0.15300000000000002,
+            "RelDelta": 0.05670867309117866,
+            "Pass": false,
+            "OffsetMismatch": 0,
+            "SignedOffset": 0,
+            "SameCorners": false
+          },
+          {
+            "A": "W4",
+            "B": "W2",
+            "LenA": 3.109,
+            "LenB": 2.982,
+            "Measured": true,
+            "Delta": -0.12699999999999978,
+            "RelDelta": -0.04084914763589571,
+            "Pass": false,
+            "OffsetMismatch": 0.1379999999999999,
+            "SignedOffset": 0.1379999999999999,
+            "SameCorners": false
+          },
+          {
+            "A": "W5",
+            "B": "W3",
+            "LenA": 1.733,
+            "LenB": 1.874,
+            "Measured": true,
+            "Delta": 0.14100000000000001,
+            "RelDelta": 0.08136180034622043,
+            "Pass": false,
+            "OffsetMismatch": 0.12700000000000022,
+            "SignedOffset": -0.12700000000000022,
+            "SameCorners": false
+          },
+          {
+            "A": "W6",
+            "B": "W4",
+            "LenA": 2.352,
+            "LenB": 1.063,
+            "Measured": false,
+            "Delta": -1.289,
+            "RelDelta": -0.5480442176870748,
+            "Pass": false,
+            "OffsetMismatch": 0.0019999999999997797,
+            "SignedOffset": -0.0019999999999997797,
+            "SameCorners": false
+          }
+        ],
+        "CeilA": null,
+        "CeilB": 2.947,
+        "DeltaA": -1.1189999999999998
+      },
+      {
+        "A": "R3",
+        "B": "R2",
+        "IoU": 0.7804674457429048,
+        "AreaA": 10.551,
+        "AreaB": 10.884,
+        "Walls": [
+          {
+            "A": "W1",
+            "B": "W4",
+            "LenA": 1.024,
+            "LenB": 0.776,
+            "Measured": true,
+            "Delta": -0.248,
+            "RelDelta": -0.2421875,
+            "Pass": false,
+            "OffsetMismatch": 0.136000000000001,
+            "SignedOffset": -0.136000000000001,
+            "SameCorners": false
+          },
+          {
+            "A": "W2",
+            "B": "W5",
+            "LenA": 2.117,
+            "LenB": 1.729,
+            "Measured": true,
+            "Delta": -0.3879999999999999,
+            "RelDelta": -0.18327822390174772,
+            "Pass": false,
+            "OffsetMismatch": 0.0010000000000002784,
+            "SignedOffset": 0.0010000000000002784,
+            "SameCorners": false
+          },
+          {
+            "A": "W4",
+            "B": "W1",
+            "LenA": 2.59,
+            "LenB": 3.027,
+            "Measured": false,
+            "Delta": 0.4370000000000003,
+            "RelDelta": 0.16872586872586884,
+            "Pass": false,
+            "OffsetMismatch": 0.0519999999999996,
+            "SignedOffset": -0.0519999999999996,
+            "SameCorners": false
+          }
+        ],
+        "CeilA": null,
+        "CeilB": 3.075,
+        "DeltaA": 0.3330000000000002
+      },
+      {
+        "A": "R5",
+        "B": "R5",
+        "IoU": 0.7704918032786885,
+        "AreaA": 5.763,
+        "AreaB": 7.254,
+        "Walls": [
+          {
+            "A": "W2",
+            "B": "W1",
+            "LenA": 2.381,
+            "LenB": 3,
+            "Measured": false,
+            "Delta": 0.6190000000000002,
+            "RelDelta": 0.25997480050399,
+            "Pass": false,
+            "OffsetMismatch": 0,
+            "SignedOffset": 0,
+            "SameCorners": false
+          },
+          {
+            "A": "W3",
+            "B": "W2",
+            "LenA": 2.421,
+            "LenB": 2.418,
+            "Measured": false,
+            "Delta": -0.0029999999999996696,
+            "RelDelta": -0.0012391573729862329,
+            "Pass": true,
+            "OffsetMismatch": 0.06399999999999961,
+            "SignedOffset": -0.06399999999999961,
+            "SameCorners": false
+          },
+          {
+            "A": "W4",
+            "B": "W3",
+            "LenA": 2.381,
+            "LenB": 3,
+            "Measured": false,
+            "Delta": 0.6190000000000002,
+            "RelDelta": 0.25997480050399,
+            "Pass": false,
+            "OffsetMismatch": 0.0010000000000002784,
+            "SignedOffset": -0.0010000000000002784,
+            "SameCorners": false
+          }
+        ],
+        "CeilA": null,
+        "CeilB": 2.338,
+        "DeltaA": 1.4909999999999997
+      }
+    ],
+    "UnmatchedA": null,
+    "UnmatchedB": null
+  }
+}

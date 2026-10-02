@@ -1,0 +1,16 @@
+room    wall           Δ cm  face-pred cm  class
+R1/R1   W1/W12        +10.4         +10.4  same end walls (face error)
+R1/R1   W7/W10         +1.0         +12.2  same end walls (face error)
+R1/R1   W8/W11         +3.8          -9.0  same end walls (face error)
+R5/R3   W5/W2          +0.6          +0.6  same end walls (face error)
+R5/R3   W6/W3         -13.3         -13.3  same end walls (face error)
+R5/R3   W7/W4          -2.5          +3.6  same end walls (face error)
+R2/R2   W2/W10         +0.1          +5.9  same end walls (face error)
+R3/R4   W2/W9         -42.3             —  different end walls (topology)
+R6/R6   W11/W4         -0.3          +6.3  same end walls (face error)
+R6/R6   W12/W5        -14.0             —  different end walls (topology)
+R6/R6   W2/W1         -29.6             —  different end walls (topology)
+
+same end walls:      8 pairs, 4 pass, median |Δ| 1.8 cm
+  |Δ − face prediction| median 5.9 cm (face shifts explain these)
+different end walls: 3 pairs, 0 pass, median |Δ| 29.6 cm

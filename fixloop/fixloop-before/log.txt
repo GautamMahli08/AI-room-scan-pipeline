@@ -1,0 +1,56 @@
+[single_room] ingest: 1715 frames, depth 256x192
+[single_room] fuse: 589678 voxels, 497750 seen by >=2 frames (1.2s)
+[single_room] floor: residual 10.5 mm, tilt 0.45°; manhattan θ=66.83° (56% support)
+[single_room] plan: 4 rooms, 4 openings, 0 open boundaries (0.6s)
+[single_room] drift iter 1: 69 obs on 7 walls; held-out scatter 17.5 mm uncorrected, 7.7 mm with prior x0.5; max shift 7.6 cm, max yaw 0.78°
+[single_room] fuse: 558906 voxels, 468319 seen by >=2 frames (1.2s)
+[single_room] floor: residual 10.0 mm, tilt 0.42°; manhattan θ=65.94° (61% support)
+[single_room] plan: 4 rooms, 1 openings, 0 open boundaries (0.9s)
+[single_room] drift iter 2: 36 obs on 3 walls; held-out scatter 23.0 mm uncorrected, 17.5 mm with prior x0.25; max shift 3.6 cm, max yaw 0.29°
+[single_room] fuse: 563718 voxels, 472846 seen by >=2 frames (1.2s)
+[single_room] floor: residual 9.9 mm, tilt 0.41°; manhattan θ=66.83° (56% support)
+[single_room] plan: 3 rooms, 5 openings, 0 open boundaries (0.8s)
+[single_room] drift: wall scatter 15.9 mm uncorrected -> 14.5 mm corrected (5.3s)
+[single_room] footprint: drift off 24.42 m², on 26.84 m²; wrote plan.*, plan_drift_off.*, drift.json (7.1s total)
+[single_scan_floor_only] ingest: 5251 frames, depth 256x192
+[single_scan_floor_only] fuse: 2250981 voxels, 1818379 seen by >=2 frames (4.1s)
+[single_scan_floor_only] floor: residual 11.1 mm, tilt 0.09°; manhattan θ=1.61° (55% support)
+[single_scan_floor_only] plan: 6 rooms, 11 openings, 3 open boundaries (1.8s)
+[single_scan_floor_only] drift iter 1: 216 obs on 23 walls; held-out scatter 25.7 mm uncorrected, 23.0 mm with prior x0.25; max shift 9.0 cm, max yaw 1.26°
+[single_scan_floor_only] fuse: 2258814 voxels, 1817676 seen by >=2 frames (4.2s)
+[single_scan_floor_only] floor: residual 9.1 mm, tilt 0.08°; manhattan θ=1.61° (60% support)
+[single_scan_floor_only] plan: 6 rooms, 15 openings, 3 open boundaries (1.8s)
+[single_scan_floor_only] drift iter 2: 253 obs on 30 walls; held-out scatter 21.2 mm uncorrected, 20.0 mm with prior x1; max shift 25.3 cm, max yaw 2.07°
+[single_scan_floor_only] fuse: 2225556 voxels, 1796440 seen by >=2 frames (4.3s)
+[single_scan_floor_only] floor: residual 10.9 mm, tilt 0.06°; manhattan θ=1.42° (65% support)
+[single_scan_floor_only] plan: 7 rooms, 13 openings, 3 open boundaries (1.7s)
+[single_scan_floor_only] drift: wall scatter 21.0 mm uncorrected -> 14.6 mm corrected (15.5s)
+[single_scan_floor_only] footprint: drift off 57.33 m², on 59.28 m²; wrote plan.*, plan_drift_off.*, drift.json (21.4s total)
+[single_scan_with_ceiling] ingest: 9745 frames, depth 256x192
+[single_scan_with_ceiling] fuse: 4354151 voxels, 3568293 seen by >=2 frames (9.3s)
+[single_scan_with_ceiling] floor: residual 8.3 mm, tilt 0.02°; manhattan θ=61.66° (62% support)
+[single_scan_with_ceiling] plan: 6 rooms, 15 openings, 2 open boundaries (2.4s)
+[single_scan_with_ceiling] drift iter 1: 506 obs on 31 walls; held-out scatter 20.8 mm uncorrected, 15.4 mm with prior x0.25; max shift 10.9 cm, max yaw 0.99°
+[single_scan_with_ceiling] fuse: 4219878 voxels, 3429326 seen by >=2 frames (9.3s)
+[single_scan_with_ceiling] floor: residual 7.1 mm, tilt 0.01°; manhattan θ=61.73° (62% support)
+[single_scan_with_ceiling] plan: 7 rooms, 19 openings, 2 open boundaries (2.4s)
+[single_scan_with_ceiling] drift iter 2: 476 obs on 31 walls; held-out scatter 14.9 mm uncorrected, 13.2 mm with prior x0.25; max shift 5.2 cm, max yaw 0.54°
+[single_scan_with_ceiling] fuse: 4201896 voxels, 3414422 seen by >=2 frames (9.5s)
+[single_scan_with_ceiling] floor: residual 7.1 mm, tilt 0.00°; manhattan θ=61.67° (62% support)
+[single_scan_with_ceiling] plan: 6 rooms, 21 openings, 1 open boundaries (2.5s)
+[single_scan_with_ceiling] drift: wall scatter 21.1 mm uncorrected -> 13.3 mm corrected (30.1s)
+[single_scan_with_ceiling] footprint: drift off 58.37 m², on 58.93 m²; wrote plan.*, plan_drift_off.*, drift.json (42.0s total)
+[single_scan_with_ceiling] ingest: 9745 frames, depth 256x192
+[single_scan_with_ceiling] fuse: 4354151 voxels, 3568293 seen by >=2 frames (9.2s)
+[single_scan_with_ceiling] floor: residual 8.3 mm, tilt 0.02°; manhattan θ=61.65° (62% support)
+[single_scan_with_ceiling] plan: 7 rooms, 17 openings, 2 open boundaries (2.5s)
+[single_scan_with_ceiling] drift iter 1: 468 obs on 30 walls; held-out scatter 21.0 mm uncorrected, 15.4 mm with prior x0.25; max shift 10.6 cm, max yaw 0.93°
+[single_scan_with_ceiling] fuse: 4233221 voxels, 3444719 seen by >=2 frames (9.3s)
+[single_scan_with_ceiling] floor: residual 7.0 mm, tilt 0.01°; manhattan θ=61.69° (63% support)
+[single_scan_with_ceiling] plan: 6 rooms, 15 openings, 2 open boundaries (2.5s)
+[single_scan_with_ceiling] drift iter 2: 467 obs on 32 walls; held-out scatter 16.6 mm uncorrected, 14.9 mm with prior x0.25; max shift 6.5 cm, max yaw 0.53°
+[single_scan_with_ceiling] fuse: 4189691 voxels, 3401986 seen by >=2 frames (9.6s)
+[single_scan_with_ceiling] floor: residual 6.9 mm, tilt 0.00°; manhattan θ=61.71° (64% support)
+[single_scan_with_ceiling] plan: 6 rooms, 15 openings, 3 open boundaries (2.5s)
+[single_scan_with_ceiling] drift: wall scatter 20.9 mm uncorrected -> 12.3 mm corrected (30.5s)
+[single_scan_with_ceiling] footprint: drift off 58.17 m², on 57.50 m²; wrote plan.*, plan_drift_off.*, drift.json (42.2s total)

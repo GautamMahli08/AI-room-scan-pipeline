@@ -1,0 +1,375 @@
+tag fixloop-after
+Tagger: Gautam Mahli <gautammahli08@gmail.com>
+Date:   Sat Oct 3 00:36:59 2026 +0530
+
+Fix loop: after state
+
+commit 37fe761b32a283c84cdf7b6084291c1d63471a6a
+Author: Gautam Mahli <gautammahli08@gmail.com>
+Date:   Sat Oct 3 00:36:59 2026 +0530
+
+    Fix loop: make plan extraction deterministic and outlines stable
+    
+    Fix for fixloop/DECLARATION.md (repeatability gate):
+    
+    1. Determinism. Voxel and drift-observation sums are integer
+       micrometres, so totals do not depend on worker completion order;
+       fused points are returned in voxel-key order. The same capture now
+       produces an identical plan (test: identical clouds with 1/3/8
+       workers).
+    2. Outline stabilisation. U-shaped outline features (notches, bumps,
+       leak strips) shallower or narrower than 0.30 m are flattened before
+       wall fitting.
+    3. Drift prior search extended to stronger priors (x0.03..x8); the
+       selection is no longer pinned to the old grid edge (x0.25).
+    
+    Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+diff --git a/internal/geometry/geometry_test.go b/internal/geometry/geometry_test.go
+index 35adfd0..3b310b4 100644
+--- a/internal/geometry/geometry_test.go
++++ b/internal/geometry/geometry_test.go
+@@ -221,3 +221,28 @@ func TestSyntheticRoomEndToEnd(t *testing.T) {
+ 		t.Errorf("door width %.3f, want 0.90 ±0.01", doors[0].Width)
+ 	}
+ }
++
++func TestRemoveSmallFeatures(t *testing.T) {
++	// 4 x 3 room with a 0.8 m wide, 0.15 m deep bump on the top wall, a
++	// 0.2 m wide, 2 m long leak strip on the right wall, and a 0.5 m deep
++	// alcove on the bottom wall that must stay.
++	p := []Pt{
++		{0, 0}, {1, 0}, {1, -0.5}, {2, -0.5}, {2, 0}, // alcove (kept)
++		{4, 0}, {4, 1}, {6, 1}, {6, 1.2}, {4, 1.2}, // leak strip (removed)
++		{4, 3}, {2.5, 3}, {2.5, 3.15}, {1.7, 3.15}, {1.7, 3}, // bump (removed)
++		{0, 3},
++	}
++	got := removeSmallFeatures(p, 0.30)
++	want := []Pt{{0, 0}, {1, 0}, {1, -0.5}, {2, -0.5}, {2, 0}, {4, 0}, {4, 3}, {0, 3}}
++	if len(got) != len(want) {
++		t.Fatalf("got %v, want %v", got, want)
++	}
++	for i := range want {
++		if got[i].Sub(want[i]).Norm() > 1e-9 {
++			t.Fatalf("got %v, want %v", got, want)
++		}
++	}
++	if a := PolygonArea(got); math.Abs(a-12.5) > 1e-9 {
++		t.Errorf("area %v, want 12.5", a)
++	}
++}
+diff --git a/internal/geometry/pointcloud/pointcloud.go b/internal/geometry/pointcloud/pointcloud.go
+index 5557c31..da32e33 100644
+--- a/internal/geometry/pointcloud/pointcloud.go
++++ b/internal/geometry/pointcloud/pointcloud.go
+@@ -4,7 +4,9 @@
+ package pointcloud
+ 
+ import (
++	"cmp"
+ 	"fmt"
++	"math"
+ 	"runtime"
+ 	"slices"
+ 	"sync"
+@@ -69,15 +71,24 @@ func (k Key) Unpack() (int, int, int) {
+ 		int(int64(k)&keyMask) - keyOff
+ }
+ 
+-// Voxel accumulates the points that fell into one grid cell.
++// Voxel accumulates the points that fell into one grid cell. Positions
++// are summed as integer micrometres so the result does not depend on the
++// order frames are merged in (float addition is not associative, and
++// workers finish in arbitrary order): the same capture always fuses to the
++// same cloud.
+ type Voxel struct {
+-	Sum    geom.Vec3 // sum of point positions
+-	N      int32     // number of points
+-	Frames int32     // number of distinct frames that observed this voxel
++	SumUM  [3]int64 // sum of point positions, micrometres
++	N      int32    // number of points
++	Frames int32    // number of distinct frames that observed this voxel
+ }
+ 
+ // Centroid is the mean position of the voxel's points.
+-func (v Voxel) Centroid() geom.Vec3 { return v.Sum.Scale(1 / float64(v.N)) }
++func (v Voxel) Centroid() geom.Vec3 {
++	n := float64(v.N) * 1e6
++	return geom.Vec3{float64(v.SumUM[0]) / n, float64(v.SumUM[1]) / n, float64(v.SumUM[2]) / n}
++}
++
++func toUM(x float64) int64 { return int64(math.Round(x * 1e6)) }
+ 
+ // Grid is a sparse voxel grid.
+ type Grid struct {
+@@ -106,7 +117,7 @@ func floorDiv(x, s float64) int {
+ // frameCell is one voxel's contribution from a single frame.
+ type frameCell struct {
+ 	key Key
+-	sum geom.Vec3
++	sum [3]int64 // micrometres
+ 	n   int32
+ }
+ 
+@@ -134,7 +145,10 @@ func (g *Grid) aggregate(pts []geom.Vec3) []frameCell {
+ 	for i := 0; i < len(ks); {
+ 		c := frameCell{key: ks[i].k}
+ 		for ; i < len(ks) && ks[i].k == c.key; i++ {
+-			c.sum = c.sum.Add(pts[ks[i].i])
++			p := pts[ks[i].i]
++			c.sum[0] += toUM(p[0])
++			c.sum[1] += toUM(p[1])
++			c.sum[2] += toUM(p[2])
+ 			c.n++
+ 		}
+ 		out = append(out, c)
+@@ -152,7 +166,9 @@ func (g *Grid) merge(cells []frameCell) {
+ 			g.Cells = append(g.Cells, Voxel{})
+ 		}
+ 		v := &g.Cells[i]
+-		v.Sum = v.Sum.Add(c.sum)
++		v.SumUM[0] += c.sum[0]
++		v.SumUM[1] += c.sum[1]
++		v.SumUM[2] += c.sum[2]
+ 		v.N += c.n
+ 		v.Frames++
+ 	}
+@@ -162,11 +178,16 @@ func (g *Grid) merge(cells []frameCell) {
+ func (g *Grid) Len() int { return len(g.Cells) }
+ 
+ // Points returns the centroids of voxels observed by at least minFrames
+-// distinct frames.
++// distinct frames, in voxel key order (independent of merge order).
+ func (g *Grid) Points(minFrames int32) []geom.Vec3 {
++	idx := make([]int, len(g.Cells))
++	for i := range idx {
++		idx[i] = i
++	}
++	slices.SortFunc(idx, func(a, b int) int { return cmp.Compare(g.Keys[a], g.Keys[b]) })
+ 	var out []geom.Vec3
+-	for _, v := range g.Cells {
+-		if v.Frames >= minFrames {
++	for _, i := range idx {
++		if v := g.Cells[i]; v.Frames >= minFrames {
+ 			out = append(out, v.Centroid())
+ 		}
+ 	}
+diff --git a/internal/geometry/pointcloud/pointcloud_test.go b/internal/geometry/pointcloud/pointcloud_test.go
+index 9fdb569..b453175 100644
+--- a/internal/geometry/pointcloud/pointcloud_test.go
++++ b/internal/geometry/pointcloud/pointcloud_test.go
+@@ -150,3 +150,39 @@ func TestConventionOnSample(t *testing.T) {
+ 		t.Errorf("OpenCV convention should give a much sharper floor: %.3f vs %.3f", cv, ar)
+ 	}
+ }
++
++// The same capture must fuse to exactly the same cloud whatever order the
++// workers finish in.
++func TestFuseDeterministic(t *testing.T) {
++	dirs, _ := filepath.Glob("../../../single_room/*")
++	if len(dirs) == 0 {
++		t.Skip("sample capture single_room not present")
++	}
++	c, err := strayscanner.Load(dirs[0])
++	if err != nil {
++		t.Fatal(err)
++	}
++	opt := DefaultFuseOptions()
++	opt.Stride = 20
++	var ref []geom.Vec3
++	for _, workers := range []int{1, 3, 8} {
++		opt.Workers = workers
++		g, err := Fuse(c, opt)
++		if err != nil {
++			t.Fatal(err)
++		}
++		pts := g.Points(1)
++		if ref == nil {
++			ref = pts
++			continue
++		}
++		if len(pts) != len(ref) {
++			t.Fatalf("workers=%d: %d points, want %d", workers, len(pts), len(ref))
++		}
++		for i := range pts {
++			if pts[i] != ref[i] {
++				t.Fatalf("workers=%d: point %d differs: %v vs %v", workers, i, pts[i], ref[i])
++			}
++		}
++	}
++}
+diff --git a/internal/geometry/walls.go b/internal/geometry/walls.go
+index 31f8c28..345d567 100644
+--- a/internal/geometry/walls.go
++++ b/internal/geometry/walls.go
+@@ -113,7 +113,7 @@ const (
+ // room), so every edge already lies on a detected wall line or its
+ // extension; fitting then moves each edge onto its measured face.
+ func FitRoom(arr *Arrangement, label int32, wp *WallPoints) *RoomShape {
+-	poly := dropCollinear(arr.Outline(label))
++	poly := removeSmallFeatures(dropCollinear(arr.Outline(label)), minFeature)
+ 	if len(poly) < 3 {
+ 		return nil
+ 	}
+@@ -440,6 +440,55 @@ func layers(hist []int, offs, along []float64, length, bin, chosen float64) []La
+ 	return out
+ }
+ 
++// minFeature is the smallest outline feature kept. Notches, bumps and
++// leak strips narrower or shallower than this are not seen consistently
++// from one capture to the next (they depend on which rectangles of the
++// wall-line arrangement pass the ownership threshold), and they decide
++// where the neighbouring walls end.
++const minFeature = 0.30
++
++// removeSmallFeatures flattens every U-shaped feature of the outline (two
++// antiparallel edges joined by a third) whose depth (the shorter leg) or
++// width (the joining edge) is below min: the joining edge is moved back
++// by the shorter leg. Repeats until no such feature remains.
++func removeSmallFeatures(p []Pt, min float64) []Pt {
++	for iter := 0; iter < 4*len(p) && len(p) > 4; iter++ {
++		n := len(p)
++		found := false
++		for i := 0; i < n; i++ {
++			a, b, c, d := p[i], p[(i+1)%n], p[(i+2)%n], p[(i+3)%n]
++			e0, e1, e2 := b.Sub(a), c.Sub(b), d.Sub(c)
++			la, w, lb := e0.Norm(), e1.Norm(), e2.Norm()
++			if la == 0 || lb == 0 || e0.Dot(e2) >= 0 || math.Abs(e0.Cross(e2)) > 1e-9*la*lb {
++				continue // not a U turn
++			}
++			if math.Min(la, lb) >= min && w >= min {
++				continue
++			}
++			back := e0.Scale(math.Min(la, lb) / la)
++			p[(i+1)%n], p[(i+2)%n] = b.Sub(back), c.Sub(back)
++			p = dropCollinear(dedupe(p))
++			found = true
++			break
++		}
++		if !found {
++			break
++		}
++	}
++	return p
++}
++
++// dedupe removes consecutive coincident vertices.
++func dedupe(p []Pt) []Pt {
++	var out []Pt
++	for i := range p {
++		if p[i].Sub(p[(i+1)%len(p)]).Norm() > 1e-9 {
++			out = append(out, p[i])
++		}
++	}
++	return out
++}
++
+ // dropCollinear removes vertices whose two edges have the same direction.
+ func dropCollinear(p []Pt) []Pt {
+ 	var out []Pt
+diff --git a/internal/stitch/drift.go b/internal/stitch/drift.go
+index 2dd6321..d21db40 100644
+--- a/internal/stitch/drift.go
++++ b/internal/stitch/drift.go
+@@ -98,12 +98,20 @@ type wallRef struct {
+ 
+ type obsKey struct{ lm, chunk, seg int }
+ 
++// obsAcc sums observations as integer micrometres so the totals do not
++// depend on which worker saw which frame.
+ type obsAcc struct {
+-	n      int
+-	s      float64
+-	px, py float64
++	n          int
++	sUM        int64
++	pxUM, pyUM int64
+ }
+ 
++func um(x float64) int64 { return int64(math.Round(x * 1e6)) }
++
++func (o *obsAcc) s() float64  { return float64(o.sUM) / 1e6 }
++func (o *obsAcc) px() float64 { return float64(o.pxUM) / 1e6 }
++func (o *obsAcc) py() float64 { return float64(o.pyUM) / 1e6 }
++
+ // Estimate measures how each chunk sees the room walls and floor and
+ // solves for per-chunk corrections. shapes and pf are from a plan built
+ // with the capture's current poses.
+@@ -193,7 +201,7 @@ func Estimate(src pointcloud.DepthSource, frames []frame.Frame, pf geometry.Plan
+ 								a.floor[j] = o
+ 							}
+ 							o.n++
+-							o.s += h
++							o.sUM += um(h)
+ 							continue
+ 						}
+ 						if room < 0 || h < 0.3 || h > 2.0 {
+@@ -217,9 +225,9 @@ func Estimate(src pointcloud.DepthSource, frames []frame.Frame, pf geometry.Plan
+ 								a.wall[k] = o
+ 							}
+ 							o.n++
+-							o.s += s
+-							o.px += x
+-							o.py += y
++							o.sUM += um(s)
++							o.pxUM += um(x)
++							o.pyUM += um(y)
+ 						}
+ 					}
+ 				}
+@@ -242,9 +250,9 @@ func Estimate(src pointcloud.DepthSource, frames []frame.Frame, pf geometry.Plan
+ 				wallObs[k] = m
+ 			}
+ 			m.n += o.n
+-			m.s += o.s
+-			m.px += o.px
+-			m.py += o.py
++			m.sUM += o.sUM
++			m.pxUM += o.pxUM
++			m.pyUM += o.pyUM
+ 		}
+ 		for k, o := range a.floor {
+ 			m := floorObs[k]
+@@ -253,7 +261,7 @@ func Estimate(src pointcloud.DepthSource, frames []frame.Frame, pf geometry.Plan
+ 				floorObs[k] = m
+ 			}
+ 			m.n += o.n
+-			m.s += o.s
++			m.sUM += o.sUM
+ 		}
+ 	}
+ 
+@@ -309,12 +317,12 @@ func Estimate(src pointcloud.DepthSource, frames []frame.Frame, pf geometry.Plan
+ 	for _, k := range used {
+ 		o := wallObs[k]
+ 		wr := walls[k.lm]
+-		pm := geometry.Pt{X: o.px / float64(o.n), Y: o.py / float64(o.n)}
++		pm := geometry.Pt{X: o.px() / float64(o.n), Y: o.py() / float64(o.n)}
+ 		g := pm.Sub(pivot(k.chunk))
+ 		rows = append(rows, obsRow{
+ 			chunk: k.chunk, lm: lmIndex[k.lm], wall: true, test: k.seg%2 == 1,
+ 			nx: wr.n.X, ny: wr.n.Y, ntheta: wr.n.Dot(geometry.Pt{X: -g.Y, Y: g.X}),
+-			value: o.s / float64(o.n), w: obsW(o.n),
++			value: o.s() / float64(o.n), w: obsW(o.n),
+ 		})
+ 	}
+ 	floorChunks := make([]int, 0, len(floorObs))
+@@ -324,7 +332,7 @@ func Estimate(src pointcloud.DepthSource, frames []frame.Frame, pf geometry.Plan
+ 	sort.Ints(floorChunks)
+ 	for _, j := range floorChunks {
+ 		if o := floorObs[j]; o.n >= minPts {
+-			rows = append(rows, obsRow{chunk: j, value: o.s / float64(o.n), w: obsW(o.n)})
++			rows = append(rows, obsRow{chunk: j, value: o.s() / float64(o.n), w: obsW(o.n)})
+ 		}
+ 	}
+ 
+@@ -340,7 +348,8 @@ func Estimate(src pointcloud.DepthSource, frames []frame.Frame, pf geometry.Plan
+ 	}
+ 	corr.HeldOutNone = sys.scatter(baseline, true)
+ 	bestScale, bestScore := 0.0, corr.HeldOutNone
+-	for _, s := range []float64{0.25, 0.5, 1, 2, 4, 8} {
++	// Strong priors first: the optimum sat at the old grid edge (x0.25).
++	for _, s := range []float64{0.03, 0.06, 0.125, 0.25, 0.5, 1, 2, 4, 8} {
+ 		x, err := sys.solve(true, s)
+ 		if err != nil {
+ 			return nil, err

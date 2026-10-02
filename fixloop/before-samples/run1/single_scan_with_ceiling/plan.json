@@ -1,0 +1,1740 @@
+{
+  "schema_version": "1.0",
+  "capture_id": "single_scan_with_ceiling",
+  "tier": "lidar",
+  "rooms": [
+    {
+      "id": "R1",
+      "polygon": [
+        [
+          -9.152,
+          -3.212
+        ],
+        [
+          -4.631,
+          -3.212
+        ],
+        [
+          -4.631,
+          -1.133
+        ],
+        [
+          -5.262,
+          -1.133
+        ],
+        [
+          -5.262,
+          0.324
+        ],
+        [
+          -6.093,
+          0.324
+        ],
+        [
+          -6.093,
+          0.751
+        ],
+        [
+          -8.637,
+          0.751
+        ],
+        [
+          -8.637,
+          -2.09
+        ],
+        [
+          -9.152,
+          -2.09
+        ]
+      ],
+      "walls": [
+        {
+          "id": "W1",
+          "start": [
+            -9.152,
+            -3.212
+          ],
+          "end": [
+            -4.631,
+            -3.212
+          ],
+          "length_m": {
+            "value": 4.521,
+            "ci90": [
+              4.357,
+              4.686
+            ],
+            "source": "inferred"
+          },
+          "inferred": false
+        },
+        {
+          "id": "W2",
+          "start": [
+            -4.631,
+            -3.212
+          ],
+          "end": [
+            -4.631,
+            -1.133
+          ],
+          "length_m": {
+            "value": 2.078,
+            "ci90": [
+              2.067,
+              2.09
+            ],
+            "source": "inferred"
+          },
+          "inferred": true
+        },
+        {
+          "id": "W3",
+          "start": [
+            -4.631,
+            -1.133
+          ],
+          "end": [
+            -5.262,
+            -1.133
+          ],
+          "length_m": {
+            "value": 0.632,
+            "ci90": [
+              0.467,
+              0.796
+            ],
+            "source": "inferred"
+          },
+          "inferred": false
+        },
+        {
+          "id": "W4",
+          "start": [
+            -5.262,
+            -1.133
+          ],
+          "end": [
+            -5.262,
+            0.324
+          ],
+          "length_m": {
+            "value": 1.457,
+            "ci90": [
+              1.293,
+              1.622
+            ],
+            "source": "inferred"
+          },
+          "inferred": false
+        },
+        {
+          "id": "W5",
+          "start": [
+            -5.262,
+            0.324
+          ],
+          "end": [
+            -6.093,
+            0.324
+          ],
+          "length_m": {
+            "value": 0.831,
+            "ci90": [
+              0.666,
+              0.996
+            ],
+            "source": "inferred"
+          },
+          "inferred": true
+        },
+        {
+          "id": "W6",
+          "start": [
+            -6.093,
+            0.324
+          ],
+          "end": [
+            -6.093,
+            0.751
+          ],
+          "length_m": {
+            "value": 0.427,
+            "ci90": [
+              0.262,
+              0.592
+            ],
+            "source": "inferred"
+          },
+          "inferred": true
+        },
+        {
+          "id": "W7",
+          "start": [
+            -6.093,
+            0.751
+          ],
+          "end": [
+            -8.637,
+            0.751
+          ],
+          "length_m": {
+            "value": 2.544,
+            "ci90": [
+              2.379,
+              2.708
+            ],
+            "source": "inferred"
+          },
+          "inferred": false
+        },
+        {
+          "id": "W8",
+          "start": [
+            -8.637,
+            0.751
+          ],
+          "end": [
+            -8.637,
+            -2.09
+          ],
+          "length_m": {
+            "value": 2.841,
+            "ci90": [
+              2.829,
+              2.852
+            ],
+            "source": "measured"
+          },
+          "inferred": false
+        },
+        {
+          "id": "W9",
+          "start": [
+            -8.637,
+            -2.09
+          ],
+          "end": [
+            -9.152,
+            -2.09
+          ],
+          "length_m": {
+            "value": 0.515,
+            "ci90": [
+              0.504,
+              0.527
+            ],
+            "source": "measured"
+          },
+          "inferred": false
+        },
+        {
+          "id": "W10",
+          "start": [
+            -9.152,
+            -2.09
+          ],
+          "end": [
+            -9.152,
+            -3.212
+          ],
+          "length_m": {
+            "value": 1.122,
+            "ci90": [
+              1.11,
+              1.134
+            ],
+            "source": "measured"
+          },
+          "inferred": false
+        }
+      ],
+      "openings": [
+        {
+          "id": "O1",
+          "wall": "W1",
+          "type": "door",
+          "offset_m": {
+            "value": 1.222,
+            "ci90": [
+              1.193,
+              1.251
+            ],
+            "source": "measured"
+          },
+          "width_m": {
+            "value": 0.5,
+            "ci90": [
+              0.459,
+              0.541
+            ],
+            "source": "measured"
+          }
+        },
+        {
+          "id": "O2",
+          "wall": "W1",
+          "type": "window",
+          "offset_m": {
+            "value": 2.282,
+            "ci90": [
+              2.253,
+              2.311
+            ],
+            "source": "measured"
+          },
+          "width_m": {
+            "value": 1.42,
+            "ci90": [
+              1.379,
+              1.461
+            ],
+            "source": "measured"
+          }
+        },
+        {
+          "id": "O16",
+          "wall": "W2",
+          "type": "opening",
+          "offset_m": {
+            "value": 0.052,
+            "ci90": [
+              -0.113,
+              0.216
+            ],
+            "source": "inferred"
+          },
+          "width_m": {
+            "value": 0.6,
+            "ci90": [
+              0.436,
+              0.764
+            ],
+            "source": "inferred"
+          }
+        },
+        {
+          "id": "O17",
+          "wall": "W2",
+          "type": "opening",
+          "offset_m": {
+            "value": 1.082,
+            "ci90": [
+              0.917,
+              1.246
+            ],
+            "source": "inferred"
+          },
+          "width_m": {
+            "value": 0.8,
+            "ci90": [
+              0.636,
+              0.964
+            ],
+            "source": "inferred"
+          }
+        }
+      ],
+      "ceiling_height_m": {
+        "observed": true,
+        "value": 2.414,
+        "ci90": [
+          2.402,
+          2.425
+        ],
+        "source": "measured"
+      },
+      "floor_area_m2": {
+        "value": 14.908,
+        "ci90": [
+          14.53,
+          15.287
+        ],
+        "source": "measured"
+      },
+      "notes": [
+        {
+          "code": "unobserved_gap",
+          "wall": "W4",
+          "message": "0.60 m gap with nothing observed in or through it; not reported as an opening"
+        },
+        {
+          "code": "unobserved_gap",
+          "wall": "W8",
+          "message": "1.58 m gap with nothing observed in or through it; not reported as an opening"
+        }
+      ]
+    },
+    {
+      "id": "R2",
+      "polygon": [
+        [
+          -4.783,
+          -5.35
+        ],
+        [
+          -0.447,
+          -5.35
+        ],
+        [
+          -0.447,
+          -2.49
+        ],
+        [
+          -4.631,
+          -2.49
+        ],
+        [
+          -4.631,
+          -3.208
+        ],
+        [
+          -4.783,
+          -3.208
+        ]
+      ],
+      "walls": [
+        {
+          "id": "W1",
+          "start": [
+            -4.783,
+            -5.35
+          ],
+          "end": [
+            -0.447,
+            -5.35
+          ],
+          "length_m": {
+            "value": 4.336,
+            "ci90": [
+              4.325,
+              4.348
+            ],
+            "source": "measured"
+          },
+          "inferred": false
+        },
+        {
+          "id": "W2",
+          "start": [
+            -0.447,
+            -5.35
+          ],
+          "end": [
+            -0.447,
+            -2.49
+          ],
+          "length_m": {
+            "value": 2.86,
+            "ci90": [
+              2.849,
+              2.872
+            ],
+            "source": "measured"
+          },
+          "inferred": false
+        },
+        {
+          "id": "W3",
+          "start": [
+            -0.447,
+            -2.49
+          ],
+          "end": [
+            -4.631,
+            -2.49
+          ],
+          "length_m": {
+            "value": 4.184,
+            "ci90": [
+              4.019,
+              4.349
+            ],
+            "source": "inferred"
+          },
+          "inferred": false
+        },
+        {
+          "id": "W4",
+          "start": [
+            -4.631,
+            -2.49
+          ],
+          "end": [
+            -4.631,
+            -3.208
+          ],
+          "length_m": {
+            "value": 0.718,
+            "ci90": [
+              0.553,
+              0.882
+            ],
+            "source": "inferred"
+          },
+          "inferred": true
+        },
+        {
+          "id": "W5",
+          "start": [
+            -4.631,
+            -3.208
+          ],
+          "end": [
+            -4.783,
+            -3.208
+          ],
+          "length_m": {
+            "value": 0.152,
+            "ci90": [
+              -0.012,
+              0.317
+            ],
+            "source": "inferred"
+          },
+          "inferred": true
+        },
+        {
+          "id": "W6",
+          "start": [
+            -4.783,
+            -3.208
+          ],
+          "end": [
+            -4.783,
+            -5.35
+          ],
+          "length_m": {
+            "value": 2.143,
+            "ci90": [
+              1.978,
+              2.307
+            ],
+            "source": "inferred"
+          },
+          "inferred": false
+        }
+      ],
+      "openings": [
+        {
+          "id": "O3",
+          "wall": "W1",
+          "type": "door",
+          "offset_m": {
+            "value": 0.2,
+            "ci90": [
+              0.186,
+              0.214
+            ],
+            "source": "measured"
+          },
+          "width_m": {
+            "value": 0.422,
+            "ci90": [
+              0.402,
+              0.442
+            ],
+            "source": "measured"
+          }
+        },
+        {
+          "id": "O4",
+          "wall": "W2",
+          "type": "window",
+          "offset_m": {
+            "value": 0.69,
+            "ci90": [
+              0.661,
+              0.719
+            ],
+            "source": "measured"
+          },
+          "width_m": {
+            "value": 1.5,
+            "ci90": [
+              1.459,
+              1.541
+            ],
+            "source": "measured"
+          }
+        }
+      ],
+      "ceiling_height_m": {
+        "observed": true,
+        "value": 3.084,
+        "ci90": [
+          3.072,
+          3.096
+        ],
+        "source": "measured"
+      },
+      "floor_area_m2": {
+        "value": 12.294,
+        "ci90": [
+          12.16,
+          12.427
+        ],
+        "source": "measured"
+      },
+      "notes": [
+        {
+          "code": "other",
+          "message": "part of this room has a different ceiling level at 2.42 m (bulkhead or merged space)"
+        },
+        {
+          "code": "unobserved_gap",
+          "wall": "W6",
+          "message": "0.58 m gap with nothing observed in or through it; not reported as an opening"
+        }
+      ]
+    },
+    {
+      "id": "R3",
+      "polygon": [
+        [
+          -2.918,
+          -2.277
+        ],
+        [
+          0.99,
+          -2.277
+        ],
+        [
+          0.99,
+          0.742
+        ],
+        [
+          -1.983,
+          0.742
+        ],
+        [
+          -1.983,
+          -1.153
+        ],
+        [
+          -2.918,
+          -1.153
+        ]
+      ],
+      "walls": [
+        {
+          "id": "W1",
+          "start": [
+            -2.918,
+            -2.277
+          ],
+          "end": [
+            0.99,
+            -2.277
+          ],
+          "length_m": {
+            "value": 3.908,
+            "ci90": [
+              3.743,
+              4.072
+            ],
+            "source": "inferred"
+          },
+          "inferred": false
+        },
+        {
+          "id": "W2",
+          "start": [
+            0.99,
+            -2.277
+          ],
+          "end": [
+            0.99,
+            0.742
+          ],
+          "length_m": {
+            "value": 3.019,
+            "ci90": [
+              3.008,
+              3.031
+            ],
+            "source": "measured"
+          },
+          "inferred": false
+        },
+        {
+          "id": "W3",
+          "start": [
+            0.99,
+            0.742
+          ],
+          "end": [
+            -1.983,
+            0.742
+          ],
+          "length_m": {
+            "value": 2.973,
+            "ci90": [
+              2.962,
+              2.985
+            ],
+            "source": "measured"
+          },
+          "inferred": false
+        },
+        {
+          "id": "W4",
+          "start": [
+            -1.983,
+            0.742
+          ],
+          "end": [
+            -1.983,
+            -1.153
+          ],
+          "length_m": {
+            "value": 1.895,
+            "ci90": [
+              1.884,
+              1.907
+            ],
+            "source": "measured"
+          },
+          "inferred": false
+        },
+        {
+          "id": "W5",
+          "start": [
+            -1.983,
+            -1.153
+          ],
+          "end": [
+            -2.918,
+            -1.153
+          ],
+          "length_m": {
+            "value": 0.934,
+            "ci90": [
+              0.77,
+              1.099
+            ],
+            "source": "inferred"
+          },
+          "inferred": false
+        },
+        {
+          "id": "W6",
+          "start": [
+            -2.918,
+            -1.153
+          ],
+          "end": [
+            -2.918,
+            -2.277
+          ],
+          "length_m": {
+            "value": 1.124,
+            "ci90": [
+              1.113,
+              1.136
+            ],
+            "source": "inferred"
+          },
+          "inferred": true
+        }
+      ],
+      "openings": [
+        {
+          "id": "O5",
+          "wall": "W2",
+          "type": "window",
+          "offset_m": {
+            "value": 1.317,
+            "ci90": [
+              1.303,
+              1.331
+            ],
+            "source": "measured"
+          },
+          "width_m": {
+            "value": 1.249,
+            "ci90": [
+              1.229,
+              1.269
+            ],
+            "source": "measured"
+          }
+        },
+        {
+          "id": "O6",
+          "wall": "W3",
+          "type": "window",
+          "offset_m": {
+            "value": 0.64,
+            "ci90": [
+              0.611,
+              0.669
+            ],
+            "source": "measured"
+          },
+          "width_m": {
+            "value": 0.66,
+            "ci90": [
+              0.619,
+              0.701
+            ],
+            "source": "measured"
+          }
+        },
+        {
+          "id": "O7",
+          "wall": "W3",
+          "type": "door",
+          "offset_m": {
+            "value": 1.62,
+            "ci90": [
+              1.591,
+              1.649
+            ],
+            "source": "measured"
+          },
+          "width_m": {
+            "value": 1.02,
+            "ci90": [
+              0.979,
+              1.061
+            ],
+            "source": "measured"
+          }
+        }
+      ],
+      "ceiling_height_m": {
+        "observed": true,
+        "value": 2.944,
+        "ci90": [
+          2.933,
+          2.956
+        ],
+        "source": "measured"
+      },
+      "floor_area_m2": {
+        "value": 10.028,
+        "ci90": [
+          9.837,
+          10.22
+        ],
+        "source": "measured"
+      },
+      "notes": [
+        {
+          "code": "other",
+          "message": "part of this room has a different ceiling level at 3.06 m (bulkhead or merged space)"
+        }
+      ]
+    },
+    {
+      "id": "R4",
+      "polygon": [
+        [
+          -2.921,
+          -8.927
+        ],
+        [
+          0.078,
+          -8.927
+        ],
+        [
+          0.078,
+          -6.43
+        ],
+        [
+          -0.675,
+          -6.43
+        ],
+        [
+          -0.675,
+          -5.764
+        ],
+        [
+          -2.06,
+          -5.764
+        ],
+        [
+          -2.06,
+          -5.486
+        ],
+        [
+          -4.63,
+          -5.486
+        ],
+        [
+          -4.63,
+          -6.43
+        ],
+        [
+          -2.921,
+          -6.43
+        ]
+      ],
+      "walls": [
+        {
+          "id": "W1",
+          "start": [
+            -2.921,
+            -8.927
+          ],
+          "end": [
+            0.078,
+            -8.927
+          ],
+          "length_m": {
+            "value": 2.999,
+            "ci90": [
+              2.987,
+              3.01
+            ],
+            "source": "measured"
+          },
+          "inferred": false
+        },
+        {
+          "id": "W2",
+          "start": [
+            0.078,
+            -8.927
+          ],
+          "end": [
+            0.078,
+            -6.43
+          ],
+          "length_m": {
+            "value": 2.497,
+            "ci90": [
+              2.332,
+              2.662
+            ],
+            "source": "inferred"
+          },
+          "inferred": false
+        },
+        {
+          "id": "W3",
+          "start": [
+            0.078,
+            -6.43
+          ],
+          "end": [
+            -0.675,
+            -6.43
+          ],
+          "length_m": {
+            "value": 0.753,
+            "ci90": [
+              0.741,
+              0.764
+            ],
+            "source": "inferred"
+          },
+          "inferred": true
+        },
+        {
+          "id": "W4",
+          "start": [
+            -0.675,
+            -6.43
+          ],
+          "end": [
+            -0.675,
+            -5.764
+          ],
+          "length_m": {
+            "value": 0.666,
+            "ci90": [
+              0.501,
+              0.83
+            ],
+            "source": "inferred"
+          },
+          "inferred": false
+        },
+        {
+          "id": "W5",
+          "start": [
+            -0.675,
+            -5.764
+          ],
+          "end": [
+            -2.06,
+            -5.764
+          ],
+          "length_m": {
+            "value": 1.385,
+            "ci90": [
+              1.373,
+              1.397
+            ],
+            "source": "measured"
+          },
+          "inferred": false
+        },
+        {
+          "id": "W6",
+          "start": [
+            -2.06,
+            -5.764
+          ],
+          "end": [
+            -2.06,
+            -5.486
+          ],
+          "length_m": {
+            "value": 0.278,
+            "ci90": [
+              0.266,
+              0.29
+            ],
+            "source": "measured"
+          },
+          "inferred": false
+        },
+        {
+          "id": "W7",
+          "start": [
+            -2.06,
+            -5.486
+          ],
+          "end": [
+            -4.63,
+            -5.486
+          ],
+          "length_m": {
+            "value": 2.57,
+            "ci90": [
+              2.558,
+              2.582
+            ],
+            "source": "measured"
+          },
+          "inferred": false
+        },
+        {
+          "id": "W8",
+          "start": [
+            -4.63,
+            -5.486
+          ],
+          "end": [
+            -4.63,
+            -6.43
+          ],
+          "length_m": {
+            "value": 0.944,
+            "ci90": [
+              0.779,
+              1.108
+            ],
+            "source": "inferred"
+          },
+          "inferred": false
+        },
+        {
+          "id": "W9",
+          "start": [
+            -4.63,
+            -6.43
+          ],
+          "end": [
+            -2.921,
+            -6.43
+          ],
+          "length_m": {
+            "value": 1.709,
+            "ci90": [
+              1.698,
+              1.721
+            ],
+            "source": "inferred"
+          },
+          "inferred": true
+        },
+        {
+          "id": "W10",
+          "start": [
+            -2.921,
+            -6.43
+          ],
+          "end": [
+            -2.921,
+            -8.927
+          ],
+          "length_m": {
+            "value": 2.497,
+            "ci90": [
+              2.332,
+              2.662
+            ],
+            "source": "inferred"
+          },
+          "inferred": false
+        }
+      ],
+      "openings": [
+        {
+          "id": "O8",
+          "wall": "W1",
+          "type": "window",
+          "offset_m": {
+            "value": 1.091,
+            "ci90": [
+              1.062,
+              1.12
+            ],
+            "source": "measured"
+          },
+          "width_m": {
+            "value": 0.76,
+            "ci90": [
+              0.719,
+              0.801
+            ],
+            "source": "measured"
+          }
+        },
+        {
+          "id": "O9",
+          "wall": "W2",
+          "type": "window",
+          "offset_m": {
+            "value": 0.567,
+            "ci90": [
+              0.538,
+              0.596
+            ],
+            "source": "measured"
+          },
+          "width_m": {
+            "value": 0.7,
+            "ci90": [
+              0.659,
+              0.741
+            ],
+            "source": "measured"
+          }
+        },
+        {
+          "id": "O10",
+          "wall": "W2",
+          "type": "window",
+          "offset_m": {
+            "value": 1.747,
+            "ci90": [
+              1.718,
+              1.776
+            ],
+            "source": "measured"
+          },
+          "width_m": {
+            "value": 0.68,
+            "ci90": [
+              0.639,
+              0.721
+            ],
+            "source": "measured"
+          }
+        },
+        {
+          "id": "O11",
+          "wall": "W7",
+          "type": "door",
+          "offset_m": {
+            "value": 1.69,
+            "ci90": [
+              1.661,
+              1.719
+            ],
+            "source": "measured"
+          },
+          "width_m": {
+            "value": 0.72,
+            "ci90": [
+              0.679,
+              0.761
+            ],
+            "source": "measured"
+          }
+        },
+        {
+          "id": "O12",
+          "wall": "W9",
+          "type": "door",
+          "offset_m": {
+            "value": 0.078,
+            "ci90": [
+              0.064,
+              0.092
+            ],
+            "source": "measured"
+          },
+          "width_m": {
+            "value": 0.585,
+            "ci90": [
+              0.565,
+              0.605
+            ],
+            "source": "measured"
+          }
+        }
+      ],
+      "ceiling_height_m": {
+        "observed": true,
+        "value": 3.073,
+        "ci90": [
+          3.061,
+          3.084
+        ],
+        "source": "measured"
+      },
+      "floor_area_m2": {
+        "value": 10.836,
+        "ci90": [
+          10.525,
+          11.146
+        ],
+        "source": "measured"
+      },
+      "notes": [
+        {
+          "code": "unobserved_gap",
+          "wall": "W10",
+          "message": "0.58 m gap with nothing observed in or through it; not reported as an opening"
+        }
+      ]
+    },
+    {
+      "id": "R5",
+      "polygon": [
+        [
+          -6.026,
+          -8.95
+        ],
+        [
+          -2.921,
+          -8.95
+        ],
+        [
+          -2.921,
+          -6.521
+        ],
+        [
+          -5,
+          -6.521
+        ],
+        [
+          -5,
+          -6.426
+        ],
+        [
+          -6.026,
+          -6.426
+        ]
+      ],
+      "walls": [
+        {
+          "id": "W1",
+          "start": [
+            -6.026,
+            -8.95
+          ],
+          "end": [
+            -2.921,
+            -8.95
+          ],
+          "length_m": {
+            "value": 3.105,
+            "ci90": [
+              3.093,
+              3.117
+            ],
+            "source": "measured"
+          },
+          "inferred": false
+        },
+        {
+          "id": "W2",
+          "start": [
+            -2.921,
+            -8.95
+          ],
+          "end": [
+            -2.921,
+            -6.521
+          ],
+          "length_m": {
+            "value": 2.428,
+            "ci90": [
+              2.417,
+              2.44
+            ],
+            "source": "measured"
+          },
+          "inferred": false
+        },
+        {
+          "id": "W3",
+          "start": [
+            -2.921,
+            -6.521
+          ],
+          "end": [
+            -5,
+            -6.521
+          ],
+          "length_m": {
+            "value": 2.08,
+            "ci90": [
+              1.915,
+              2.244
+            ],
+            "source": "inferred"
+          },
+          "inferred": false
+        },
+        {
+          "id": "W4",
+          "start": [
+            -5,
+            -6.521
+          ],
+          "end": [
+            -5,
+            -6.426
+          ],
+          "length_m": {
+            "value": 0.095,
+            "ci90": [
+              0.083,
+              0.106
+            ],
+            "source": "inferred"
+          },
+          "inferred": true
+        },
+        {
+          "id": "W5",
+          "start": [
+            -5,
+            -6.426
+          ],
+          "end": [
+            -6.026,
+            -6.426
+          ],
+          "length_m": {
+            "value": 1.025,
+            "ci90": [
+              0.861,
+              1.19
+            ],
+            "source": "inferred"
+          },
+          "inferred": false
+        },
+        {
+          "id": "W6",
+          "start": [
+            -6.026,
+            -6.426
+          ],
+          "end": [
+            -6.026,
+            -8.95
+          ],
+          "length_m": {
+            "value": 2.523,
+            "ci90": [
+              2.512,
+              2.535
+            ],
+            "source": "measured"
+          },
+          "inferred": false
+        }
+      ],
+      "openings": [
+        {
+          "id": "O13",
+          "wall": "W1",
+          "type": "window",
+          "offset_m": {
+            "value": 0.955,
+            "ci90": [
+              0.926,
+              0.984
+            ],
+            "source": "measured"
+          },
+          "width_m": {
+            "value": 0.52,
+            "ci90": [
+              0.479,
+              0.561
+            ],
+            "source": "measured"
+          }
+        }
+      ],
+      "ceiling_height_m": {
+        "observed": true,
+        "value": 2.335,
+        "ci90": [
+          2.324,
+          2.347
+        ],
+        "source": "measured"
+      },
+      "floor_area_m2": {
+        "value": 7.637,
+        "ci90": [
+          7.592,
+          7.683
+        ],
+        "source": "measured"
+      }
+    },
+    {
+      "id": "R6",
+      "polygon": [
+        [
+          -4.998,
+          -0.975
+        ],
+        [
+          -2.916,
+          -0.975
+        ],
+        [
+          -2.916,
+          0.752
+        ],
+        [
+          -4.548,
+          0.752
+        ],
+        [
+          -4.548,
+          0.317
+        ],
+        [
+          -4.998,
+          0.317
+        ]
+      ],
+      "walls": [
+        {
+          "id": "W1",
+          "start": [
+            -4.998,
+            -0.975
+          ],
+          "end": [
+            -2.916,
+            -0.975
+          ],
+          "length_m": {
+            "value": 2.081,
+            "ci90": [
+              2.07,
+              2.093
+            ],
+            "source": "measured"
+          },
+          "inferred": false
+        },
+        {
+          "id": "W2",
+          "start": [
+            -2.916,
+            -0.975
+          ],
+          "end": [
+            -2.916,
+            0.752
+          ],
+          "length_m": {
+            "value": 1.727,
+            "ci90": [
+              1.715,
+              1.738
+            ],
+            "source": "measured"
+          },
+          "inferred": false
+        },
+        {
+          "id": "W3",
+          "start": [
+            -2.916,
+            0.752
+          ],
+          "end": [
+            -4.548,
+            0.752
+          ],
+          "length_m": {
+            "value": 1.632,
+            "ci90": [
+              1.62,
+              1.643
+            ],
+            "source": "measured"
+          },
+          "inferred": false
+        },
+        {
+          "id": "W4",
+          "start": [
+            -4.548,
+            0.752
+          ],
+          "end": [
+            -4.548,
+            0.317
+          ],
+          "length_m": {
+            "value": 0.435,
+            "ci90": [
+              0.423,
+              0.446
+            ],
+            "source": "measured"
+          },
+          "inferred": false
+        },
+        {
+          "id": "W5",
+          "start": [
+            -4.548,
+            0.317
+          ],
+          "end": [
+            -4.998,
+            0.317
+          ],
+          "length_m": {
+            "value": 0.45,
+            "ci90": [
+              0.438,
+              0.461
+            ],
+            "source": "measured"
+          },
+          "inferred": false
+        },
+        {
+          "id": "W6",
+          "start": [
+            -4.998,
+            0.317
+          ],
+          "end": [
+            -4.998,
+            -0.975
+          ],
+          "length_m": {
+            "value": 1.292,
+            "ci90": [
+              1.28,
+              1.304
+            ],
+            "source": "measured"
+          },
+          "inferred": false
+        }
+      ],
+      "openings": [
+        {
+          "id": "O14",
+          "wall": "W1",
+          "type": "door",
+          "offset_m": {
+            "value": 0.747,
+            "ci90": [
+              0.718,
+              0.776
+            ],
+            "source": "measured"
+          },
+          "width_m": {
+            "value": 1.16,
+            "ci90": [
+              1.119,
+              1.201
+            ],
+            "source": "measured"
+          }
+        },
+        {
+          "id": "O15",
+          "wall": "W2",
+          "type": "door",
+          "offset_m": {
+            "value": 0.074,
+            "ci90": [
+              0.045,
+              0.103
+            ],
+            "source": "measured"
+          },
+          "width_m": {
+            "value": 0.88,
+            "ci90": [
+              0.839,
+              0.921
+            ],
+            "source": "measured"
+          }
+        }
+      ],
+      "ceiling_height_m": {
+        "observed": true,
+        "value": 2.257,
+        "ci90": [
+          2.245,
+          2.268
+        ],
+        "source": "measured"
+      },
+      "floor_area_m2": {
+        "value": 3.398,
+        "ci90": [
+          3.37,
+          3.427
+        ],
+        "source": "measured"
+      }
+    }
+  ],
+  "adjacency": [
+    {
+      "rooms": [
+        "R2",
+        "R4"
+      ],
+      "via": [
+        "O3",
+        "O11"
+      ]
+    },
+    {
+      "rooms": [
+        "R4",
+        "R5"
+      ],
+      "via": [
+        "O12"
+      ]
+    },
+    {
+      "rooms": [
+        "R1",
+        "R2"
+      ],
+      "via": [
+        "O16"
+      ]
+    },
+    {
+      "rooms": [
+        "R1",
+        "R3"
+      ],
+      "via": [
+        "O17"
+      ]
+    }
+  ],
+  "footprint_area_m2": {
+    "value": 59.102,
+    "ci90": [
+      58.557,
+      59.647
+    ],
+    "source": "measured"
+  },
+  "damage": [],
+  "concealed_flags": [],
+  "scope": [],
+  "provenance": {
+    "pipeline_version": "0.1.0",
+    "input": "single_scan_with_ceiling/c7d28f72c6",
+    "models": [],
+    "drift_correction": "on",
+    "runtime_s": 42.7
+  },
+  "diagnostics": {
+    "ceilings": [
+      {
+        "coverage": 0.5,
+        "height": 2.414,
+        "observed": true,
+        "other_levels": null,
+        "spread_mm": 10.2,
+        "support": 30924
+      },
+      {
+        "coverage": 0.45,
+        "height": 3.084,
+        "observed": true,
+        "other_levels": [
+          2.420854423401812
+        ],
+        "spread_mm": 11.8,
+        "support": 22683
+      },
+      {
+        "coverage": 0.8,
+        "height": 2.944,
+        "observed": true,
+        "other_levels": [
+          3.0623584559464425
+        ],
+        "spread_mm": 10.1,
+        "support": 38006
+      },
+      {
+        "coverage": 0.85,
+        "height": 3.073,
+        "observed": true,
+        "other_levels": null,
+        "spread_mm": 9.1,
+        "support": 39355
+      },
+      {
+        "coverage": 1,
+        "height": 2.335,
+        "observed": true,
+        "other_levels": null,
+        "spread_mm": 8.5,
+        "support": 25703
+      },
+      {
+        "coverage": 1,
+        "height": 2.257,
+        "observed": true,
+        "other_levels": null,
+        "spread_mm": 7.2,
+        "support": 13851
+      }
+    ],
+    "floor_residual_mm": 7.6,
+    "floor_tilt_deg": 0.002,
+    "frames": 9745,
+    "fused_points": 3394866,
+    "manhattan_deg": 61.72,
+    "manhattan_support": 0.632,
+    "room_regions_m2": [
+      15.39,
+      11.53,
+      10.43,
+      10.86,
+      5.97,
+      3.08
+    ],
+    "trajectory_length_m": 100.1
+  }
+}
