@@ -15,11 +15,15 @@ Handheld phone capture in, dimensioned floor plan out. One command per capture, 
 
 ![High-level design](docs/img/high_level_design.png)
 
+How the code is organised (modules, Go and Python processes, files):
+
+![Software architecture](docs/img/architecture.png)
+
 What is built today, with status and measured results:
 
 ![What is built](docs/img/as_built.png)
 
-Regenerate the pictures with `scripts/draw_hld.py` and `scripts/draw_as_built.py`.
+Regenerate the pictures with `scripts/draw_hld.py`, `scripts/draw_architecture.py` and `scripts/draw_as_built.py`.
 
 ## Quick start
 

@@ -66,6 +66,8 @@ The two `single_scan_*` captures share the same layout (central corridor, same b
 
 ![High-level design](docs/img/high_level_design.png)
 
+![Software architecture](docs/img/architecture.png)
+
 ```mermaid
 flowchart LR
     subgraph Ingest
