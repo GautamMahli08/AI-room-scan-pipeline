@@ -39,3 +39,6 @@ Thumbs.db
 
 # Personal defence notes (not part of the submission)
 /GUIDING.md
+
+# Your own test captures (videos, photos, scans): local only
+/captures/
