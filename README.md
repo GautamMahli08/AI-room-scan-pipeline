@@ -13,17 +13,10 @@ Handheld phone capture in, dimensioned floor plan out. One command per capture, 
 | Architecture | [SYSTEM_DESIGN.md](SYSTEM_DESIGN.md) |
 | What is not built yet, and how it would be | [docs/FUTURE_SCOPE.md](docs/FUTURE_SCOPE.md) |
 
+See the Full Picture How its Works
 ![High-level design](https://github.com/GautamMahli08/AI-room-scan-pipeline/blob/main/Architecture-Full%20Picure.png))
 
-How the code is organised (modules, Go and Python processes, files):
 
-![Software architecture](docs/img/architecture.png)
-
-What is built today, with status and measured results:
-
-![What is built](docs/img/as_built.png)
-
-Regenerate the pictures with `scripts/draw_hld.py`, `scripts/draw_architecture.py` and `scripts/draw_as_built.py`.
 
 ## Quick start
 
