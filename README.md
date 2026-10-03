@@ -60,8 +60,8 @@ The samples (`single_room/`, `single_scan_floor_only/`, `single_scan_with_ceilin
 | Tier | State | On the samples |
 |---|---|---|
 | **LiDAR** | Complete: rooms, walls, openings, ceilings, adjacency, drift correction with ablation, intervals | Runs on all three samples: geometry 7–56 s on CPU, plus 20–100 s for damage detection on GPU; see [BENCHMARK](docs/BENCHMARK.md) |
-| **Video** | Runs end to end (VGGT + Depth Pro → LiDAR pipeline); always outputs a plan | Not accurate: metric scale within ~18%, the trajectory bends over a long walk, walls are not fitted, so rooms are outlined from free space with every wall inferred. `single_room` footprint −23% vs LiDAR |
-| **Photo** | Runs end to end, including doorway linking and stitching; always outputs a plan | Not accurate: cameras within 16 cm and scale within 8% of ARKit for one room, but walls are not fitted (all inferred). One-room footprint +42% vs LiDAR |
+| **Video** | Runs end to end (VGGT + Depth Pro → LiDAR pipeline); always outputs a plan | Not accurate: metric scale within ~18%, the trajectory bends over a long walk, walls are not fitted, so each room is a rectangle over the floor seen, with every wall inferred. `single_room` footprint 13.1 m² vs 25.0 m² from LiDAR (−48%), inside its lopsided interval [10.5, 28.8] |
+| **Photo** | Runs end to end, including doorway linking and stitching; always outputs a plan | Not accurate: cameras within 16 cm and scale within 8% of ARKit for one room, but walls are not fitted (all inferred); 2 of 4 rooms linked. Footprint 14.0 m² vs 26.9 m² from LiDAR for the same two rooms (−48%), inside its interval [11.2, 30.9] |
 | **Damage** | OWLv2 detection on video frames → projected onto walls/floor/ceiling through LiDAR depth → merged across views → concealed-damage rules → scope items (LiDAR tier) | The one real defect in the samples (a bathroom wall crack) is found in `single_room` (right wall, right shape), mislabelled as a water stain in `floor_only`, missed in `with_ceiling` |
 
 The video and photo tiers fail honestly. They report wide intervals, or no rooms, rather than confident wrong numbers.

@@ -206,7 +206,7 @@ As built ([ml/video_recon.py](ml/video_recon.py)); the measurements behind each 
 2. **Orientation.** Sideways video is detected: straight-line directions pick the vertical axis and depth ordering picks the sign. Frames are rotated upright for the models.
 3. **Poses and depth.** VGGT-1B on 8-frame chunks (fits 4 GB with the aggregator in fp16), chained by a similarity fitted on shared frames. Incremental SfM (COLMAP) was tried and registered only 49 of 223 frames, because people pan in place.
 4. **Metric scale.** Apple Depth Pro, rescaled by (VGGT focal / Depth Pro focal). Depth Anything V2 Metric read 1.5–2.0× deep on these frames; focal-corrected Depth Pro reads 0.97–1.12× LiDAR. The scale uncertainty (from the spread across frames, with a 6% bias floor) is added to every interval.
-5. **Geometry.** The export goes through the same Go pipeline, with fusion and the plan raster adapted to noisy model depth (4 cm voxels, one view, 5 cm raster). Rooms whose walls cannot be fitted are outlined from free space, with every wall inferred.
+5. **Geometry.** The export goes through the same Go pipeline, with fusion and the plan raster adapted to noisy model depth (4 cm voxels, one view, 5 cm raster). Rooms whose walls cannot be fitted are drawn as a Manhattan rectangle over the floor actually seen, with every wall inferred and a lopsided interval ([0.8×, 2.2×] for area), because the floor seen underestimates the room. Overlapping rectangles are split.
 
 **Status:** runs end to end, not accurate. Chunk chaining accumulates to 70 cm and 18% scale over 14.6 m, so walls are not fitted. Global alignment of the chunks (loop closure plus a pose graph) is the identified next step.
 
@@ -225,7 +225,7 @@ As built ([ml/photo_recon.py](ml/photo_recon.py)):
 3. **Whole-property stitch.** SIFT + fundamental-matrix inliers between photos of different rooms find the doorway photos. Each linked pair of rooms is reconstructed jointly, giving a gravity-preserving yaw + translation between the room frames. Rooms are placed along a maximum spanning tree, and rooms with no link are reported as unplaced, not guessed.
 4. **Export** as one capture through the Go pipeline (same as the video tier).
 
-**Status:** runs end to end, not accurate. For one room, VGGT's cameras match ARKit within 16 cm and scale within 8%, but walls are not fitted from 6 views of model depth, so the room is outlined from free space (footprint +42% vs LiDAR).
+**Status:** runs end to end, not accurate. For one room, VGGT's cameras match ARKit within 16 cm and scale within 8%, but walls are not fitted from 6 views of model depth, so rooms are rectangles over the floor seen (2 linked rooms: 14.0 m² vs 26.9 m² from LiDAR, −48%, inside the lopsided interval).
 
 **Target gate:** wall lengths and footprint within ±8%, with calibrated intervals.
 
@@ -320,7 +320,7 @@ Stated plainly so nothing is overclaimed:
 - **All tiers are evaluated only on the three sample captures**, as agreed with the hiring team. No captures of my own are added.
 - **Limited data variety.** The pipeline has only been exercised on the sample captures, from one phone in a small number of rooms. Performance on other phones and spaces (the walk-in test) is untested; the loaders accept native iPhone formats to reduce this risk.
 - **Photo and Video inputs are derived from the sample video.** A scanning video mostly looks at nearby walls, so the photo sets favour wide views (`scripts/make_photo_sets.py`). Even so, they are harder than photos a person would take for the protocol, so photo-tier results here are probably pessimistic.
-- **Video and photo tiers are not accurate** on the samples (footprint −23% and +42% vs LiDAR, walls inferred). See §5–6.
+- **Video and photo tiers are not accurate** on the samples (footprints −48% for both vs LiDAR, walls inferred; the lopsided intervals of the fallback outlines contain the LiDAR value, but they are set from these same two cases). See §5–6.
 - **Damage is evaluated on a single real defect:** a bathroom wall crack, found in 1 of 3 captures correctly, in 1 with the wrong class, and missed in 1. The first version missed it entirely; see [docs/BENCHMARK.md](docs/BENCHMARK.md). Other classes are tested only synthetically.
 - **Ground truth:** none is included in the zips. Without it, results rely on cross-tier comparison against LiDAR, internal consistency (plane-fit residuals, repeatability across samples), and convention/scale checks. Requested from the team.
 - **Multi-room coverage is one property.** Stitching, adjacency and drift are exercised on two scans of the same property, not on a variety of layouts.

@@ -212,27 +212,49 @@ func mergeJogs(lines []Line, axes []Orientation, fits []WallFit) ([]Line, []Orie
 // every wall is reported as inferred, so it carries the wide inferred-wall
 // interval. A rough, honestly uncertain outline is more useful than
 // dropping the room.
+//
+// The outline is a Manhattan-aligned rectangle over the 5th-95th
+// percentile extent of the cells where floor was actually seen. Tracing
+// the region itself was tried first: with few views the region is made of
+// fans of space carved free from each camera, and its outline came out as
+// a ~50-edge star no one would recognise as a room.
 func FallbackShape(r *Rasters, cells []int) *RoomShape {
-	mask := cleanRegion(r, cells, openRadius)
-	poly := douglasPeucker(traceBoundary(r, mask), 0.10)
-	if len(poly) < 3 {
+	var xs, ys []float64
+	for _, i := range cells {
+		if r.Floor[i] > 0 {
+			x, y := r.Center(i%r.W, i/r.W)
+			xs, ys = append(xs, x), append(ys, y)
+		}
+	}
+	if len(xs) < 50 { // too little floor seen: use the whole region
+		xs, ys = xs[:0], ys[:0]
+		for _, i := range cells {
+			x, y := r.Center(i%r.W, i/r.W)
+			xs, ys = append(xs, x), append(ys, y)
+		}
+	}
+	if len(xs) == 0 {
 		return nil
 	}
-	es := regularize(edgeLines(poly))
-	if len(es) < 3 {
+	sort.Float64s(xs)
+	sort.Float64s(ys)
+	pct := func(v []float64, p float64) float64 { return v[int(p*float64(len(v)-1))] }
+	x0, x1, y0, y1 := pct(xs, 0.05), pct(xs, 0.95), pct(ys, 0.05), pct(ys, 0.95)
+	if (x1-x0)*(y1-y0) < 1.0 {
 		return nil
 	}
-	lines := make([]Line, len(es))
-	fits := make([]WallFit, len(es))
-	for i, e := range es {
-		lines[i] = e.l
-		fits[i] = WallFit{Line: e.l, Axis: e.axis, Inferred: true}
+	lines := []Line{
+		{N: Pt{0, -1}, C: -y0}, // bottom, travelling +x
+		{N: Pt{1, 0}, C: x1},   // right, +y
+		{N: Pt{0, 1}, C: y1},   // top, -x
+		{N: Pt{-1, 0}, C: -x0}, // left, -y
 	}
-	corners := intersectAll(lines)
-	if math.Abs(PolygonArea(corners)) < 1.0 {
-		return nil
+	axes := []Orientation{OrientH, OrientV, OrientH, OrientV}
+	fits := make([]WallFit, 4)
+	for i := range lines {
+		fits[i] = WallFit{Line: lines[i], Axis: axes[i], Inferred: true}
 	}
-	return &RoomShape{Corners: corners, Walls: fits}
+	return &RoomShape{Corners: []Pt{{x0, y0}, {x1, y0}, {x1, y1}, {x0, y1}}, Walls: fits}
 }
 
 // edge is a polygon edge as a line plus the vertex it starts at.
@@ -528,4 +550,60 @@ func dropCollinear(p []Pt) []Pt {
 		}
 	}
 	return out
+}
+
+// SeparateFallbacks removes overlaps between fallback rectangles (rooms
+// with every wall inferred): the overlap is split down its middle along
+// its narrower side, so the rooms share a boundary instead of covering
+// each other. Fitted rooms are never moved.
+func SeparateFallbacks(shapes []*RoomShape) {
+	isRect := func(s *RoomShape) bool {
+		if s == nil || len(s.Corners) != 4 {
+			return false
+		}
+		for _, w := range s.Walls {
+			if !w.Inferred {
+				return false
+			}
+		}
+		return true
+	}
+	box := func(s *RoomShape) (x0, y0, x1, y1 float64) {
+		return s.Corners[0].X, s.Corners[0].Y, s.Corners[2].X, s.Corners[2].Y
+	}
+	set := func(s *RoomShape, x0, y0, x1, y1 float64) {
+		s.Corners = []Pt{{x0, y0}, {x1, y0}, {x1, y1}, {x0, y1}}
+		s.Walls[0].Line.C, s.Walls[1].Line.C, s.Walls[2].Line.C, s.Walls[3].Line.C = -y0, x1, y1, -x0
+	}
+	for i := range shapes {
+		for j := i + 1; j < len(shapes); j++ {
+			if !isRect(shapes[i]) || !isRect(shapes[j]) {
+				continue
+			}
+			ax0, ay0, ax1, ay1 := box(shapes[i])
+			bx0, by0, bx1, by1 := box(shapes[j])
+			ox := math.Min(ax1, bx1) - math.Max(ax0, bx0)
+			oy := math.Min(ay1, by1) - math.Max(ay0, by0)
+			if ox <= 0 || oy <= 0 {
+				continue
+			}
+			if ox <= oy { // split along x
+				mid := (math.Max(ax0, bx0) + math.Min(ax1, bx1)) / 2
+				if ax0+ax1 < bx0+bx1 {
+					ax1, bx0 = mid, mid
+				} else {
+					bx1, ax0 = mid, mid
+				}
+			} else {
+				mid := (math.Max(ay0, by0) + math.Min(ay1, by1)) / 2
+				if ay0+ay1 < by0+by1 {
+					ay1, by0 = mid, mid
+				} else {
+					by1, ay0 = mid, mid
+				}
+			}
+			set(shapes[i], ax0, ay0, ax1, ay1)
+			set(shapes[j], bx0, by0, bx1, by1)
+		}
+	}
 }

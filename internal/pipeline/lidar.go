@@ -251,7 +251,8 @@ func extract(c *strayscanner.Capture, opt Options, outDir string, logf func(stri
 		}
 	}
 	if fallback > 0 {
-		logf("plan: %d room(s) without fitted walls outlined from free space (all walls inferred)", fallback)
+		geometry.SeparateFallbacks(shapes)
+		logf("plan: %d room(s) without fitted walls outlined from the floor seen (rectangle, all walls inferred)", fallback)
 	}
 	g := &scene{
 		pts: len(pts), floor: floor, pf: pf, support: support, regions: regions, shapes: shapes,
@@ -328,10 +329,16 @@ func assemble(id, tier string, scaleRel float64, calibrate bool, floor geometry.
 	openingID := 0
 	floorSig := calib.FaceSigma(floor.Residual, floor.Inliers, calib.LiDARHeightSys)
 	var footVar, footArea float64
+	var footLo, footHi float64 // sum of room interval bounds, used when any room is a fallback
+	anyFallback := false
 
 	for ri, s := range shapes {
 		if s == nil {
 			continue
+		}
+		fallback := true // every wall inferred: outlined from the floor seen
+		for _, w := range s.Walls {
+			fallback = fallback && w.Inferred
 		}
 		rid := fmt.Sprintf("R%d", len(p.Rooms)+1)
 		roomID[ri] = rid
@@ -353,9 +360,13 @@ func assemble(id, tier string, scaleRel float64, calibrate bool, floor geometry.
 			if s.Walls[i].Inferred || s.Walls[(i-1+n)%n].Inferred || s.Walls[(i+1)%n].Inferred {
 				src = "inferred"
 			}
+			lm := meas(l, ls, src)
+			if fallback {
+				lm = lowerBoundInterval(l, fallbackLengthHi, "inferred")
+			}
 			room.Walls = append(room.Walls, output.Wall{
 				ID: fmt.Sprintf("W%d", i+1), Start: [2]float64{round(a.X, 3), round(a.Y, 3)}, End: [2]float64{round(b.X, 3), round(b.Y, 3)},
-				LengthM:  meas(l, ls, src),
+				LengthM:  lm,
 				Inferred: s.Walls[i].Inferred,
 			})
 			room.Polygon = append(room.Polygon, [2]float64{round(a.X, 3), round(a.Y, 3)})
@@ -363,8 +374,14 @@ func assemble(id, tier string, scaleRel float64, calibrate bool, floor geometry.
 		}
 		area := geometry.PolygonArea(s.Corners)
 		room.FloorAreaM2 = measArea(area, math.Sqrt(areaVar), "measured")
+		if fallback {
+			room.FloorAreaM2 = lowerBoundInterval(area, fallbackAreaHi, "inferred")
+			anyFallback = true
+		}
 		footArea += area
 		footVar += areaVar
+		footLo += room.FloorAreaM2.CI90[0]
+		footHi += room.FloorAreaM2.CI90[1]
 
 		cl := ceilings[ri]
 		if cl.Observed {
@@ -449,6 +466,9 @@ func assemble(id, tier string, scaleRel float64, calibrate bool, floor geometry.
 		p.Adjacency = append(p.Adjacency, output.Adjacency{Rooms: [2]string{k[0], k[1]}, Via: adj[k]})
 	}
 	p.FootprintAreaM2 = measArea(footArea, math.Sqrt(footVar), "measured")
+	if anyFallback {
+		p.FootprintAreaM2 = output.Measurement{Value: round(footArea, 3), CI90: [2]float64{round(footLo, 3), round(footHi, 3)}, Source: "inferred"}
+	}
 	return p
 }
 
@@ -495,4 +515,18 @@ func models(m strayscanner.Meta) []output.Model {
 		out = append(out, output.Model{Name: x.Name, Version: x.Version})
 	}
 	return out
+}
+
+// A fallback room is the rectangle of the floor actually seen, so it is
+// close to a lower bound: furniture and unseen corners hide floor. Its
+// interval is lopsided, [0.8x, hi x]. The upper factors come from the
+// only two measured cases (single_room video and the photo set: true
+// area / estimate = 1.91 and 1.92), which is a very small calibration set.
+const (
+	fallbackAreaHi   = 2.2
+	fallbackLengthHi = 1.6
+)
+
+func lowerBoundInterval(v, hi float64, src string) output.Measurement {
+	return output.Measurement{Value: round(v, 3), CI90: [2]float64{round(0.8*v, 3), round(hi*v, 3)}, Source: src}
 }

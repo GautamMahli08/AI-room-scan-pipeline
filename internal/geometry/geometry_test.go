@@ -246,3 +246,22 @@ func TestRemoveSmallFeatures(t *testing.T) {
 		t.Errorf("area %v, want 12.5", a)
 	}
 }
+
+func TestSeparateFallbacks(t *testing.T) {
+	rect := func(x0, y0, x1, y1 float64) *RoomShape {
+		s := &RoomShape{Walls: make([]WallFit, 4)}
+		for i := range s.Walls {
+			s.Walls[i].Inferred = true
+		}
+		s.Corners = []Pt{{x0, y0}, {x1, y0}, {x1, y1}, {x0, y1}}
+		return s
+	}
+	a, b := rect(0, 0, 3, 4), rect(2, 1, 5, 3) // overlap 1 m wide in x, 2 m tall
+	SeparateFallbacks([]*RoomShape{a, b})
+	if a.Corners[2].X != 2.5 || b.Corners[0].X != 2.5 {
+		t.Fatalf("got a %v b %v, want both split at x = 2.5", a.Corners, b.Corners)
+	}
+	if a.Walls[1].Line.C != 2.5 || b.Walls[3].Line.C != -2.5 {
+		t.Errorf("wall lines not updated: %v %v", a.Walls[1].Line, b.Walls[3].Line)
+	}
+}
