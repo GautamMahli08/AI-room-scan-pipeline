@@ -15,7 +15,11 @@ Handheld phone capture in, dimensioned floor plan out. One command per capture, 
 
 ![High-level design](docs/img/high_level_design.png)
 
-Regenerate the picture with `scripts/draw_hld.py`.
+What is built today, with status and measured results:
+
+![What is built](docs/img/as_built.png)
+
+Regenerate the pictures with `scripts/draw_hld.py` and `scripts/draw_as_built.py`.
 
 ## Quick start
 
