@@ -17,8 +17,17 @@ import (
 	"roomscan/internal/output"
 )
 
-// damageEvery is the frame spacing of damage detection (~2 s at 46 fps).
-const damageEvery = 90
+// detectorVersion is part of the detection cache key; bump it whenever
+// ml/damage_detect.py changes what it outputs (2: fixed the mapping of
+// boxes from upright frames back to the original frame; 3: bathroom
+// fixture distractors).
+const detectorVersion = 3
+
+// damageEvery is the frame spacing of damage detection (~1 s at 46 fps).
+// A hairline crack stays in view for only a few seconds, and a region must
+// be seen in two frames: at 90 (~2 s) the single_room bathroom crack was
+// seen in one frame only.
+const damageEvery = 45
 
 // detectDamage runs the detector on every damageEvery-th frame of the
 // capture's video (cached), then places, merges and rules the detections.
@@ -48,7 +57,7 @@ func detectDamage(c *strayscanner.Capture, g *scene, outDir string, live bool, l
 		return nil, nil
 	}
 	detPath := filepath.Join(dir, "detections.json")
-	key := fmt.Sprintf("%s|rot=%d|%s", video, rot, strings.Join(idx, ","))
+	key := fmt.Sprintf("%s|rot=%d|detector=%d|%s", video, rot, detectorVersion, strings.Join(idx, ","))
 	st, _ := stamp(video)
 	keyPath := filepath.Join(dir, "input.json")
 	cached := false

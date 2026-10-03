@@ -143,6 +143,8 @@ Two earlier hypotheses were tested and rejected before declaring:
 - **Place:** each surviving box is projected through LiDAR depth onto the wall (within 25 cm of its face), floor or ceiling, then merged across views. Only regions seen in at least 2 frames are reported.
 - **Rules:** R-WET-CEIL-01, R-WALL-BASE-01 and R-CRACK-DIAG-01 raise concealed-damage flags. Scope items are generated per class (m², m or each) and linked to their damage and flags.
 
-On the undamaged samples, 226 raw detections give **0 reports**. Recall is untested on real damage; the projection and rules are tested synthetically.
+The samples contain one real defect, a hairline crack on the bathroom wall. A human reviewer spotted it after the first version had missed it, and the miss drove four fixes: a hairline-specific prompt (0.20 → 0.50), denser sampling, score hysteresis, and a unit-tested fix to the box coordinate mapping.
+
+Now the crack is found in `single_room` on the right wall with the right shape (0.11 × 0.74 m). In `floor_only` it is reported as a water stain, contaminated by marble veining. In `with_ceiling` it is missed. Rules and scope are also tested synthetically.
 
 **Not implemented:** damage at the video and photo tiers, and the head-to-head against a consumer app (needs a LiDAR device in the same rooms).

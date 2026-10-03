@@ -23,7 +23,9 @@ import numpy as np
 PROMPTS = {
     "water_stain": ["a water stain on a wall", "a brown water stain on a ceiling", "water damage"],
     "mould": ["black mould on a wall", "mold growth"],
-    "crack": ["a crack in a wall", "a cracked plaster wall"],
+    # "thin hairline" matters: on the single_room bathroom crack the generic
+    # phrases score 0.20 on wall-sized boxes, this one 0.50 on the crack.
+    "crack": ["a thin hairline crack in a white wall", "a crack in a wall", "a cracked plaster wall"],
     "peeling_paint": ["peeling paint", "flaking paint on a wall"],
     "hole": ["a hole in a wall", "a damaged hole in drywall"],
 }
@@ -31,7 +33,9 @@ PROMPTS = {
 # A box whose best phrase is a distractor is dropped, and so are damage
 # boxes overlapping it.
 DISTRACTORS = ["a potted plant", "a curtain", "a shadow on a wall", "a light switch", "a picture frame",
-               "a piece of furniture", "a door", "a window", "a person"]
+               "a piece of furniture", "a door", "a window", "a person",
+               # bathroom fixtures: marble veining was read as a water stain in floor_only
+               "a marble countertop", "a bathroom sink", "a toilet", "a trash bin", "a mirror"]
 ROT = {1: cv2.ROTATE_90_CLOCKWISE, 2: cv2.ROTATE_180, 3: cv2.ROTATE_90_COUNTERCLOCKWISE}
 
 
@@ -42,15 +46,33 @@ def log(*a):
 def unrotate_box(box, rot, w, h):
     """Map a box from the rotated (upright) image back to the original
     w x h frame. rot = clockwise quarter turns applied to the original."""
+    # Clockwise turn: original (x, y) -> upright (h-1-y, x). Inverse: x = y_up, y = h-1-x_up.
+    # Counter-clockwise: original (x, y) -> upright (y, w-1-x). Inverse: x = w-1-y_up, y = x_up.
     x0, y0, x1, y1 = box
     pts = np.array([[x0, y0], [x1, y0], [x0, y1], [x1, y1]], float)
-    if rot == 1:      # original = rotate upright counter-clockwise
-        pts = np.stack([pts[:, 1], w - 1 - pts[:, 0]], 1)
+    if rot == 1:
+        pts = np.stack([pts[:, 1], h - 1 - pts[:, 0]], 1)
     elif rot == 2:
         pts = np.stack([w - 1 - pts[:, 0], h - 1 - pts[:, 1]], 1)
     elif rot == 3:
-        pts = np.stack([h - 1 - pts[:, 1], pts[:, 0]], 1)
+        pts = np.stack([w - 1 - pts[:, 1], pts[:, 0]], 1)
     return [float(pts[:, 0].min()), float(pts[:, 1].min()), float(pts[:, 0].max()), float(pts[:, 1].max())]
+
+
+def _self_test():
+    """A box marked on a w x h frame must come back to the same place after
+    rotating the frame and mapping the rotated box back."""
+    import cv2
+    h, w = 1440, 1920
+    box = (300, 200, 700, 260)  # x0, y0, x1, y1 in the original
+    for rot in (1, 2, 3):
+        img = np.zeros((h, w), np.uint8)
+        img[box[1]:box[3] + 1, box[0]:box[2] + 1] = 255
+        up = cv2.rotate(img, ROT[rot])
+        ys, xs = np.nonzero(up)
+        back = unrotate_box([xs.min(), ys.min(), xs.max(), ys.max()], rot, w, h)
+        assert np.allclose(back, box), (rot, back, box)
+    print("unrotate_box self-test passed")
 
 
 def iou(a, b):

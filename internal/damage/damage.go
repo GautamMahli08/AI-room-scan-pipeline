@@ -50,12 +50,23 @@ func (r Region) Area() float64   { return r.Width() * r.Height() }
 
 // Thresholds: precision over recall, so that an undamaged room reports
 // nothing rather than confident false damage.
+//
+// Hysteresis (as in edge detection): every detection scoring at least
+// SupportScore is placed, but a region is reported only if its best view
+// scores at least MinScore and at least MinViews frames put it on the same
+// spot of the same surface. Open-vocabulary scores jitter between
+// neighbouring frames (the single_room bathroom crack: 0.21, 0.29, 0.51 on
+// three consecutive samples), while false alarms on plain walls rarely land
+// on the same surface spot twice.
 const (
-	MinScore     = 0.35 // detector score
+	MinScore     = 0.35 // best view of a reported region
+	SupportScore = 0.20 // a view counts as support from this score
 	MinViews     = 2    // distinct frames seeing the same region
 	wallDist     = 0.25 // projected points within this of a wall face
 	mergeSlack   = 0.10 // regions closer than this on a surface merge
 	maxArea      = 4.0  // m²; larger "damage" is a whole surface misfire
+	onSurface    = 0.06 // m; a point is on the surface within this distance
+	minOnSurface = 0.5  // share of a region's points that must be on the surface
 	minPixelHits = 20   // depth pixels inside a box needed to place it
 )
 
@@ -72,7 +83,7 @@ func Place(dets []Detection, src Source, frameIndex map[int]int, rgbW, rgbH int,
 	shapes []*geometry.RoomShape, ceilings []geometry.Ceiling) []Region {
 	var regions []Region
 	for _, d := range dets {
-		if d.Score < MinScore {
+		if d.Score < SupportScore {
 			continue
 		}
 		pos, ok := frameIndex[d.Frame]
@@ -88,7 +99,7 @@ func Place(dets []Detection, src Source, frameIndex map[int]int, rgbW, rgbH int,
 	var out []Region
 	for _, r := range regions {
 		r.Views = len(r.frames)
-		if r.Views >= MinViews {
+		if r.Views >= MinViews && r.Score >= MinScore {
 			out = append(out, r)
 		}
 	}
@@ -156,10 +167,16 @@ func project(d Detection, src Source, pos, rgbW, rgbH int, pf geometry.PlanFrame
 	}
 	switch {
 	case ch < 0.05:
+		if fracWithin(hs, 0, onSurface) < minOnSurface {
+			return Region{}, false
+		}
 		r.Surface = Surface{room, SurfFloor}
 		r.U0, r.U1, r.V0, r.V1 = q(xs, 0.1), q(xs, 0.9), q(ys, 0.1), q(ys, 0.9)
 		return r, true
 	case ch > ceil-0.15:
+		if q(hs, 0.9)-q(hs, 0.1) > 2*onSurface {
+			return Region{}, false // not a flat layer
+		}
 		r.Surface = Surface{room, SurfCeiling}
 		r.U0, r.U1, r.V0, r.V1 = q(xs, 0.1), q(xs, 0.9), q(ys, 0.1), q(ys, 0.9)
 		return r, true
@@ -177,6 +194,18 @@ func project(d Detection, src Source, pos, rgbW, rgbH int, pf geometry.PlanFrame
 	}
 	if best < 0 {
 		return Region{}, false // on furniture, not a surface
+	}
+	// Most of the region's points must lie in the wall face itself: a
+	// countertop or shelf against the wall has its median near the wall
+	// but its points stick out (marble veining read as a water stain in
+	// floor_only).
+	wl := s.Walls[best].Line
+	ds := make([]float64, len(pts))
+	for i, p := range pts {
+		ds[i] = wl.N.Dot(geometry.Pt{X: p.x, Y: p.y}) - wl.C
+	}
+	if fracWithin(ds, q(ds, 0.5), onSurface) < minOnSurface {
+		return Region{}, false
 	}
 	a, b := s.Corners[best], s.Corners[(best+1)%len(s.Corners)]
 	u := b.Sub(a).Scale(1 / b.Sub(a).Norm())
@@ -217,4 +246,15 @@ func q(v []float64, p float64) float64 {
 	s := append([]float64{}, v...)
 	sort.Float64s(s)
 	return s[int(p*float64(len(s)-1))]
+}
+
+// fracWithin is the share of v within tol of centre.
+func fracWithin(v []float64, centre, tol float64) float64 {
+	n := 0
+	for _, x := range v {
+		if math.Abs(x-centre) <= tol {
+			n++
+		}
+	}
+	return float64(n) / float64(len(v))
 }

@@ -321,7 +321,7 @@ Stated plainly so nothing is overclaimed:
 - **Limited data variety.** The pipeline has only been exercised on the sample captures, from one phone in a small number of rooms. Performance on other phones and spaces (the walk-in test) is untested; the loaders accept native iPhone formats to reduce this risk.
 - **Photo and Video inputs are derived from the sample video.** A scanning video mostly looks at nearby walls, so the photo sets favour wide views (`scripts/make_photo_sets.py`). Even so, they are harder than photos a person would take for the protocol, so photo-tier results here are probably pessimistic.
 - **Video and photo tiers are not accurate** on the samples (footprint −23% and +42% vs LiDAR, walls inferred). See §5–6.
-- **Damage recall is untested:** the samples have no damage. Precision on undamaged rooms is measured (226 raw detections → 0 reported); the placement and rules are tested synthetically.
+- **Damage is evaluated on a single real defect:** a bathroom wall crack, found in 1 of 3 captures correctly, in 1 with the wrong class, and missed in 1. The first version missed it entirely; see [docs/BENCHMARK.md](docs/BENCHMARK.md). Other classes are tested only synthetically.
 - **Ground truth:** none is included in the zips. Without it, results rely on cross-tier comparison against LiDAR, internal consistency (plane-fit residuals, repeatability across samples), and convention/scale checks. Requested from the team.
 - **Multi-room coverage is one property.** Stitching, adjacency and drift are exercised on two scans of the same property, not on a variety of layouts.
 - **Ceiling repeatability** cannot be measured: only one sample scanned the ceiling.

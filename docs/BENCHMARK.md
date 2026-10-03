@@ -12,7 +12,7 @@ The case study asks for a self-built benchmark: a multi-room capture, a room wit
 | Same room captured twice at the same tier | ✅ The property is scanned twice; `single_room` overlaps it a third time |
 | Same rooms at all three tiers | ✅ Video and photo inputs are derived from the same captures (frames from `rgb.mp4`; photo folders built by `scripts/make_photo_sets.py`) |
 | Laser / tape ground truth | ❌ None exists. Reference = the LiDAR result, independent repeat captures, and synthetic scenes with exact ground truth |
-| Staged damage (two classes) | ❌ No damage in the samples, so only precision on undamaged rooms can be measured (below) |
+| Staged damage (two classes) | ⚠️ No staged damage. The samples contain one real defect (a bathroom wall crack), used below |
 | Head-to-head vs a consumer app (Part 3) | ❌ Needs the same rooms scanned with Polycam/magicplan; the rooms and a LiDAR device were not available. Not attempted, rather than faked. |
 
 ## Gates: LiDAR tier
@@ -51,15 +51,22 @@ The resulting wall intervals are about ±27 cm (90%), which is honest about what
 
 ## Damage (LiDAR tier)
 
-Damage recall cannot be measured: the samples contain no damage. The samples do measure precision on undamaged rooms, which is the failure that produces confident false scope.
+The samples contain one real defect: a hairline crack, about 1 m long, on the bathroom wall above the vanity (visible in `single_room` around 28.5 s). It was spotted by a human reviewer *after* the first version of damage detection had reported nothing. That miss drove four fixes:
 
-| Capture | Frames analysed (1 per ~2 s) | Raw OWLv2 detections (score ≥ 0.15) | Score ≥ 0.35 | Reported regions (on a surface, ≥ 2 views) |
+1. A prompt that fits the defect ("a thin hairline crack in a white wall": 0.50 on the crack, against 0.20 for the generic phrases).
+2. Denser sampling (1 frame per ~1 s).
+3. Score hysteresis: one view ≥ 0.35 and support from ≥ 0.20, both on the same surface spot.
+4. A coordinate bug in mapping boxes from upright frames back to the original frame (found while checking this crack; now unit-tested).
+
+Result on all three captures:
+
+| Capture | Frames analysed | Raw detections | Reported | Verdict (checked by eye: `scripts/show_detection.py`) |
 |---|---|---|---|---|
-| `single_room` | 20 | 33 | 1 | **0** |
-| `single_scan_floor_only` | 59 | 93 | 0 | **0** |
-| `single_scan_with_ceiling` | 109 | 100 | 0 | **0** |
+| `single_room` | 39 | 84 | **1 crack**, bathroom wall, 0.11 × 0.74 m, centre 1.48 m up, 2 views | ✅ the real crack: right wall, right shape |
+| `single_scan_floor_only` | 117 | 212 | 1 "water stain", same bathroom wall, 0.46 × 0.19 m at 0.94 m | ⚠️ partly wrong: its strongest view is the crack, mislabelled; two weaker views are marble veining on the vanity |
+| `single_scan_with_ceiling` | 217 | 266 | none | ❌ the crack is missed |
 
-Typical raw false positives: whole-wall boxes ("a cracked plaster wall"), a shadow beside a potted plant ("mold growth", 0.52), and curtains. These are removed by the box-size limit, the distractor prompts, the score threshold and the two-view requirement. The positive path (projection onto the right wall with the right metric extent, merging two views, every rule firing, the scope units, schema validity) is covered by `internal/damage/damage_test.go` and `internal/pipeline/damage_test.go`.
+So, on the samples: **recall is 2 of 3 captures for the one real defect (one with the wrong class), with 1 partly false report.** Raw false alarms (whole-wall boxes, a shadow by a plant, curtains, marble) are mostly removed by the box-size limit, distractor prompts (plant, curtain, shadow, marble countertop, sink, toilet, bin, mirror), the score hysteresis, and the requirement that most of a region's points lie in the surface itself. The crack does not start at an opening corner, so no concealed-damage rule fires. Placement, every rule, scope units and schema validity are also covered by synthetic tests (`internal/damage/damage_test.go`, `internal/pipeline/damage_test.go`).
 
 ## Gates: video and photo tiers
 
