@@ -102,9 +102,7 @@ Run the Python scripts with `ml/.venv/Scripts/python.exe scripts/<name>.py …`.
 |---|---|
 | `scripts/explain_raster.py <debug_raster.png> <out.png> [title]` | The labelled version of a debug picture: every colour explained |
 | `scripts/show_detection.py <capture_dir> <results_dir> <class> <out.jpg> [n]` | The strongest damage detections of one class (e.g. `crack`) drawn on their frames, for checking by eye |
-| `scripts/draw_hld.py` | `docs/img/high_level_design.png` |
-| `scripts/draw_architecture.py` | `docs/img/architecture.png` |
-| `scripts/draw_as_built.py` | `docs/img/as_built.png` (numbers from BENCHMARK.md: update both together) |
+| `scripts/draw_hld.py`, `scripts/draw_architecture.py`, `scripts/draw_as_built.py` | Optional diagrams (design, code architecture, what is built with status), written to `docs/img/`. The README uses the hand-drawn `Architecture-Full Picure.png` instead |
 
 ## 6. Diagnostics (used to find causes; not needed to get results)
 

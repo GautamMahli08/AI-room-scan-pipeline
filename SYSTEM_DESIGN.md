@@ -64,9 +64,7 @@ The two `single_scan_*` captures share the same layout (central corridor, same b
 
 ## 3. Architecture
 
-![High-level design](docs/img/high_level_design.png)
-
-![Software architecture](docs/img/architecture.png)
+![Full picture: how it works](Architecture-Full%20Picure.png)
 
 ```mermaid
 flowchart LR
