@@ -13,6 +13,10 @@ Handheld phone capture in, dimensioned floor plan out. One command per capture, 
 | Architecture | [SYSTEM_DESIGN.md](SYSTEM_DESIGN.md) |
 | What is not built yet, and how it would be | [docs/FUTURE_SCOPE.md](docs/FUTURE_SCOPE.md) |
 
+![High-level design](docs/img/high_level_design.png)
+
+Regenerate the picture with `scripts/draw_hld.py`.
+
 ## Quick start
 
 Requirements: Go ≥ 1.25, ffmpeg on `PATH`, git. The video and photo tiers also need [uv](https://docs.astral.sh/uv/), which fetches Python 3.12 itself; an NVIDIA GPU is used if present (4 GB is enough).
