@@ -14,7 +14,7 @@ Handheld phone capture in, dimensioned floor plan out. One command per capture, 
 | What is not built yet, and how it would be | [docs/FUTURE_SCOPE.md](docs/FUTURE_SCOPE.md) |
 
 See the Full Picture How its Works
-![High-level design](https://github.com/GautamMahli08/AI-room-scan-pipeline/blob/main/Architecture-Full%20Picure.png))
+![High-level design](https://github.com/GautamMahli08/AI-room-scan-pipeline/blob/main/Architecture-Full%20Picure.png)
 
 
 
