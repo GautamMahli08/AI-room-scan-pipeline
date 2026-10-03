@@ -4,7 +4,7 @@ Date:   Sat Oct 3 00:36:59 2026 +0530
 
 Fix loop: after state
 
-commit 37fe761b32a283c84cdf7b6084291c1d63471a6a
+commit 376c5b69602f399421b67721a0048238cc18ee87
 Author: Gautam Mahli <gautammahli08@gmail.com>
 Date:   Sat Oct 3 00:36:59 2026 +0530
 
@@ -22,8 +22,6 @@ Date:   Sat Oct 3 00:36:59 2026 +0530
        wall fitting.
     3. Drift prior search extended to stronger priors (x0.03..x8); the
        selection is no longer pinned to the old grid edge (x0.25).
-    
-    Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
 
 diff --git a/internal/geometry/geometry_test.go b/internal/geometry/geometry_test.go
 index 35adfd0..3b310b4 100644

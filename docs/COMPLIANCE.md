@@ -49,7 +49,7 @@ Requirement → where it lives → what to look at → status. Status key: ✅ d
 
 | Requirement | File path | Status |
 |---|---|---|
-| Declaration: worst gate + number, root cause + evidence, fix + prediction | [fixloop/DECLARATION.md](../fixloop/DECLARATION.md) (committed before the fix, `1af94b6`) | ✅ |
+| Declaration: worst gate + number, root cause + evidence, fix + prediction | [fixloop/DECLARATION.md](../fixloop/DECLARATION.md) (committed before the fix, `ee71729`) | ✅ |
 | Shipped fix with readable diff | tag `fixloop-after`, [fixloop/fix.diff](../fixloop/fix.diff) | ✅ |
 | Before and after runs, regenerable | [scripts/fixloop.sh](../scripts/fixloop.sh), `fixloop/fixloop-{before,after}/` | ✅ |
 | Post-mortem | [fixloop/RESULT.md](../fixloop/RESULT.md) | ✅ (same-input gate fixed; cross-capture prediction missed, explained) |

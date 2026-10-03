@@ -1,6 +1,6 @@
 # Fix declaration: repeatability gate
 
-Committed before any fix code. The before state is tag `fixloop-before` (commit `ce9f9ae`); diagnostics added afterwards (`bench overlay`, `bench repeat -json`, `scripts/repeat_*.py`, the `wall_layers` diagnostic) do not change any plan output.
+Committed before any fix code. The before state is tag `fixloop-before` (commit `ca7dcb0`); diagnostics added afterwards (`bench overlay`, `bench repeat -json`, `scripts/repeat_*.py`, the `wall_layers` diagnostic) do not change any plan output.
 
 ## 1. Worst gate and the failing number
 

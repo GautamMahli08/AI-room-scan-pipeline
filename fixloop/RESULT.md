@@ -1,7 +1,7 @@
 # Fix result and post-mortem: repeatability gate
 
-Declaration: [DECLARATION.md](DECLARATION.md) (commit `1af94b6`, before any fix code).
-Fix: tag `fixloop-after` (commit `37fe761`); readable diff in [fix.diff](fix.diff).
+Declaration: [DECLARATION.md](DECLARATION.md) (commit `ee71729`, before any fix code).
+Fix: tag `fixloop-after` (commit `376c5b6`); readable diff in [fix.diff](fix.diff).
 Regenerate everything: `scripts/fixloop.sh` (each tag is built in its own worktree and run on all samples; both states are scored by the same `bench` binary).
 
 ## Results
