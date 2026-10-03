@@ -36,3 +36,6 @@ Thumbs.db
 
 # Generated benchmark inputs (regenerate with scripts/make_photo_sets.py)
 /data/
+
+# Personal defence notes (not part of the submission)
+/GUIDING.md
