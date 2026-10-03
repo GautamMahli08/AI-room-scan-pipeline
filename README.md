@@ -13,7 +13,7 @@ Handheld phone capture in, dimensioned floor plan out. One command per capture, 
 | Architecture | [SYSTEM_DESIGN.md](SYSTEM_DESIGN.md) |
 | What is not built yet, and how it would be | [docs/FUTURE_SCOPE.md](docs/FUTURE_SCOPE.md) |
 
-![High-level design](/Architecture-Full Picure.png)
+![High-level design](Architecture-Full Picure.png)
 
 How the code is organised (modules, Go and Python processes, files):
 
