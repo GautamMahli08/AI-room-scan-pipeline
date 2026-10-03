@@ -195,6 +195,15 @@ def choose_rotation(frames, depth, n=12):
     return rot, line, dep / n
 
 
+def has_orientation_tag(video):
+    """True if the video carries a display-matrix rotation (phone camera
+    apps write one; raw sensor exports such as Stray Scanner's do not)."""
+    r = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries",
+                        "stream_side_data=rotation:stream_tags=rotate", "-of", "default=nw=1", str(video)],
+                       capture_output=True, text=True)
+    return "rotation=" in r.stdout or "rotate=" in r.stdout
+
+
 def vggt_size(w, h, long_side=518):
     """VGGT input size: long side 518, both sides multiples of 14."""
     s = long_side / max(w, h)
@@ -385,9 +394,16 @@ def main():
     log(f"frames: {len(frames)} at {args.fps} fps ({time.time() - t0:.0f}s)")
 
     metric = MetricDepth(args.depth_model, device)
-    rot, line, dep = choose_rotation(frames, metric)
-    log(f"orientation: {rot} quarter turn(s) clockwise (line score {line:+.2f}: "
-        f"{'upright axis' if line > 0 else 'sideways'}; depth scores {np.round(dep, 2)})")
+    if has_orientation_tag(args.video):
+        # The phone's camera app recorded which way up the video is, and
+        # ffmpeg has already applied it: frames are upright. Image cues are
+        # only a fallback (they fail on footage aimed at a tiled floor).
+        rot, line = 0, float("nan")
+        log("orientation: from the video's own rotation tag (frames already upright)")
+    else:
+        rot, line, dep = choose_rotation(frames, metric)
+        log(f"orientation: {rot} quarter turn(s) clockwise (no rotation tag; line score {line:+.2f}: "
+            f"{'upright axis' if line > 0 else 'sideways'}; depth scores {np.round(dep, 2)})")
 
     first = rotate(cv2.imread(str(frames[0][0])), rot)
     W, H = vggt_size(first.shape[1], first.shape[0])
@@ -449,7 +465,7 @@ def main():
         fh.write(f"{K[0, 0]:.4f}, 0.0, {K[0, 2]:.4f}\n0.0, {K[1, 1]:.4f}, {K[1, 2]:.4f}\n0.0, 0.0, 1.0")
     meta = {
         "tier": "video", "rgb_width": W, "rgb_height": H, "frames": len(frames),
-        "image_rotation_quarter_turns": rot, "orientation_line_score": line, "scale_to_metres": s,
+        "image_rotation_quarter_turns": rot, "orientation_line_score": None if math.isnan(line) else line, "scale_to_metres": s,
         "scale_rel_sigma": scale_sig, "scale_frame_spread": spread, "camera_height_m": cam_h,
         "models": [{"name": "facebook/VGGT-1B", "version": "hf"}, {"name": "apple/DepthPro-hf", "version": "hf"},
                    {"name": args.depth_model + " (orientation only)", "version": "hf"}],
