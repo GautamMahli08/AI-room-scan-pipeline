@@ -45,7 +45,7 @@ The tier is detected from the input when `-tier` is omitted. Output goes to `res
 | `export/` | Video/photo tiers: the model outputs in LiDAR layout (cached; `-live` recomputes) |
 | `damage/detections.json` | Raw damage detections (cached; `-live` recomputes) |
 
-Useful flags: `-debug` (top-down raster with rooms, walls and openings), `-ply` (fused point cloud), `-drift=false`, `-damage=false`, `-live` (re-run model inference, ignoring the cache).
+Useful flags: `-debug` (top-down raster with rooms, walls and openings; how to read it: [docs/img/debug_raster_explained.png](docs/img/debug_raster_explained.png)), `-ply` (fused point cloud), `-drift=false`, `-damage=false`, `-live` (re-run model inference, ignoring the cache).
 
 ## Regenerate every reported number
 
