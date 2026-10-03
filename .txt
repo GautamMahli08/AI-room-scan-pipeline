@@ -1,0 +1,22 @@
+Record following the video box in docs/CAPTURE_PROTOCOL.md:
+Use the normal Camera app in Video mode, 1× lens.
+Walk slowly along the walls, and tilt up to the ceiling once per room.
+Walk through the doorways and finish where you started.
+Keep the phone the same way up throughout.
+Copy the file to the computer, for example to F:\LiDAR\captures\myroom.mp4. iPhone .MOV files work too.
+Run, in a terminal in F:\LiDAR:
+
+bin\scan.exe run captures\myroom.mp4
+The video tier is picked automatically from the file type.
+Open the result: results\myroom_video\plan.svg. Add -debug to the command if you also want the coloured picture.
+What to expect:
+
+Time	About 15 s of processing per second of video on your laptop (a 30 s video takes about 7–9 min)
+Rotation	Automatic. Phone videos store their orientation, and sideways videos are also detected
+Accuracy	Rough, as the docs say: rooms come out as estimated rectangles, often too small, with wide ranges. Doors usually aren't found
+Second run	Instant, because the AI results are saved. Use -live to force a fresh run
+Photos work the same way. Make one folder per room inside one main folder (e.g. captures\myflat\kitchen\, captures\myflat\bedroom\) with 2–8 photos each, then run:
+
+
+bin\scan.exe run captures\myflat -tier photo
+For a real accuracy test, measure too. Measure 3–4 walls with a tape measure and compare with the plan. That would be the first real ground truth for the video and photo tiers.
