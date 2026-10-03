@@ -1,0 +1,262 @@
+{
+  "iterations": [
+    {
+      "observations": 0,
+      "landmarks": 0,
+      "scatter_before_mm": 0,
+      "scatter_predicted_after_mm": 0,
+      "max_shift_cm": 0,
+      "max_yaw_deg": 0,
+      "held_out_no_correction_mm": 0,
+      "held_out_selected_mm": 0,
+      "prior_scale": 0,
+      "prior_selection": [
+        {
+          "scale": 0.03,
+          "held_out_mm": 0
+        },
+        {
+          "scale": 0.06,
+          "held_out_mm": 0
+        },
+        {
+          "scale": 0.125,
+          "held_out_mm": 0
+        },
+        {
+          "scale": 0.25,
+          "held_out_mm": 0
+        },
+        {
+          "scale": 0.5,
+          "held_out_mm": 0
+        },
+        {
+          "scale": 1,
+          "held_out_mm": 0
+        },
+        {
+          "scale": 2,
+          "held_out_mm": 0
+        },
+        {
+          "scale": 4,
+          "held_out_mm": 0
+        },
+        {
+          "scale": 8,
+          "held_out_mm": 0
+        }
+      ]
+    }
+  ],
+  "final": {
+    "observations": 0,
+    "landmarks": 0,
+    "scatter_before_mm": 0,
+    "scatter_predicted_after_mm": 0,
+    "max_shift_cm": 0,
+    "max_yaw_deg": 0,
+    "held_out_no_correction_mm": 0,
+    "held_out_selected_mm": 0,
+    "prior_scale": 0,
+    "prior_selection": [
+      {
+        "scale": 0.03,
+        "held_out_mm": 0
+      },
+      {
+        "scale": 0.06,
+        "held_out_mm": 0
+      },
+      {
+        "scale": 0.125,
+        "held_out_mm": 0
+      },
+      {
+        "scale": 0.25,
+        "held_out_mm": 0
+      },
+      {
+        "scale": 0.5,
+        "held_out_mm": 0
+      },
+      {
+        "scale": 1,
+        "held_out_mm": 0
+      },
+      {
+        "scale": 2,
+        "held_out_mm": 0
+      },
+      {
+        "scale": 4,
+        "held_out_mm": 0
+      },
+      {
+        "scale": 8,
+        "held_out_mm": 0
+      }
+    ]
+  },
+  "footprint_off_m2": {
+    "value": 13.11,
+    "ci90": [
+      10.488,
+      28.842
+    ],
+    "source": "inferred"
+  },
+  "footprint_on_m2": {
+    "value": 13.11,
+    "ci90": [
+      10.488,
+      28.842
+    ],
+    "source": "inferred"
+  },
+  "rooms_off": 5,
+  "rooms_on": 5,
+  "chunks_first_iteration": [
+    {
+      "T0": 0.166667,
+      "T1": 4.166667,
+      "Pivot": {
+        "X": 0.6740945020228045,
+        "Y": -0.2657756194600825
+      },
+      "Dx": 0,
+      "Dy": 0,
+      "Dtheta": 0,
+      "Dh": 0,
+      "WallObs": 0,
+      "FloorObs": true
+    },
+    {
+      "T0": 4.166667,
+      "T1": 8.166667,
+      "Pivot": {
+        "X": 1.292726728008075,
+        "Y": -0.7538536274626163
+      },
+      "Dx": -0,
+      "Dy": -0,
+      "Dtheta": -0,
+      "Dh": -0,
+      "WallObs": 0,
+      "FloorObs": true
+    },
+    {
+      "T0": 8.166667,
+      "T1": 12.166667,
+      "Pivot": {
+        "X": -0.22805562621806702,
+        "Y": -0.5263240988591542
+      },
+      "Dx": -0,
+      "Dy": -0,
+      "Dtheta": -0,
+      "Dh": -0,
+      "WallObs": 0,
+      "FloorObs": true
+    },
+    {
+      "T0": 12.166667,
+      "T1": 16.166667,
+      "Pivot": {
+        "X": -0.9935712849498903,
+        "Y": 0.14738593423930638
+      },
+      "Dx": -0,
+      "Dy": -0,
+      "Dtheta": -0,
+      "Dh": -0,
+      "WallObs": 0,
+      "FloorObs": true
+    },
+    {
+      "T0": 16.166667,
+      "T1": 20.166667,
+      "Pivot": {
+        "X": -2.420817540244123,
+        "Y": -0.0043000256666685015
+      },
+      "Dx": -0,
+      "Dy": -0,
+      "Dtheta": -0,
+      "Dh": -0,
+      "WallObs": 0,
+      "FloorObs": true
+    },
+    {
+      "T0": 20.166667,
+      "T1": 24.166667,
+      "Pivot": {
+        "X": -3.2600799308645882,
+        "Y": -0.43175591224714194
+      },
+      "Dx": -0,
+      "Dy": -0,
+      "Dtheta": -0,
+      "Dh": -0,
+      "WallObs": 0,
+      "FloorObs": true
+    },
+    {
+      "T0": 24.166667,
+      "T1": 28.166667,
+      "Pivot": {
+        "X": -3.2893757160720094,
+        "Y": -0.08060716822178511
+      },
+      "Dx": -0,
+      "Dy": -0,
+      "Dtheta": -0,
+      "Dh": -0,
+      "WallObs": 0,
+      "FloorObs": true
+    },
+    {
+      "T0": 28.166667,
+      "T1": 32.166667,
+      "Pivot": {
+        "X": -3.1169736189063255,
+        "Y": -0.514593963149784
+      },
+      "Dx": -0,
+      "Dy": -0,
+      "Dtheta": -0,
+      "Dh": -0,
+      "WallObs": 0,
+      "FloorObs": false
+    },
+    {
+      "T0": 32.166667,
+      "T1": 36.166667,
+      "Pivot": {
+        "X": -3.6294428600033024,
+        "Y": -1.113707024600567
+      },
+      "Dx": -0,
+      "Dy": -0,
+      "Dtheta": -0,
+      "Dh": -0,
+      "WallObs": 0,
+      "FloorObs": false
+    },
+    {
+      "T0": 36.166667,
+      "T1": 40.166667,
+      "Pivot": {
+        "X": -4.141205903627325,
+        "Y": -1.6536714333508034
+      },
+      "Dx": -0,
+      "Dy": -0,
+      "Dtheta": -0,
+      "Dh": -0,
+      "WallObs": 0,
+      "FloorObs": true
+    }
+  ]
+}

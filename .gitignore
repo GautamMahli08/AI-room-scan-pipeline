@@ -5,7 +5,16 @@
 /data/
 
 # Outputs, caches, model weights
-/results/
+/results/*
+# Committed: results for the five sample runs (plans, drawings, debug images, damage).
+# Bulky regenerable pieces stay local: frame dumps, point clouds, video copies.
+!/results/single_room/
+!/results/single_scan_floor_only/
+!/results/single_scan_with_ceiling/
+!/results/single_room_video/
+!/results/single_scan_with_ceiling_photo/
+/results/*/export/
+/results/*/*.mp4
 /cache/
 /weights/
 *.npy

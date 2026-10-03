@@ -1,0 +1,2669 @@
+{
+ "model": "google/owlv2-base-patch16-ensemble",
+ "threshold": 0.15,
+ "frames": [
+  0,
+  45,
+  90,
+  135,
+  180,
+  225,
+  270,
+  315,
+  360,
+  405,
+  450,
+  495,
+  540,
+  585,
+  630,
+  675,
+  720,
+  765,
+  810,
+  855,
+  900,
+  945,
+  990,
+  1035,
+  1080,
+  1125,
+  1170,
+  1215,
+  1260,
+  1305,
+  1350,
+  1395,
+  1440,
+  1485,
+  1530,
+  1575,
+  1620,
+  1665,
+  1710,
+  1755,
+  1800,
+  1845,
+  1890,
+  1935,
+  1980,
+  2025,
+  2070,
+  2115,
+  2160,
+  2205,
+  2250,
+  2295,
+  2340,
+  2385,
+  2430,
+  2475,
+  2520,
+  2565,
+  2610,
+  2655,
+  2700,
+  2745,
+  2790,
+  2835,
+  2880,
+  2925,
+  2970,
+  3015,
+  3060,
+  3105,
+  3150,
+  3195,
+  3240,
+  3285,
+  3330,
+  3375,
+  3420,
+  3465,
+  3510,
+  3555,
+  3600,
+  3645,
+  3690,
+  3735,
+  3780,
+  3825,
+  3870,
+  3915,
+  3960,
+  4005,
+  4050,
+  4095,
+  4140,
+  4185,
+  4230,
+  4275,
+  4320,
+  4365,
+  4410,
+  4455,
+  4500,
+  4545,
+  4590,
+  4635,
+  4680,
+  4725,
+  4770,
+  4815,
+  4860,
+  4905,
+  4950,
+  4995,
+  5040,
+  5085,
+  5130,
+  5175,
+  5220
+ ],
+ "detections": [
+  {
+   "frame": 0,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.1795,
+   "box": [
+    844.9,
+    3.4,
+    1919.0,
+    378.9
+   ]
+  },
+  {
+   "frame": 0,
+   "class": "hole",
+   "prompt": "a damaged hole in drywall",
+   "score": 0.1645,
+   "box": [
+    1243.8,
+    445.3,
+    1918.5,
+    713.3
+   ]
+  },
+  {
+   "frame": 45,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.1762,
+   "box": [
+    1270.9,
+    0.0,
+    1919.0,
+    383.2
+   ]
+  },
+  {
+   "frame": 45,
+   "class": "hole",
+   "prompt": "a damaged hole in drywall",
+   "score": 0.1726,
+   "box": [
+    1174.0,
+    450.5,
+    1819.0,
+    676.6
+   ]
+  },
+  {
+   "frame": 225,
+   "class": "hole",
+   "prompt": "a hole in a wall",
+   "score": 0.2142,
+   "box": [
+    1302.6,
+    267.8,
+    1427.7,
+    307.5
+   ]
+  },
+  {
+   "frame": 270,
+   "class": "hole",
+   "prompt": "a hole in a wall",
+   "score": 0.2145,
+   "box": [
+    1563.2,
+    543.4,
+    1740.9,
+    608.3
+   ]
+  },
+  {
+   "frame": 450,
+   "class": "hole",
+   "prompt": "a hole in a wall",
+   "score": 0.1737,
+   "box": [
+    143.6,
+    1263.7,
+    428.5,
+    1416.3
+   ]
+  },
+  {
+   "frame": 450,
+   "class": "crack",
+   "prompt": "a cracked plaster wall",
+   "score": 0.15,
+   "box": [
+    138.4,
+    1192.1,
+    948.0,
+    1439.0
+   ]
+  },
+  {
+   "frame": 450,
+   "class": "hole",
+   "prompt": "a damaged hole in drywall",
+   "score": 0.2276,
+   "box": [
+    788.0,
+    957.9,
+    1576.3,
+    1427.7
+   ]
+  },
+  {
+   "frame": 450,
+   "class": "water_stain",
+   "prompt": "water damage",
+   "score": 0.1681,
+   "box": [
+    1453.8,
+    716.9,
+    1919.0,
+    1052.4
+   ]
+  },
+  {
+   "frame": 450,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.1853,
+   "box": [
+    1546.0,
+    152.8,
+    1919.0,
+    312.2
+   ]
+  },
+  {
+   "frame": 495,
+   "class": "crack",
+   "prompt": "a cracked plaster wall",
+   "score": 0.1692,
+   "box": [
+    0.0,
+    5.8,
+    573.0,
+    501.2
+   ]
+  },
+  {
+   "frame": 495,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.1846,
+   "box": [
+    422.9,
+    87.9,
+    529.0,
+    463.6
+   ]
+  },
+  {
+   "frame": 585,
+   "class": "water_stain",
+   "prompt": "water damage",
+   "score": 0.1882,
+   "box": [
+    667.7,
+    1091.6,
+    714.3,
+    1250.1
+   ]
+  },
+  {
+   "frame": 630,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.1545,
+   "box": [
+    0.0,
+    615.1,
+    564.5,
+    775.2
+   ]
+  },
+  {
+   "frame": 630,
+   "class": "crack",
+   "prompt": "a cracked plaster wall",
+   "score": 0.1673,
+   "box": [
+    3.6,
+    251.4,
+    1398.6,
+    598.3
+   ]
+  },
+  {
+   "frame": 675,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.1754,
+   "box": [
+    217.8,
+    516.5,
+    549.9,
+    612.2
+   ]
+  },
+  {
+   "frame": 675,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.1621,
+   "box": [
+    877.9,
+    0.0,
+    1919.0,
+    256.2
+   ]
+  },
+  {
+   "frame": 720,
+   "class": "crack",
+   "prompt": "a cracked plaster wall",
+   "score": 0.155,
+   "box": [
+    0.9,
+    342.7,
+    293.6,
+    876.8
+   ]
+  },
+  {
+   "frame": 720,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.2073,
+   "box": [
+    0.0,
+    821.6,
+    166.7,
+    893.6
+   ]
+  },
+  {
+   "frame": 720,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.1584,
+   "box": [
+    127.2,
+    426.0,
+    156.6,
+    831.4
+   ]
+  },
+  {
+   "frame": 720,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.2121,
+   "box": [
+    129.7,
+    413.7,
+    307.7,
+    828.8
+   ]
+  },
+  {
+   "frame": 720,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.1723,
+   "box": [
+    748.5,
+    0.0,
+    829.0,
+    450.6
+   ]
+  },
+  {
+   "frame": 720,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.1636,
+   "box": [
+    774.2,
+    1189.4,
+    1024.6,
+    1293.1
+   ]
+  },
+  {
+   "frame": 765,
+   "class": "peeling_paint",
+   "prompt": "flaking paint on a wall",
+   "score": 0.1537,
+   "box": [
+    0.1,
+    589.1,
+    386.4,
+    1330.6
+   ]
+  },
+  {
+   "frame": 765,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.3777,
+   "box": [
+    291.9,
+    682.8,
+    518.0,
+    1218.1
+   ]
+  },
+  {
+   "frame": 765,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.1583,
+   "box": [
+    916.3,
+    23.5,
+    1025.9,
+    658.6
+   ]
+  },
+  {
+   "frame": 765,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.1687,
+   "box": [
+    1777.5,
+    874.9,
+    1919.0,
+    1439.0
+   ]
+  },
+  {
+   "frame": 810,
+   "class": "peeling_paint",
+   "prompt": "flaking paint on a wall",
+   "score": 0.1632,
+   "box": [
+    0.9,
+    573.8,
+    361.7,
+    1439.0
+   ]
+  },
+  {
+   "frame": 810,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.3178,
+   "box": [
+    326.8,
+    758.9,
+    618.9,
+    1439.0
+   ]
+  },
+  {
+   "frame": 810,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.1855,
+   "box": [
+    607.5,
+    1020.5,
+    884.4,
+    1436.9
+   ]
+  },
+  {
+   "frame": 810,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.1559,
+   "box": [
+    1148.3,
+    0.0,
+    1334.2,
+    712.4
+   ]
+  },
+  {
+   "frame": 810,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.1536,
+   "box": [
+    1472.4,
+    205.9,
+    1685.6,
+    742.5
+   ]
+  },
+  {
+   "frame": 855,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.2796,
+   "box": [
+    627.5,
+    488.2,
+    1006.6,
+    959.9
+   ]
+  },
+  {
+   "frame": 945,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.2066,
+   "box": [
+    2.4,
+    15.8,
+    340.7,
+    1410.0
+   ]
+  },
+  {
+   "frame": 990,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.1525,
+   "box": [
+    346.8,
+    831.0,
+    544.4,
+    1010.1
+   ]
+  },
+  {
+   "frame": 990,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.1643,
+   "box": [
+    423.4,
+    0.0,
+    817.0,
+    571.3
+   ]
+  },
+  {
+   "frame": 990,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.23,
+   "box": [
+    636.5,
+    310.1,
+    1005.9,
+    435.1
+   ]
+  },
+  {
+   "frame": 990,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.2207,
+   "box": [
+    677.4,
+    0.0,
+    1385.7,
+    372.9
+   ]
+  },
+  {
+   "frame": 990,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.172,
+   "box": [
+    679.3,
+    0.0,
+    1089.2,
+    351.0
+   ]
+  },
+  {
+   "frame": 990,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.3176,
+   "box": [
+    431.0,
+    0.2,
+    1405.7,
+    551.5
+   ]
+  },
+  {
+   "frame": 1035,
+   "class": "crack",
+   "prompt": "a crack in a wall",
+   "score": 0.2164,
+   "box": [
+    629.9,
+    987.0,
+    1139.8,
+    1169.0
+   ]
+  },
+  {
+   "frame": 1035,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.1632,
+   "box": [
+    550.9,
+    3.2,
+    1892.3,
+    194.7
+   ]
+  },
+  {
+   "frame": 1035,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.1624,
+   "box": [
+    759.9,
+    928.3,
+    1093.2,
+    1111.7
+   ]
+  },
+  {
+   "frame": 1080,
+   "class": "peeling_paint",
+   "prompt": "flaking paint on a wall",
+   "score": 0.1528,
+   "box": [
+    0.0,
+    974.4,
+    640.1,
+    1439.0
+   ]
+  },
+  {
+   "frame": 1080,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.1719,
+   "box": [
+    627.9,
+    0.0,
+    1339.5,
+    578.2
+   ]
+  },
+  {
+   "frame": 1080,
+   "class": "crack",
+   "prompt": "a crack in a wall",
+   "score": 0.2467,
+   "box": [
+    687.1,
+    957.3,
+    1498.8,
+    1231.7
+   ]
+  },
+  {
+   "frame": 1080,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.1507,
+   "box": [
+    1196.4,
+    0.0,
+    1912.3,
+    572.1
+   ]
+  },
+  {
+   "frame": 1080,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.2721,
+   "box": [
+    1655.9,
+    0.0,
+    1919.0,
+    370.8
+   ]
+  },
+  {
+   "frame": 1125,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.4838,
+   "box": [
+    26.2,
+    1004.7,
+    600.1,
+    1389.7
+   ]
+  },
+  {
+   "frame": 1125,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.2245,
+   "box": [
+    545.9,
+    596.6,
+    1501.5,
+    1005.6
+   ]
+  },
+  {
+   "frame": 1125,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.1509,
+   "box": [
+    893.1,
+    588.2,
+    1305.2,
+    907.3
+   ]
+  },
+  {
+   "frame": 1125,
+   "class": "crack",
+   "prompt": "a crack in a wall",
+   "score": 0.2876,
+   "box": [
+    726.1,
+    799.1,
+    1540.8,
+    977.3
+   ]
+  },
+  {
+   "frame": 1125,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.1617,
+   "box": [
+    883.4,
+    224.2,
+    1862.2,
+    576.0
+   ]
+  },
+  {
+   "frame": 1125,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.1929,
+   "box": [
+    762.2,
+    0.0,
+    1919.0,
+    271.3
+   ]
+  },
+  {
+   "frame": 1125,
+   "class": "hole",
+   "prompt": "a hole in a wall",
+   "score": 0.1704,
+   "box": [
+    1273.1,
+    1260.4,
+    1304.1,
+    1293.4
+   ]
+  },
+  {
+   "frame": 1125,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.2499,
+   "box": [
+    1486.4,
+    0.0,
+    1919.0,
+    255.5
+   ]
+  },
+  {
+   "frame": 1170,
+   "class": "hole",
+   "prompt": "a hole in a wall",
+   "score": 0.1722,
+   "box": [
+    249.6,
+    0.0,
+    307.0,
+    55.7
+   ]
+  },
+  {
+   "frame": 1170,
+   "class": "hole",
+   "prompt": "a hole in a wall",
+   "score": 0.1806,
+   "box": [
+    920.1,
+    121.5,
+    969.9,
+    207.7
+   ]
+  },
+  {
+   "frame": 1215,
+   "class": "peeling_paint",
+   "prompt": "flaking paint on a wall",
+   "score": 0.1888,
+   "box": [
+    2.0,
+    973.6,
+    388.6,
+    1434.1
+   ]
+  },
+  {
+   "frame": 1215,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.1671,
+   "box": [
+    300.8,
+    999.0,
+    395.2,
+    1373.2
+   ]
+  },
+  {
+   "frame": 1215,
+   "class": "crack",
+   "prompt": "a cracked plaster wall",
+   "score": 0.1543,
+   "box": [
+    51.2,
+    1281.6,
+    803.6,
+    1437.9
+   ]
+  },
+  {
+   "frame": 1215,
+   "class": "water_stain",
+   "prompt": "water damage",
+   "score": 0.1771,
+   "box": [
+    440.5,
+    516.1,
+    791.0,
+    758.9
+   ]
+  },
+  {
+   "frame": 1215,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.2457,
+   "box": [
+    1068.5,
+    1338.6,
+    1372.9,
+    1439.0
+   ]
+  },
+  {
+   "frame": 1260,
+   "class": "peeling_paint",
+   "prompt": "flaking paint on a wall",
+   "score": 0.1701,
+   "box": [
+    0.0,
+    23.7,
+    565.6,
+    571.7
+   ]
+  },
+  {
+   "frame": 1260,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.1751,
+   "box": [
+    398.0,
+    611.7,
+    440.2,
+    1011.6
+   ]
+  },
+  {
+   "frame": 1260,
+   "class": "crack",
+   "prompt": "a cracked plaster wall",
+   "score": 0.2925,
+   "box": [
+    0.0,
+    968.9,
+    1161.2,
+    1412.5
+   ]
+  },
+  {
+   "frame": 1305,
+   "class": "peeling_paint",
+   "prompt": "flaking paint on a wall",
+   "score": 0.2193,
+   "box": [
+    0.0,
+    68.4,
+    460.8,
+    651.0
+   ]
+  },
+  {
+   "frame": 1350,
+   "class": "peeling_paint",
+   "prompt": "flaking paint on a wall",
+   "score": 0.2094,
+   "box": [
+    0.0,
+    222.3,
+    473.8,
+    844.0
+   ]
+  },
+  {
+   "frame": 1350,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.1536,
+   "box": [
+    425.5,
+    264.6,
+    486.9,
+    798.5
+   ]
+  },
+  {
+   "frame": 1395,
+   "class": "peeling_paint",
+   "prompt": "flaking paint on a wall",
+   "score": 0.2664,
+   "box": [
+    0.1,
+    135.6,
+    556.6,
+    878.0
+   ]
+  },
+  {
+   "frame": 1395,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.1855,
+   "box": [
+    515.4,
+    226.0,
+    572.1,
+    839.8
+   ]
+  },
+  {
+   "frame": 1395,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.1594,
+   "box": [
+    997.4,
+    885.1,
+    1919.0,
+    1424.4
+   ]
+  },
+  {
+   "frame": 1440,
+   "class": "peeling_paint",
+   "prompt": "flaking paint on a wall",
+   "score": 0.3058,
+   "box": [
+    0.7,
+    0.0,
+    718.5,
+    667.2
+   ]
+  },
+  {
+   "frame": 1440,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.2233,
+   "box": [
+    607.3,
+    6.0,
+    740.8,
+    657.9
+   ]
+  },
+  {
+   "frame": 1485,
+   "class": "peeling_paint",
+   "prompt": "flaking paint on a wall",
+   "score": 0.294,
+   "box": [
+    9.0,
+    0.0,
+    849.9,
+    500.7
+   ]
+  },
+  {
+   "frame": 1485,
+   "class": "hole",
+   "prompt": "a hole in a wall",
+   "score": 0.1505,
+   "box": [
+    640.6,
+    494.8,
+    652.7,
+    506.1
+   ]
+  },
+  {
+   "frame": 1485,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.1699,
+   "box": [
+    691.3,
+    2.8,
+    861.3,
+    497.4
+   ]
+  },
+  {
+   "frame": 1620,
+   "class": "crack",
+   "prompt": "a cracked plaster wall",
+   "score": 0.1621,
+   "box": [
+    2.3,
+    7.5,
+    853.7,
+    253.3
+   ]
+  },
+  {
+   "frame": 1620,
+   "class": "crack",
+   "prompt": "a cracked plaster wall",
+   "score": 0.1961,
+   "box": [
+    0.0,
+    0.0,
+    841.6,
+    223.0
+   ]
+  },
+  {
+   "frame": 1665,
+   "class": "crack",
+   "prompt": "a cracked plaster wall",
+   "score": 0.2023,
+   "box": [
+    1.4,
+    2.1,
+    928.2,
+    519.5
+   ]
+  },
+  {
+   "frame": 1665,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.1737,
+   "box": [
+    0.0,
+    481.0,
+    924.4,
+    561.1
+   ]
+  },
+  {
+   "frame": 1665,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.1598,
+   "box": [
+    402.7,
+    0.0,
+    932.0,
+    68.4
+   ]
+  },
+  {
+   "frame": 1710,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.2211,
+   "box": [
+    0.0,
+    351.6,
+    1080.1,
+    493.0
+   ]
+  },
+  {
+   "frame": 1710,
+   "class": "crack",
+   "prompt": "a cracked plaster wall",
+   "score": 0.231,
+   "box": [
+    1.1,
+    7.3,
+    1115.5,
+    442.8
+   ]
+  },
+  {
+   "frame": 1755,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.2833,
+   "box": [
+    0.0,
+    488.7,
+    1341.9,
+    635.8
+   ]
+  },
+  {
+   "frame": 1755,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.1678,
+   "box": [
+    605.7,
+    1096.0,
+    1919.0,
+    1439.0
+   ]
+  },
+  {
+   "frame": 1800,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.4168,
+   "box": [
+    0.0,
+    584.5,
+    1821.8,
+    887.0
+   ]
+  },
+  {
+   "frame": 1890,
+   "class": "peeling_paint",
+   "prompt": "flaking paint on a wall",
+   "score": 0.2585,
+   "box": [
+    0.0,
+    0.0,
+    731.8,
+    601.5
+   ]
+  },
+  {
+   "frame": 2025,
+   "class": "crack",
+   "prompt": "a crack in a wall",
+   "score": 0.1699,
+   "box": [
+    1309.2,
+    318.8,
+    1916.2,
+    617.9
+   ]
+  },
+  {
+   "frame": 2115,
+   "class": "water_stain",
+   "prompt": "a brown water stain on a ceiling",
+   "score": 0.1677,
+   "box": [
+    0.7,
+    795.3,
+    118.4,
+    1194.5
+   ]
+  },
+  {
+   "frame": 2115,
+   "class": "crack",
+   "prompt": "a cracked plaster wall",
+   "score": 0.1778,
+   "box": [
+    3.7,
+    1050.1,
+    1058.9,
+    1417.2
+   ]
+  },
+  {
+   "frame": 2115,
+   "class": "peeling_paint",
+   "prompt": "flaking paint on a wall",
+   "score": 0.1583,
+   "box": [
+    8.3,
+    0.0,
+    1906.0,
+    13.9
+   ]
+  },
+  {
+   "frame": 2160,
+   "class": "crack",
+   "prompt": "a cracked plaster wall",
+   "score": 0.1787,
+   "box": [
+    3.9,
+    538.0,
+    1055.9,
+    823.9
+   ]
+  },
+  {
+   "frame": 2205,
+   "class": "crack",
+   "prompt": "a cracked plaster wall",
+   "score": 0.2128,
+   "box": [
+    4.9,
+    238.5,
+    1229.0,
+    583.6
+   ]
+  },
+  {
+   "frame": 2250,
+   "class": "crack",
+   "prompt": "a cracked plaster wall",
+   "score": 0.1785,
+   "box": [
+    0.0,
+    0.0,
+    1892.8,
+    30.9
+   ]
+  },
+  {
+   "frame": 2250,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.1708,
+   "box": [
+    1154.0,
+    1052.1,
+    1587.5,
+    1436.8
+   ]
+  },
+  {
+   "frame": 2295,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.1721,
+   "box": [
+    1230.6,
+    696.0,
+    1869.9,
+    1434.4
+   ]
+  },
+  {
+   "frame": 2340,
+   "class": "crack",
+   "prompt": "a cracked plaster wall",
+   "score": 0.169,
+   "box": [
+    8.5,
+    0.0,
+    1902.7,
+    44.5
+   ]
+  },
+  {
+   "frame": 2340,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.1628,
+   "box": [
+    1346.1,
+    902.0,
+    1907.1,
+    1438.1
+   ]
+  },
+  {
+   "frame": 2430,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.1882,
+   "box": [
+    1045.9,
+    1147.8,
+    1147.8,
+    1253.5
+   ]
+  },
+  {
+   "frame": 2520,
+   "class": "peeling_paint",
+   "prompt": "flaking paint on a wall",
+   "score": 0.151,
+   "box": [
+    0.0,
+    87.7,
+    549.1,
+    391.3
+   ]
+  },
+  {
+   "frame": 2520,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.2221,
+   "box": [
+    82.8,
+    130.4,
+    541.6,
+    217.8
+   ]
+  },
+  {
+   "frame": 2520,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.2076,
+   "box": [
+    82.8,
+    132.9,
+    816.9,
+    266.0
+   ]
+  },
+  {
+   "frame": 2520,
+   "class": "crack",
+   "prompt": "a cracked plaster wall",
+   "score": 0.1918,
+   "box": [
+    5.9,
+    980.8,
+    833.3,
+    1439.0
+   ]
+  },
+  {
+   "frame": 2520,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.1558,
+   "box": [
+    78.5,
+    133.1,
+    980.4,
+    316.8
+   ]
+  },
+  {
+   "frame": 2520,
+   "class": "hole",
+   "prompt": "a hole in a wall",
+   "score": 0.1505,
+   "box": [
+    754.9,
+    1057.4,
+    992.0,
+    1221.4
+   ]
+  },
+  {
+   "frame": 2520,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.1828,
+   "box": [
+    933.6,
+    149.1,
+    1133.3,
+    237.8
+   ]
+  },
+  {
+   "frame": 2520,
+   "class": "water_stain",
+   "prompt": "water damage",
+   "score": 0.2474,
+   "box": [
+    1507.9,
+    1154.1,
+    1861.5,
+    1439.0
+   ]
+  },
+  {
+   "frame": 2520,
+   "class": "water_stain",
+   "prompt": "water damage",
+   "score": 0.1572,
+   "box": [
+    1535.4,
+    1179.3,
+    1837.1,
+    1437.9
+   ]
+  },
+  {
+   "frame": 2565,
+   "class": "crack",
+   "prompt": "a cracked plaster wall",
+   "score": 0.151,
+   "box": [
+    1.9,
+    0.0,
+    610.1,
+    700.4
+   ]
+  },
+  {
+   "frame": 2565,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.2028,
+   "box": [
+    128.7,
+    872.0,
+    328.2,
+    1034.8
+   ]
+  },
+  {
+   "frame": 2565,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.1612,
+   "box": [
+    144.6,
+    1179.0,
+    502.5,
+    1439.0
+   ]
+  },
+  {
+   "frame": 2565,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.1785,
+   "box": [
+    436.1,
+    1124.0,
+    771.1,
+    1439.0
+   ]
+  },
+  {
+   "frame": 2565,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.1684,
+   "box": [
+    561.4,
+    751.0,
+    933.5,
+    977.2
+   ]
+  },
+  {
+   "frame": 2565,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.1713,
+   "box": [
+    412.6,
+    716.0,
+    854.0,
+    1114.0
+   ]
+  },
+  {
+   "frame": 2565,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.1505,
+   "box": [
+    15.8,
+    865.1,
+    922.0,
+    1053.0
+   ]
+  },
+  {
+   "frame": 2565,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.1533,
+   "box": [
+    697.2,
+    1112.4,
+    928.6,
+    1321.4
+   ]
+  },
+  {
+   "frame": 2565,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.1537,
+   "box": [
+    780.9,
+    363.8,
+    1073.5,
+    548.1
+   ]
+  },
+  {
+   "frame": 2610,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.151,
+   "box": [
+    300.5,
+    366.9,
+    675.9,
+    790.3
+   ]
+  },
+  {
+   "frame": 2610,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.1794,
+   "box": [
+    667.2,
+    375.8,
+    982.3,
+    770.4
+   ]
+  },
+  {
+   "frame": 2610,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.2231,
+   "box": [
+    965.3,
+    397.4,
+    1165.3,
+    757.6
+   ]
+  },
+  {
+   "frame": 2610,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.1809,
+   "box": [
+    941.9,
+    3.7,
+    1200.7,
+    762.2
+   ]
+  },
+  {
+   "frame": 2610,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.1689,
+   "box": [
+    1010.2,
+    914.0,
+    1919.0,
+    1436.9
+   ]
+  },
+  {
+   "frame": 2655,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.2261,
+   "box": [
+    236.5,
+    0.0,
+    811.8,
+    544.5
+   ]
+  },
+  {
+   "frame": 2655,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.2314,
+   "box": [
+    720.7,
+    3.6,
+    1209.5,
+    578.4
+   ]
+  },
+  {
+   "frame": 2655,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.2301,
+   "box": [
+    1088.8,
+    102.5,
+    1432.0,
+    596.7
+   ]
+  },
+  {
+   "frame": 2655,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.1505,
+   "box": [
+    1363.9,
+    1041.1,
+    1919.0,
+    1437.8
+   ]
+  },
+  {
+   "frame": 2700,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.1566,
+   "box": [
+    611.0,
+    1.3,
+    710.4,
+    1439.0
+   ]
+  },
+  {
+   "frame": 2745,
+   "class": "hole",
+   "prompt": "a hole in a wall",
+   "score": 0.1535,
+   "box": [
+    946.8,
+    813.7,
+    1038.7,
+    1128.4
+   ]
+  },
+  {
+   "frame": 2745,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.1507,
+   "box": [
+    1139.8,
+    0.0,
+    1915.2,
+    436.4
+   ]
+  },
+  {
+   "frame": 2745,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.1931,
+   "box": [
+    1333.1,
+    547.5,
+    1916.7,
+    717.2
+   ]
+  },
+  {
+   "frame": 2745,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.152,
+   "box": [
+    1407.5,
+    95.9,
+    1912.5,
+    256.0
+   ]
+  },
+  {
+   "frame": 2745,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.1597,
+   "box": [
+    1536.1,
+    0.0,
+    1915.6,
+    378.8
+   ]
+  },
+  {
+   "frame": 2790,
+   "class": "crack",
+   "prompt": "a cracked plaster wall",
+   "score": 0.2681,
+   "box": [
+    1.1,
+    0.0,
+    867.4,
+    417.9
+   ]
+  },
+  {
+   "frame": 2790,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.1905,
+   "box": [
+    0.0,
+    320.6,
+    763.7,
+    452.1
+   ]
+  },
+  {
+   "frame": 2790,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.19,
+   "box": [
+    1082.5,
+    598.0,
+    1504.4,
+    1032.8
+   ]
+  },
+  {
+   "frame": 2835,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.2405,
+   "box": [
+    0.4,
+    685.8,
+    869.5,
+    875.1
+   ]
+  },
+  {
+   "frame": 2835,
+   "class": "crack",
+   "prompt": "a cracked plaster wall",
+   "score": 0.1521,
+   "box": [
+    22.5,
+    0.0,
+    1916.2,
+    11.4
+   ]
+  },
+  {
+   "frame": 2835,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.2001,
+   "box": [
+    928.8,
+    1017.7,
+    1056.6,
+    1066.6
+   ]
+  },
+  {
+   "frame": 2835,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.1667,
+   "box": [
+    973.7,
+    1206.7,
+    1090.8,
+    1254.0
+   ]
+  },
+  {
+   "frame": 2880,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.2041,
+   "box": [
+    6.9,
+    536.1,
+    1086.8,
+    724.5
+   ]
+  },
+  {
+   "frame": 2880,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.2335,
+   "box": [
+    1169.3,
+    960.7,
+    1333.7,
+    1029.0
+   ]
+  },
+  {
+   "frame": 2880,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.2011,
+   "box": [
+    1061.3,
+    5.8,
+    1444.8,
+    585.5
+   ]
+  },
+  {
+   "frame": 2880,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.1616,
+   "box": [
+    1491.0,
+    1023.8,
+    1751.6,
+    1433.6
+   ]
+  },
+  {
+   "frame": 2925,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.1529,
+   "box": [
+    1.8,
+    529.1,
+    1085.5,
+    727.7
+   ]
+  },
+  {
+   "frame": 2925,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.1909,
+   "box": [
+    866.1,
+    691.9,
+    1028.0,
+    961.6
+   ]
+  },
+  {
+   "frame": 2925,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.1968,
+   "box": [
+    1050.9,
+    10.6,
+    1458.9,
+    592.3
+   ]
+  },
+  {
+   "frame": 2970,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.221,
+   "box": [
+    15.3,
+    272.9,
+    1897.5,
+    423.8
+   ]
+  },
+  {
+   "frame": 3015,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.232,
+   "box": [
+    1175.4,
+    104.8,
+    1793.6,
+    800.2
+   ]
+  },
+  {
+   "frame": 3060,
+   "class": "crack",
+   "prompt": "a cracked plaster wall",
+   "score": 0.168,
+   "box": [
+    338.7,
+    1119.2,
+    1919.0,
+    1433.3
+   ]
+  },
+  {
+   "frame": 3150,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.1965,
+   "box": [
+    515.3,
+    204.3,
+    656.1,
+    284.4
+   ]
+  },
+  {
+   "frame": 3150,
+   "class": "hole",
+   "prompt": "a hole in a wall",
+   "score": 0.1696,
+   "box": [
+    582.8,
+    207.6,
+    653.3,
+    283.9
+   ]
+  },
+  {
+   "frame": 3285,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.1547,
+   "box": [
+    1451.7,
+    10.3,
+    1915.5,
+    867.9
+   ]
+  },
+  {
+   "frame": 3330,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.1641,
+   "box": [
+    0.0,
+    117.3,
+    1010.9,
+    178.5
+   ]
+  },
+  {
+   "frame": 3330,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.2119,
+   "box": [
+    1456.4,
+    359.4,
+    1905.6,
+    812.2
+   ]
+  },
+  {
+   "frame": 3375,
+   "class": "hole",
+   "prompt": "a hole in a wall",
+   "score": 0.2298,
+   "box": [
+    1707.8,
+    1161.6,
+    1901.3,
+    1290.1
+   ]
+  },
+  {
+   "frame": 3420,
+   "class": "water_stain",
+   "prompt": "a brown water stain on a ceiling",
+   "score": 0.1512,
+   "box": [
+    0.0,
+    524.8,
+    96.9,
+    883.1
+   ]
+  },
+  {
+   "frame": 3420,
+   "class": "crack",
+   "prompt": "a cracked plaster wall",
+   "score": 0.1879,
+   "box": [
+    0.0,
+    0.0,
+    1659.2,
+    248.1
+   ]
+  },
+  {
+   "frame": 3420,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.1836,
+   "box": [
+    989.4,
+    559.0,
+    1602.0,
+    1063.4
+   ]
+  },
+  {
+   "frame": 3510,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.1706,
+   "box": [
+    1129.3,
+    12.6,
+    1257.4,
+    327.4
+   ]
+  },
+  {
+   "frame": 3555,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.2283,
+   "box": [
+    1128.7,
+    170.3,
+    1361.0,
+    868.6
+   ]
+  },
+  {
+   "frame": 3600,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.2421,
+   "box": [
+    1664.1,
+    4.1,
+    1859.1,
+    620.4
+   ]
+  },
+  {
+   "frame": 3690,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.183,
+   "box": [
+    1193.6,
+    542.3,
+    1424.4,
+    671.4
+   ]
+  },
+  {
+   "frame": 3735,
+   "class": "crack",
+   "prompt": "a cracked plaster wall",
+   "score": 0.1709,
+   "box": [
+    3.3,
+    1.9,
+    682.9,
+    404.6
+   ]
+  },
+  {
+   "frame": 3735,
+   "class": "crack",
+   "prompt": "a cracked plaster wall",
+   "score": 0.1795,
+   "box": [
+    13.8,
+    660.2,
+    728.3,
+    811.0
+   ]
+  },
+  {
+   "frame": 3735,
+   "class": "peeling_paint",
+   "prompt": "flaking paint on a wall",
+   "score": 0.1778,
+   "box": [
+    0.0,
+    823.1,
+    982.0,
+    1172.9
+   ]
+  },
+  {
+   "frame": 3780,
+   "class": "crack",
+   "prompt": "a cracked plaster wall",
+   "score": 0.1862,
+   "box": [
+    655.1,
+    1165.6,
+    1919.0,
+    1439.0
+   ]
+  },
+  {
+   "frame": 3870,
+   "class": "crack",
+   "prompt": "a cracked plaster wall",
+   "score": 0.1562,
+   "box": [
+    0.0,
+    792.1,
+    801.5,
+    956.4
+   ]
+  },
+  {
+   "frame": 3870,
+   "class": "crack",
+   "prompt": "a cracked plaster wall",
+   "score": 0.2661,
+   "box": [
+    4.6,
+    866.1,
+    890.2,
+    1437.5
+   ]
+  },
+  {
+   "frame": 3870,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.1532,
+   "box": [
+    829.0,
+    9.1,
+    1756.0,
+    434.4
+   ]
+  },
+  {
+   "frame": 3915,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.1571,
+   "box": [
+    857.5,
+    0.2,
+    961.6,
+    222.7
+   ]
+  },
+  {
+   "frame": 3960,
+   "class": "peeling_paint",
+   "prompt": "flaking paint on a wall",
+   "score": 0.1698,
+   "box": [
+    0.0,
+    1016.7,
+    1238.5,
+    1439.0
+   ]
+  },
+  {
+   "frame": 3960,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.1865,
+   "box": [
+    778.3,
+    417.2,
+    851.1,
+    856.0
+   ]
+  },
+  {
+   "frame": 4005,
+   "class": "water_stain",
+   "prompt": "a brown water stain on a ceiling",
+   "score": 0.2201,
+   "box": [
+    66.5,
+    2.9,
+    216.8,
+    312.0
+   ]
+  },
+  {
+   "frame": 4005,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.1655,
+   "box": [
+    1085.9,
+    80.9,
+    1168.6,
+    609.7
+   ]
+  },
+  {
+   "frame": 4005,
+   "class": "water_stain",
+   "prompt": "water damage",
+   "score": 0.1689,
+   "box": [
+    1418.8,
+    0.0,
+    1918.1,
+    324.7
+   ]
+  },
+  {
+   "frame": 4050,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.1581,
+   "box": [
+    1063.4,
+    36.2,
+    1143.5,
+    650.3
+   ]
+  },
+  {
+   "frame": 4050,
+   "class": "water_stain",
+   "prompt": "water damage",
+   "score": 0.1913,
+   "box": [
+    1489.1,
+    0.0,
+    1917.8,
+    309.1
+   ]
+  },
+  {
+   "frame": 4095,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.1827,
+   "box": [
+    1031.4,
+    0.0,
+    1169.3,
+    696.4
+   ]
+  },
+  {
+   "frame": 4095,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.271,
+   "box": [
+    1675.0,
+    0.0,
+    1919.0,
+    320.1
+   ]
+  },
+  {
+   "frame": 4140,
+   "class": "crack",
+   "prompt": "a crack in a wall",
+   "score": 0.2277,
+   "box": [
+    1.0,
+    841.2,
+    762.7,
+    931.5
+   ]
+  },
+  {
+   "frame": 4140,
+   "class": "peeling_paint",
+   "prompt": "flaking paint on a wall",
+   "score": 0.1682,
+   "box": [
+    2.0,
+    521.8,
+    726.5,
+    915.2
+   ]
+  },
+  {
+   "frame": 4140,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.1993,
+   "box": [
+    1154.0,
+    0.0,
+    1411.8,
+    745.5
+   ]
+  },
+  {
+   "frame": 4185,
+   "class": "crack",
+   "prompt": "a cracked plaster wall",
+   "score": 0.2238,
+   "box": [
+    0.3,
+    193.6,
+    692.3,
+    455.9
+   ]
+  },
+  {
+   "frame": 4185,
+   "class": "crack",
+   "prompt": "a crack in a wall",
+   "score": 0.2249,
+   "box": [
+    9.7,
+    740.3,
+    1145.4,
+    839.9
+   ]
+  },
+  {
+   "frame": 4185,
+   "class": "water_stain",
+   "prompt": "water damage",
+   "score": 0.1523,
+   "box": [
+    1471.7,
+    0.0,
+    1523.2,
+    40.5
+   ]
+  },
+  {
+   "frame": 4230,
+   "class": "mould",
+   "prompt": "mold growth",
+   "score": 0.3127,
+   "box": [
+    1560.7,
+    410.8,
+    1918.2,
+    1157.5
+   ]
+  },
+  {
+   "frame": 4275,
+   "class": "hole",
+   "prompt": "a hole in a wall",
+   "score": 0.1519,
+   "box": [
+    403.9,
+    950.1,
+    598.8,
+    1240.0
+   ]
+  },
+  {
+   "frame": 4275,
+   "class": "mould",
+   "prompt": "black mould on a wall",
+   "score": 0.22,
+   "box": [
+    909.3,
+    745.9,
+    1206.9,
+    1411.7
+   ]
+  },
+  {
+   "frame": 4275,
+   "class": "water_stain",
+   "prompt": "water damage",
+   "score": 0.2211,
+   "box": [
+    1239.7,
+    716.1,
+    1281.2,
+    784.2
+   ]
+  },
+  {
+   "frame": 4365,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.1812,
+   "box": [
+    1565.2,
+    9.2,
+    1723.1,
+    495.5
+   ]
+  },
+  {
+   "frame": 4410,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.1504,
+   "box": [
+    1838.1,
+    11.6,
+    1913.9,
+    917.8
+   ]
+  },
+  {
+   "frame": 4455,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.1536,
+   "box": [
+    1538.4,
+    0.0,
+    1842.2,
+    177.8
+   ]
+  },
+  {
+   "frame": 4455,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.2662,
+   "box": [
+    1338.8,
+    6.4,
+    1917.9,
+    763.2
+   ]
+  },
+  {
+   "frame": 4545,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.1614,
+   "box": [
+    1071.5,
+    481.9,
+    1912.4,
+    894.0
+   ]
+  },
+  {
+   "frame": 4590,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.1855,
+   "box": [
+    817.4,
+    5.8,
+    897.0,
+    805.0
+   ]
+  },
+  {
+   "frame": 4590,
+   "class": "water_stain",
+   "prompt": "water damage",
+   "score": 0.1703,
+   "box": [
+    1652.4,
+    409.0,
+    1918.2,
+    735.0
+   ]
+  },
+  {
+   "frame": 4635,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.2812,
+   "box": [
+    1058.2,
+    12.9,
+    1150.1,
+    861.2
+   ]
+  },
+  {
+   "frame": 4635,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.201,
+   "box": [
+    1065.6,
+    8.9,
+    1112.4,
+    849.2
+   ]
+  },
+  {
+   "frame": 4725,
+   "class": "water_stain",
+   "prompt": "water damage",
+   "score": 0.1541,
+   "box": [
+    1003.5,
+    1092.5,
+    1054.2,
+    1139.6
+   ]
+  },
+  {
+   "frame": 4770,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.2142,
+   "box": [
+    156.8,
+    220.9,
+    281.3,
+    444.2
+   ]
+  },
+  {
+   "frame": 4770,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.1637,
+   "box": [
+    0.0,
+    0.4,
+    612.3,
+    196.1
+   ]
+  },
+  {
+   "frame": 4770,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.1669,
+   "box": [
+    1387.2,
+    654.4,
+    1600.9,
+    1439.0
+   ]
+  },
+  {
+   "frame": 4815,
+   "class": "crack",
+   "prompt": "a cracked plaster wall",
+   "score": 0.2312,
+   "box": [
+    24.2,
+    1146.7,
+    1903.1,
+    1439.0
+   ]
+  },
+  {
+   "frame": 4815,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.1614,
+   "box": [
+    63.7,
+    1167.9,
+    1594.6,
+    1435.5
+   ]
+  },
+  {
+   "frame": 4905,
+   "class": "water_stain",
+   "prompt": "water damage",
+   "score": 0.176,
+   "box": [
+    1124.5,
+    666.4,
+    1916.2,
+    1236.0
+   ]
+  },
+  {
+   "frame": 4995,
+   "class": "water_stain",
+   "prompt": "a water stain on a wall",
+   "score": 0.1794,
+   "box": [
+    844.3,
+    492.5,
+    1512.1,
+    820.3
+   ]
+  },
+  {
+   "frame": 4995,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.2232,
+   "box": [
+    1458.6,
+    504.3,
+    1547.6,
+    810.8
+   ]
+  },
+  {
+   "frame": 5130,
+   "class": "crack",
+   "prompt": "a thin hairline crack in a white wall",
+   "score": 0.164,
+   "box": [
+    1655.7,
+    807.4,
+    1919.0,
+    1331.2
+   ]
+  },
+  {
+   "frame": 5175,
+   "class": "hole",
+   "prompt": "a damaged hole in drywall",
+   "score": 0.1659,
+   "box": [
+    1484.7,
+    764.2,
+    1916.7,
+    1038.8
+   ]
+  },
+  {
+   "frame": 5220,
+   "class": "hole",
+   "prompt": "a damaged hole in drywall",
+   "score": 0.2791,
+   "box": [
+    1524.5,
+    591.3,
+    1914.4,
+    916.7
+   ]
+  }
+ ]
+}

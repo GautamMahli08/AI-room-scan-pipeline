@@ -1,0 +1,180 @@
+{
+  "schema_version": "1.0",
+  "capture_id": "single_scan_with_ceiling_photo",
+  "tier": "photo",
+  "rooms": [
+    {
+      "id": "R1",
+      "polygon": [
+        [
+          0.612,
+          -1.131
+        ],
+        [
+          3.362,
+          -1.131
+        ],
+        [
+          3.362,
+          3.969
+        ],
+        [
+          0.612,
+          3.969
+        ]
+      ],
+      "walls": [
+        {
+          "id": "W1",
+          "start": [
+            0.612,
+            -1.131
+          ],
+          "end": [
+            3.362,
+            -1.131
+          ],
+          "length_m": {
+            "value": 2.75,
+            "ci90": [
+              2.2,
+              4.4
+            ],
+            "source": "inferred"
+          },
+          "inferred": true
+        },
+        {
+          "id": "W2",
+          "start": [
+            3.362,
+            -1.131
+          ],
+          "end": [
+            3.362,
+            3.969
+          ],
+          "length_m": {
+            "value": 5.1,
+            "ci90": [
+              4.08,
+              8.16
+            ],
+            "source": "inferred"
+          },
+          "inferred": true
+        },
+        {
+          "id": "W3",
+          "start": [
+            3.362,
+            3.969
+          ],
+          "end": [
+            0.612,
+            3.969
+          ],
+          "length_m": {
+            "value": 2.75,
+            "ci90": [
+              2.2,
+              4.4
+            ],
+            "source": "inferred"
+          },
+          "inferred": true
+        },
+        {
+          "id": "W4",
+          "start": [
+            0.612,
+            3.969
+          ],
+          "end": [
+            0.612,
+            -1.131
+          ],
+          "length_m": {
+            "value": 5.1,
+            "ci90": [
+              4.08,
+              8.16
+            ],
+            "source": "inferred"
+          },
+          "inferred": true
+        }
+      ],
+      "openings": [],
+      "ceiling_height_m": {
+        "observed": false,
+        "value": null,
+        "reason": "highest horizontal layer covers too little of the room to be the ceiling (ceiling not scanned)"
+      },
+      "floor_area_m2": {
+        "value": 14.025,
+        "ci90": [
+          11.22,
+          30.855
+        ],
+        "source": "inferred"
+      }
+    }
+  ],
+  "adjacency": [],
+  "footprint_area_m2": {
+    "value": 14.025,
+    "ci90": [
+      11.22,
+      30.855
+    ],
+    "source": "inferred"
+  },
+  "damage": [],
+  "concealed_flags": [],
+  "scope": [],
+  "provenance": {
+    "pipeline_version": "0.1.0",
+    "input": "results/single_scan_with_ceiling_photo/export",
+    "models": [
+      {
+        "name": "facebook/VGGT-1B",
+        "version": "hf"
+      },
+      {
+        "name": "apple/DepthPro-hf",
+        "version": "hf"
+      }
+    ],
+    "drift_correction": "off",
+    "runtime_s": 0.3
+  },
+  "diagnostics": {
+    "ceilings": [
+      {
+        "coverage": 0.12,
+        "height": 2.195,
+        "observed": false,
+        "other_levels": null,
+        "spread_mm": 9.8,
+        "support": 647
+      }
+    ],
+    "floor_residual_mm": 11,
+    "floor_tilt_deg": 0.011,
+    "frames": 12,
+    "fused_points": 110819,
+    "manhattan_deg": 66.59,
+    "manhattan_support": 0.5,
+    "room_regions_m2": [
+      15.78
+    ],
+    "trajectory_length_m": 20.3,
+    "wall_layers": {
+      "R1/W1": null,
+      "R1/W2": null,
+      "R1/W3": null,
+      "R1/W4": null
+    }
+  }
+}

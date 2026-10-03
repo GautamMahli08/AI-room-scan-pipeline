@@ -1,0 +1,736 @@
+{
+  "schema_version": "1.0",
+  "capture_id": "single_room_video",
+  "tier": "video",
+  "rooms": [
+    {
+      "id": "R1",
+      "polygon": [
+        [
+          -4.362,
+          -2.19
+        ],
+        [
+          -3.087,
+          -2.19
+        ],
+        [
+          -3.087,
+          0.81
+        ],
+        [
+          -4.362,
+          0.81
+        ]
+      ],
+      "walls": [
+        {
+          "id": "W1",
+          "start": [
+            -4.362,
+            -2.19
+          ],
+          "end": [
+            -3.087,
+            -2.19
+          ],
+          "length_m": {
+            "value": 1.275,
+            "ci90": [
+              1.02,
+              2.04
+            ],
+            "source": "inferred"
+          },
+          "inferred": true
+        },
+        {
+          "id": "W2",
+          "start": [
+            -3.087,
+            -2.19
+          ],
+          "end": [
+            -3.087,
+            0.81
+          ],
+          "length_m": {
+            "value": 3,
+            "ci90": [
+              2.4,
+              4.8
+            ],
+            "source": "inferred"
+          },
+          "inferred": true
+        },
+        {
+          "id": "W3",
+          "start": [
+            -3.087,
+            0.81
+          ],
+          "end": [
+            -4.362,
+            0.81
+          ],
+          "length_m": {
+            "value": 1.275,
+            "ci90": [
+              1.02,
+              2.04
+            ],
+            "source": "inferred"
+          },
+          "inferred": true
+        },
+        {
+          "id": "W4",
+          "start": [
+            -4.362,
+            0.81
+          ],
+          "end": [
+            -4.362,
+            -2.19
+          ],
+          "length_m": {
+            "value": 3,
+            "ci90": [
+              2.4,
+              4.8
+            ],
+            "source": "inferred"
+          },
+          "inferred": true
+        }
+      ],
+      "openings": [
+        {
+          "id": "O1",
+          "wall": "W2",
+          "type": "opening",
+          "offset_m": {
+            "value": 1.15,
+            "ci90": [
+              0.788,
+              1.512
+            ],
+            "source": "inferred"
+          },
+          "width_m": {
+            "value": 1.85,
+            "ci90": [
+              1.429,
+              2.271
+            ],
+            "source": "inferred"
+          }
+        }
+      ],
+      "ceiling_height_m": {
+        "observed": false,
+        "value": null,
+        "reason": "no points above 1.9 m were captured in this room"
+      },
+      "floor_area_m2": {
+        "value": 3.825,
+        "ci90": [
+          3.06,
+          8.415
+        ],
+        "source": "inferred"
+      }
+    },
+    {
+      "id": "R2",
+      "polygon": [
+        [
+          -3.087,
+          -0.44
+        ],
+        [
+          -1.312,
+          -0.44
+        ],
+        [
+          -1.312,
+          1.16
+        ],
+        [
+          -3.087,
+          1.16
+        ]
+      ],
+      "walls": [
+        {
+          "id": "W1",
+          "start": [
+            -3.087,
+            -0.44
+          ],
+          "end": [
+            -1.312,
+            -0.44
+          ],
+          "length_m": {
+            "value": 1.775,
+            "ci90": [
+              1.42,
+              2.84
+            ],
+            "source": "inferred"
+          },
+          "inferred": true
+        },
+        {
+          "id": "W2",
+          "start": [
+            -1.312,
+            -0.44
+          ],
+          "end": [
+            -1.312,
+            1.16
+          ],
+          "length_m": {
+            "value": 1.6,
+            "ci90": [
+              1.28,
+              2.56
+            ],
+            "source": "inferred"
+          },
+          "inferred": true
+        },
+        {
+          "id": "W3",
+          "start": [
+            -1.312,
+            1.16
+          ],
+          "end": [
+            -3.087,
+            1.16
+          ],
+          "length_m": {
+            "value": 1.775,
+            "ci90": [
+              1.42,
+              2.84
+            ],
+            "source": "inferred"
+          },
+          "inferred": true
+        },
+        {
+          "id": "W4",
+          "start": [
+            -3.087,
+            1.16
+          ],
+          "end": [
+            -3.087,
+            -0.44
+          ],
+          "length_m": {
+            "value": 1.6,
+            "ci90": [
+              1.28,
+              2.56
+            ],
+            "source": "inferred"
+          },
+          "inferred": true
+        }
+      ],
+      "openings": [],
+      "ceiling_height_m": {
+        "observed": false,
+        "value": null,
+        "reason": "no points above 1.9 m were captured in this room"
+      },
+      "floor_area_m2": {
+        "value": 2.84,
+        "ci90": [
+          2.272,
+          6.248
+        ],
+        "source": "inferred"
+      }
+    },
+    {
+      "id": "R3",
+      "polygon": [
+        [
+          -1.362,
+          -2.59
+        ],
+        [
+          -0.012,
+          -2.59
+        ],
+        [
+          -0.012,
+          -1.19
+        ],
+        [
+          -1.362,
+          -1.19
+        ]
+      ],
+      "walls": [
+        {
+          "id": "W1",
+          "start": [
+            -1.362,
+            -2.59
+          ],
+          "end": [
+            -0.012,
+            -2.59
+          ],
+          "length_m": {
+            "value": 1.35,
+            "ci90": [
+              1.08,
+              2.16
+            ],
+            "source": "inferred"
+          },
+          "inferred": true
+        },
+        {
+          "id": "W2",
+          "start": [
+            -0.012,
+            -2.59
+          ],
+          "end": [
+            -0.012,
+            -1.19
+          ],
+          "length_m": {
+            "value": 1.4,
+            "ci90": [
+              1.12,
+              2.24
+            ],
+            "source": "inferred"
+          },
+          "inferred": true
+        },
+        {
+          "id": "W3",
+          "start": [
+            -0.012,
+            -1.19
+          ],
+          "end": [
+            -1.362,
+            -1.19
+          ],
+          "length_m": {
+            "value": 1.35,
+            "ci90": [
+              1.08,
+              2.16
+            ],
+            "source": "inferred"
+          },
+          "inferred": true
+        },
+        {
+          "id": "W4",
+          "start": [
+            -1.362,
+            -1.19
+          ],
+          "end": [
+            -1.362,
+            -2.59
+          ],
+          "length_m": {
+            "value": 1.4,
+            "ci90": [
+              1.12,
+              2.24
+            ],
+            "source": "inferred"
+          },
+          "inferred": true
+        }
+      ],
+      "openings": [],
+      "ceiling_height_m": {
+        "observed": false,
+        "value": null,
+        "reason": "no points above 1.9 m were captured in this room"
+      },
+      "floor_area_m2": {
+        "value": 1.89,
+        "ci90": [
+          1.512,
+          4.158
+        ],
+        "source": "inferred"
+      }
+    },
+    {
+      "id": "R4",
+      "polygon": [
+        [
+          0.388,
+          -2.44
+        ],
+        [
+          1.988,
+          -2.44
+        ],
+        [
+          1.988,
+          -1.24
+        ],
+        [
+          0.388,
+          -1.24
+        ]
+      ],
+      "walls": [
+        {
+          "id": "W1",
+          "start": [
+            0.388,
+            -2.44
+          ],
+          "end": [
+            1.988,
+            -2.44
+          ],
+          "length_m": {
+            "value": 1.6,
+            "ci90": [
+              1.28,
+              2.56
+            ],
+            "source": "inferred"
+          },
+          "inferred": true
+        },
+        {
+          "id": "W2",
+          "start": [
+            1.988,
+            -2.44
+          ],
+          "end": [
+            1.988,
+            -1.24
+          ],
+          "length_m": {
+            "value": 1.2,
+            "ci90": [
+              0.96,
+              1.92
+            ],
+            "source": "inferred"
+          },
+          "inferred": true
+        },
+        {
+          "id": "W3",
+          "start": [
+            1.988,
+            -1.24
+          ],
+          "end": [
+            0.388,
+            -1.24
+          ],
+          "length_m": {
+            "value": 1.6,
+            "ci90": [
+              1.28,
+              2.56
+            ],
+            "source": "inferred"
+          },
+          "inferred": true
+        },
+        {
+          "id": "W4",
+          "start": [
+            0.388,
+            -1.24
+          ],
+          "end": [
+            0.388,
+            -2.44
+          ],
+          "length_m": {
+            "value": 1.2,
+            "ci90": [
+              0.96,
+              1.92
+            ],
+            "source": "inferred"
+          },
+          "inferred": true
+        }
+      ],
+      "openings": [],
+      "ceiling_height_m": {
+        "observed": false,
+        "value": null,
+        "reason": "no points above 1.9 m were captured in this room"
+      },
+      "floor_area_m2": {
+        "value": 1.92,
+        "ci90": [
+          1.536,
+          4.224
+        ],
+        "source": "inferred"
+      }
+    },
+    {
+      "id": "R5",
+      "polygon": [
+        [
+          0.388,
+          -0.29
+        ],
+        [
+          1.938,
+          -0.29
+        ],
+        [
+          1.938,
+          1.41
+        ],
+        [
+          0.388,
+          1.41
+        ]
+      ],
+      "walls": [
+        {
+          "id": "W1",
+          "start": [
+            0.388,
+            -0.29
+          ],
+          "end": [
+            1.938,
+            -0.29
+          ],
+          "length_m": {
+            "value": 1.55,
+            "ci90": [
+              1.24,
+              2.48
+            ],
+            "source": "inferred"
+          },
+          "inferred": true
+        },
+        {
+          "id": "W2",
+          "start": [
+            1.938,
+            -0.29
+          ],
+          "end": [
+            1.938,
+            1.41
+          ],
+          "length_m": {
+            "value": 1.7,
+            "ci90": [
+              1.36,
+              2.72
+            ],
+            "source": "inferred"
+          },
+          "inferred": true
+        },
+        {
+          "id": "W3",
+          "start": [
+            1.938,
+            1.41
+          ],
+          "end": [
+            0.388,
+            1.41
+          ],
+          "length_m": {
+            "value": 1.55,
+            "ci90": [
+              1.24,
+              2.48
+            ],
+            "source": "inferred"
+          },
+          "inferred": true
+        },
+        {
+          "id": "W4",
+          "start": [
+            0.388,
+            1.41
+          ],
+          "end": [
+            0.388,
+            -0.29
+          ],
+          "length_m": {
+            "value": 1.7,
+            "ci90": [
+              1.36,
+              2.72
+            ],
+            "source": "inferred"
+          },
+          "inferred": true
+        }
+      ],
+      "openings": [],
+      "ceiling_height_m": {
+        "observed": false,
+        "value": null,
+        "reason": "no points above 1.9 m were captured in this room"
+      },
+      "floor_area_m2": {
+        "value": 2.635,
+        "ci90": [
+          2.108,
+          5.797
+        ],
+        "source": "inferred"
+      }
+    }
+  ],
+  "adjacency": [
+    {
+      "rooms": [
+        "R1",
+        "R2"
+      ],
+      "via": [
+        "O1"
+      ]
+    }
+  ],
+  "footprint_area_m2": {
+    "value": 13.11,
+    "ci90": [
+      10.488,
+      28.842
+    ],
+    "source": "inferred"
+  },
+  "damage": [],
+  "concealed_flags": [],
+  "scope": [],
+  "provenance": {
+    "pipeline_version": "0.1.0",
+    "input": "results/single_room_video/export",
+    "models": [
+      {
+        "name": "facebook/VGGT-1B",
+        "version": "hf"
+      },
+      {
+        "name": "apple/DepthPro-hf",
+        "version": "hf"
+      },
+      {
+        "name": "depth-anything/Depth-Anything-V2-Metric-Indoor-Base-hf (orientation only)",
+        "version": "hf"
+      }
+    ],
+    "drift_correction": "off",
+    "runtime_s": 0.7
+  },
+  "diagnostics": {
+    "ceilings": [
+      {
+        "coverage": 0,
+        "height": 0,
+        "observed": false,
+        "other_levels": null,
+        "spread_mm": 0,
+        "support": 0
+      },
+      {
+        "coverage": 0,
+        "height": 0,
+        "observed": false,
+        "other_levels": null,
+        "spread_mm": 0,
+        "support": 0
+      },
+      {
+        "coverage": 0,
+        "height": 0,
+        "observed": false,
+        "other_levels": null,
+        "spread_mm": 0,
+        "support": 0
+      },
+      {
+        "coverage": 0,
+        "height": 0,
+        "observed": false,
+        "other_levels": null,
+        "spread_mm": 0,
+        "support": 0
+      },
+      {
+        "coverage": 0,
+        "height": 0,
+        "observed": false,
+        "other_levels": null,
+        "spread_mm": 0,
+        "support": 0
+      }
+    ],
+    "floor_residual_mm": 8.8,
+    "floor_tilt_deg": 0.075,
+    "frames": 112,
+    "fused_points": 132806,
+    "manhattan_deg": 27.42,
+    "manhattan_support": 0.176,
+    "room_regions_m2": [
+      8.41,
+      4.38,
+      3.09,
+      1.93,
+      2.23
+    ],
+    "trajectory_length_m": 17.9,
+    "wall_layers": {
+      "R1/W1": null,
+      "R1/W2": null,
+      "R1/W3": null,
+      "R1/W4": null,
+      "R2/W1": null,
+      "R2/W2": null,
+      "R2/W3": null,
+      "R2/W4": null,
+      "R3/W1": null,
+      "R3/W2": null,
+      "R3/W3": null,
+      "R3/W4": null,
+      "R4/W1": null,
+      "R4/W2": null,
+      "R4/W3": null,
+      "R4/W4": null,
+      "R5/W1": null,
+      "R5/W2": null,
+      "R5/W3": null,
+      "R5/W4": null
+    }
+  }
+}

@@ -1,0 +1,500 @@
+{
+  "iterations": [
+    {
+      "observations": 0,
+      "landmarks": 0,
+      "scatter_before_mm": 0,
+      "scatter_predicted_after_mm": 0,
+      "max_shift_cm": 0,
+      "max_yaw_deg": 0,
+      "held_out_no_correction_mm": 0,
+      "held_out_selected_mm": 0,
+      "prior_scale": 0,
+      "prior_selection": [
+        {
+          "scale": 0.03,
+          "held_out_mm": 0
+        },
+        {
+          "scale": 0.06,
+          "held_out_mm": 0
+        },
+        {
+          "scale": 0.125,
+          "held_out_mm": 0
+        },
+        {
+          "scale": 0.25,
+          "held_out_mm": 0
+        },
+        {
+          "scale": 0.5,
+          "held_out_mm": 0
+        },
+        {
+          "scale": 1,
+          "held_out_mm": 0
+        },
+        {
+          "scale": 2,
+          "held_out_mm": 0
+        },
+        {
+          "scale": 4,
+          "held_out_mm": 0
+        },
+        {
+          "scale": 8,
+          "held_out_mm": 0
+        }
+      ]
+    }
+  ],
+  "final": {
+    "observations": 0,
+    "landmarks": 0,
+    "scatter_before_mm": 0,
+    "scatter_predicted_after_mm": 0,
+    "max_shift_cm": 0,
+    "max_yaw_deg": 0,
+    "held_out_no_correction_mm": 0,
+    "held_out_selected_mm": 0,
+    "prior_scale": 0,
+    "prior_selection": [
+      {
+        "scale": 0.03,
+        "held_out_mm": 0
+      },
+      {
+        "scale": 0.06,
+        "held_out_mm": 0
+      },
+      {
+        "scale": 0.125,
+        "held_out_mm": 0
+      },
+      {
+        "scale": 0.25,
+        "held_out_mm": 0
+      },
+      {
+        "scale": 0.5,
+        "held_out_mm": 0
+      },
+      {
+        "scale": 1,
+        "held_out_mm": 0
+      },
+      {
+        "scale": 2,
+        "held_out_mm": 0
+      },
+      {
+        "scale": 4,
+        "held_out_mm": 0
+      },
+      {
+        "scale": 8,
+        "held_out_mm": 0
+      }
+    ]
+  },
+  "footprint_off_m2": {
+    "value": 14.025,
+    "ci90": [
+      11.22,
+      30.855
+    ],
+    "source": "inferred"
+  },
+  "footprint_on_m2": {
+    "value": 14.025,
+    "ci90": [
+      11.22,
+      30.855
+    ],
+    "source": "inferred"
+  },
+  "rooms_off": 1,
+  "rooms_on": 1,
+  "chunks_first_iteration": [
+    {
+      "T0": 200,
+      "T1": 204,
+      "Pivot": {
+        "X": -0.41306026533698786,
+        "Y": 0.05216816509843125
+      },
+      "Dx": 0,
+      "Dy": 0,
+      "Dtheta": 0,
+      "Dh": 0,
+      "WallObs": 0,
+      "FloorObs": true
+    },
+    {
+      "T0": 204,
+      "T1": 208,
+      "Pivot": {
+        "X": -0.08212435506483964,
+        "Y": 0.47978815512414863
+      },
+      "Dx": -0,
+      "Dy": -0,
+      "Dtheta": -0,
+      "Dh": -0,
+      "WallObs": 0,
+      "FloorObs": true
+    },
+    {
+      "T0": 208,
+      "T1": 212,
+      "Pivot": {
+        "X": 0,
+        "Y": 0
+      },
+      "Dx": -0,
+      "Dy": -0,
+      "Dtheta": -0,
+      "Dh": -0,
+      "WallObs": 0,
+      "FloorObs": false
+    },
+    {
+      "T0": 212,
+      "T1": 216,
+      "Pivot": {
+        "X": 0,
+        "Y": 0
+      },
+      "Dx": -0,
+      "Dy": -0,
+      "Dtheta": -0,
+      "Dh": -0,
+      "WallObs": 0,
+      "FloorObs": false
+    },
+    {
+      "T0": 216,
+      "T1": 220,
+      "Pivot": {
+        "X": 0,
+        "Y": 0
+      },
+      "Dx": -0,
+      "Dy": -0,
+      "Dtheta": -0,
+      "Dh": -0,
+      "WallObs": 0,
+      "FloorObs": false
+    },
+    {
+      "T0": 220,
+      "T1": 224,
+      "Pivot": {
+        "X": 0,
+        "Y": 0
+      },
+      "Dx": -0,
+      "Dy": -0,
+      "Dtheta": -0,
+      "Dh": -0,
+      "WallObs": 0,
+      "FloorObs": false
+    },
+    {
+      "T0": 224,
+      "T1": 228,
+      "Pivot": {
+        "X": 0,
+        "Y": 0
+      },
+      "Dx": -0,
+      "Dy": -0,
+      "Dtheta": -0,
+      "Dh": -0,
+      "WallObs": 0,
+      "FloorObs": false
+    },
+    {
+      "T0": 228,
+      "T1": 232,
+      "Pivot": {
+        "X": 0,
+        "Y": 0
+      },
+      "Dx": -0,
+      "Dy": -0,
+      "Dtheta": -0,
+      "Dh": -0,
+      "WallObs": 0,
+      "FloorObs": false
+    },
+    {
+      "T0": 232,
+      "T1": 236,
+      "Pivot": {
+        "X": 0,
+        "Y": 0
+      },
+      "Dx": -0,
+      "Dy": -0,
+      "Dtheta": -0,
+      "Dh": -0,
+      "WallObs": 0,
+      "FloorObs": false
+    },
+    {
+      "T0": 236,
+      "T1": 240,
+      "Pivot": {
+        "X": 0,
+        "Y": 0
+      },
+      "Dx": -0,
+      "Dy": -0,
+      "Dtheta": -0,
+      "Dh": -0,
+      "WallObs": 0,
+      "FloorObs": false
+    },
+    {
+      "T0": 240,
+      "T1": 244,
+      "Pivot": {
+        "X": 0,
+        "Y": 0
+      },
+      "Dx": -0,
+      "Dy": -0,
+      "Dtheta": -0,
+      "Dh": -0,
+      "WallObs": 0,
+      "FloorObs": false
+    },
+    {
+      "T0": 244,
+      "T1": 248,
+      "Pivot": {
+        "X": 0,
+        "Y": 0
+      },
+      "Dx": -0,
+      "Dy": -0,
+      "Dtheta": -0,
+      "Dh": -0,
+      "WallObs": 0,
+      "FloorObs": false
+    },
+    {
+      "T0": 248,
+      "T1": 252,
+      "Pivot": {
+        "X": 0,
+        "Y": 0
+      },
+      "Dx": -0,
+      "Dy": -0,
+      "Dtheta": -0,
+      "Dh": -0,
+      "WallObs": 0,
+      "FloorObs": false
+    },
+    {
+      "T0": 252,
+      "T1": 256,
+      "Pivot": {
+        "X": 0,
+        "Y": 0
+      },
+      "Dx": -0,
+      "Dy": -0,
+      "Dtheta": -0,
+      "Dh": -0,
+      "WallObs": 0,
+      "FloorObs": false
+    },
+    {
+      "T0": 256,
+      "T1": 260,
+      "Pivot": {
+        "X": 0,
+        "Y": 0
+      },
+      "Dx": -0,
+      "Dy": -0,
+      "Dtheta": -0,
+      "Dh": -0,
+      "WallObs": 0,
+      "FloorObs": false
+    },
+    {
+      "T0": 260,
+      "T1": 264,
+      "Pivot": {
+        "X": 0,
+        "Y": 0
+      },
+      "Dx": -0,
+      "Dy": -0,
+      "Dtheta": -0,
+      "Dh": -0,
+      "WallObs": 0,
+      "FloorObs": false
+    },
+    {
+      "T0": 264,
+      "T1": 268,
+      "Pivot": {
+        "X": 0,
+        "Y": 0
+      },
+      "Dx": -0,
+      "Dy": -0,
+      "Dtheta": -0,
+      "Dh": -0,
+      "WallObs": 0,
+      "FloorObs": false
+    },
+    {
+      "T0": 268,
+      "T1": 272,
+      "Pivot": {
+        "X": 0,
+        "Y": 0
+      },
+      "Dx": -0,
+      "Dy": -0,
+      "Dtheta": -0,
+      "Dh": -0,
+      "WallObs": 0,
+      "FloorObs": false
+    },
+    {
+      "T0": 272,
+      "T1": 276,
+      "Pivot": {
+        "X": 0,
+        "Y": 0
+      },
+      "Dx": -0,
+      "Dy": -0,
+      "Dtheta": -0,
+      "Dh": -0,
+      "WallObs": 0,
+      "FloorObs": false
+    },
+    {
+      "T0": 276,
+      "T1": 280,
+      "Pivot": {
+        "X": 0,
+        "Y": 0
+      },
+      "Dx": -0,
+      "Dy": -0,
+      "Dtheta": -0,
+      "Dh": -0,
+      "WallObs": 0,
+      "FloorObs": false
+    },
+    {
+      "T0": 280,
+      "T1": 284,
+      "Pivot": {
+        "X": 0,
+        "Y": 0
+      },
+      "Dx": -0,
+      "Dy": -0,
+      "Dtheta": -0,
+      "Dh": -0,
+      "WallObs": 0,
+      "FloorObs": false
+    },
+    {
+      "T0": 284,
+      "T1": 288,
+      "Pivot": {
+        "X": 0,
+        "Y": 0
+      },
+      "Dx": -0,
+      "Dy": -0,
+      "Dtheta": -0,
+      "Dh": -0,
+      "WallObs": 0,
+      "FloorObs": false
+    },
+    {
+      "T0": 288,
+      "T1": 292,
+      "Pivot": {
+        "X": 0,
+        "Y": 0
+      },
+      "Dx": -0,
+      "Dy": -0,
+      "Dtheta": -0,
+      "Dh": -0,
+      "WallObs": 0,
+      "FloorObs": false
+    },
+    {
+      "T0": 292,
+      "T1": 296,
+      "Pivot": {
+        "X": 0,
+        "Y": 0
+      },
+      "Dx": -0,
+      "Dy": -0,
+      "Dtheta": -0,
+      "Dh": -0,
+      "WallObs": 0,
+      "FloorObs": false
+    },
+    {
+      "T0": 296,
+      "T1": 300,
+      "Pivot": {
+        "X": 0,
+        "Y": 0
+      },
+      "Dx": -0,
+      "Dy": -0,
+      "Dtheta": -0,
+      "Dh": -0,
+      "WallObs": 0,
+      "FloorObs": false
+    },
+    {
+      "T0": 300,
+      "T1": 304,
+      "Pivot": {
+        "X": -6.08938182474038,
+        "Y": -2.866274045955274
+      },
+      "Dx": -0,
+      "Dy": -0,
+      "Dtheta": -0,
+      "Dh": -0,
+      "WallObs": 0,
+      "FloorObs": false
+    },
+    {
+      "T0": 304,
+      "T1": 308,
+      "Pivot": {
+        "X": -5.384033771051214,
+        "Y": -3.2339974251613217
+      },
+      "Dx": -0,
+      "Dy": -0,
+      "Dtheta": -0,
+      "Dh": -0,
+      "WallObs": 0,
+      "FloorObs": false
+    }
+  ]
+}
