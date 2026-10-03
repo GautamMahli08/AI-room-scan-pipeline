@@ -10,6 +10,7 @@ Handheld phone capture in, dimensioned floor plan out. One command per capture, 
 | Results on the sample captures | [docs/BENCHMARK.md](docs/BENCHMARK.md) |
 | Technical report | [docs/TECHNICAL_REPORT.md](docs/TECHNICAL_REPORT.md) |
 | Fix loop (declaration, fix, before/after, post-mortem) | [fixloop/README.md](fixloop/README.md) |
+| Every command and what it is for | [docs/COMMANDS.md](docs/COMMANDS.md) |
 | Architecture | [SYSTEM_DESIGN.md](SYSTEM_DESIGN.md) |
 | What is not built yet, and how it would be | [docs/FUTURE_SCOPE.md](docs/FUTURE_SCOPE.md) |
 
